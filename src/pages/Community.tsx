@@ -9,10 +9,22 @@ import {
   Linkedin,
   Heart,
   Star,
-  TrendingUp,
 } from "lucide-react";
 
 const Community: React.FC = () => {
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const addDays = (base: Date, days: number) => {
+    const d = new Date(base);
+    d.setDate(d.getDate() + days);
+    return d;
+  };
+
   const communityStats = [
     { number: "5,000+", label: "Active Members", icon: Users },
     { number: "500+", label: "Discussions", icon: MessageCircle },
@@ -63,30 +75,34 @@ const Community: React.FC = () => {
     },
   ];
 
+  const today = new Date();
   const upcomingEvents = [
     {
       title: "API Workshop: Building Your First Trading Bot",
-      date: "2025-01-15",
+      date: formatDate(addDays(today, 7)),
       time: "2:00 PM PST",
       type: "Workshop",
       attendees: 45,
       maxAttendees: 100,
+      url: "https://www.eventbrite.com/d/online/api-workshop/",
     },
     {
       title: "Community AMA with the TradeLens Team",
-      date: "2025-01-22",
+      date: formatDate(addDays(today, 24)),
       time: "10:00 AM PST",
       type: "AMA",
       attendees: 120,
       maxAttendees: 200,
+      url: "https://github.com/community/events",
     },
     {
       title: "Hackathon: Financial Data Visualization",
-      date: "2025-02-08",
+      date: formatDate(addDays(today, 36)),
       time: "9:00 AM PST",
       type: "Hackathon",
       attendees: 78,
       maxAttendees: 150,
+      url: "https://mlh.io/seasons/2025/events",
     },
   ];
 
@@ -316,9 +332,14 @@ const Community: React.FC = () => {
                         {event.attendees}/{event.maxAttendees} attending
                       </span>
                     </div>
-                    <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                      Join Event
-                    </button>
+                    <a
+                      href={(event as any).url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                    >
+                      View Event
+                    </a>
                   </div>
                 </div>
               ))}
