@@ -340,9 +340,12 @@ print(stock_quote)`;
                 </pre>
               </div>
               <div className="mt-6 flex flex-col sm:flex-row gap-4">
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                <Link
+                  to="/api#api-key-section"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors text-center"
+                >
                   Get API Key
-                </button>
+                </Link>
                 <a
                   href="#"
                   className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-center"

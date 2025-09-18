@@ -393,9 +393,15 @@ console.log('24h Change:', portfolio.change_24h);`,
                 Try our interactive API explorer to test endpoints before
                 integrating.
               </p>
-              <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                Open API Explorer
-              </button>
+              <a
+                href="https://developers.apideck.com/api-explorer"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center space-x-2"
+              >
+                <ExternalLink className="w-4 h-4" />
+                <span>Open API Explorer</span>
+              </a>
             </div>
           </div>
         </div>
