@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  TrendingUp,
   Users,
   Target,
   Award,
@@ -10,7 +9,6 @@ import {
   BarChart3,
   Shield,
   Zap,
-  Users2,
   Lightbulb,
   CheckCircle,
 } from "lucide-react";
@@ -54,8 +52,7 @@ const About: React.FC = () => {
     {
       name: "Bright Akoto",
       role: "Founder & CEO",
-      image:
-        "https://avatars.githubusercontent.com/u/122811766?s=400&u=77ef1a48543698fdb141b0af0848a3f406796945&v=4",
+      image: "/img/Owner.jpg",
       bio: "Former fintech engineer with 8+ years experience in financial data systems.",
     },
     {

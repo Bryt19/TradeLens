@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  TrendingUp,
-  Coins,
-  BarChart3,
-  Newspaper,
-  ArrowRight,
-} from "lucide-react";
+import { Coins, BarChart3, Newspaper, ArrowRight } from "lucide-react";
 import { useCryptocurrencies, useFinancialNews } from "../hooks/useApi";
 import { useFavorites } from "../hooks/useApi";
 import CryptoCard from "../components/CryptoCard";
@@ -14,7 +8,6 @@ import CryptoDetailsModal from "../components/CryptoDetailsModal";
 import NewsCard from "../components/NewsCard";
 import Loading from "../components/Loading";
 import Chart from "../components/Chart";
-import { convertCoinGeckoChartData } from "../utils/helpers";
 import { CoinGeckoCoin } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 
