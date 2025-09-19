@@ -10,8 +10,6 @@ import {
   ExternalLink,
   Key,
   Download,
-  Globe,
-  Clock,
 } from "lucide-react";
 
 const API: React.FC = () => {
@@ -87,7 +85,7 @@ const API: React.FC = () => {
       description: "Fetch real-time cryptocurrency prices and market data",
       language: "JavaScript",
       code: `// Get top 10 cryptocurrencies
-const response = await fetch('https://api.tradelens.com/v1/crypto/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1', {
+const response = await fetch('https://api.deriv.com/crypto/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1', {
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -105,7 +103,7 @@ console.log(data);`,
       code: `import requests
 
 # Get stock quote for Apple
-url = "https://api.tradelens.com/v1/stocks/quote"
+url = "https://api.deriv.com/stocks/quote"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY",
     "Content-Type": "application/json"
@@ -123,7 +121,7 @@ print(data)`,
       title: "Get Financial News",
       description: "Fetch latest financial and cryptocurrency news articles",
       language: "cURL",
-      code: `curl -X GET "https://api.tradelens.com/v1/news" \\
+      code: `curl -X GET "https://api.deriv.com/news" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -G -d "category=crypto" \\
@@ -136,7 +134,7 @@ print(data)`,
         "Retrieve user portfolio information and performance metrics",
       language: "JavaScript",
       code: `// Get portfolio summary
-const portfolioResponse = await fetch('https://api.tradelens.com/v1/portfolio/summary', {
+const portfolioResponse = await fetch('https://api.deriv.com/portfolio/summary', {
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -381,7 +379,7 @@ console.log('24h Change:', portfolio.change_24h);`,
               <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
                 <code className="text-sm text-gray-800 dark:text-gray-200">
                   curl -H "Authorization: Bearer YOUR_API_KEY" \<br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;https://api.tradelens.com/v1/crypto/markets
+                  &nbsp;&nbsp;&nbsp;&nbsp;https://api.deriv.com/crypto/markets
                 </code>
               </div>
             </div>
@@ -394,10 +392,14 @@ console.log('24h Change:', portfolio.change_24h);`,
                 integrating.
               </p>
               <a
-                href="https://api.deriv.com/api-explorer/"
+                href="https://developers.apideck.com/api-explorer"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center space-x-2"
+                onClick={(e) => {
+                  // Allow the default link behavior to handle the navigation
+                  // This is more reliable than trying to detect popup blockers
+                }}
               >
                 <ExternalLink className="w-4 h-4" />
                 <span>Open API Explorer</span>
