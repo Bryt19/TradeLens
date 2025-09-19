@@ -1,0 +1,33 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://trade-lens-finance.vercel.app/sitemap.xml
+
+# Allow all search engines to crawl all pages including API page
+# Allow API page to be indexed for better discoverability
+Allow: /api/
+
+# Block access to admin or sensitive areas (if any exist)
+# Disallow: /admin/
+# Disallow: /private/
+
+# Allow crawling of all content including API page
+Allow: /crypto/
+Allow: /stocks/
+Allow: /news/
+Allow: /pricing/
+Allow: /features/
+Allow: /contact/
+Allow: /about/
+Allow: /blog/
+Allow: /careers/
+Allow: /docs/
+Allow: /help/
+Allow: /community/
+Allow: /privacy/
+Allow: /terms/
+Allow: /cookies/
+
+# Crawl delay (optional - helps prevent overwhelming your server)
+Crawl-delay: 1
