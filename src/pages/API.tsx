@@ -394,7 +394,7 @@ console.log('24h Change:', portfolio.change_24h);`,
                 integrating.
               </p>
               <a
-                href="https://developers.apideck.com/api-explorer"
+                href="https://api.deriv.com/api-explorer/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors inline-flex items-center space-x-2"
