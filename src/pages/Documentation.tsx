@@ -341,7 +341,7 @@ print(stock_quote)`;
               </div>
               <div className="mt-6 flex flex-col sm:flex-row gap-4">
                 <Link
-                  to="/api#api-key-section"
+                  to="/api"
                   className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors text-center"
                 >
                   Get API Key

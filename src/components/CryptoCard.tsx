@@ -52,12 +52,13 @@ const CryptoCard: React.FC<CryptoCardProps> = ({
           <div className="flex items-center space-x-2 sm:space-x-3 min-w-0 flex-1">
             <img
               src={coin.image}
-              alt={coin.name}
+              alt={`${coin.name} (${coin.symbol}) cryptocurrency logo`}
               className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex-shrink-0"
               onError={(e) => {
                 const target = e.target as HTMLImageElement;
                 target.src =
                   "https://via.placeholder.com/40x40/6B7280/FFFFFF?text=?";
+                target.alt = `${coin.name} cryptocurrency logo (placeholder)`;
               }}
             />
             <div className="min-w-0 flex-1">

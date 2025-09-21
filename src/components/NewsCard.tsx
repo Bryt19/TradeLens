@@ -1,4 +1,3 @@
-import React from "react";
 import { ExternalLink, Calendar, User } from "lucide-react";
 import { NewsArticle } from "../types";
 import {
@@ -27,7 +26,7 @@ const NewsCard = ({ article, className = "" }: NewsCardProps) => {
         <div className="relative h-40 sm:h-48 w-full overflow-hidden">
           <img
             src={article.urlToImage}
-            alt={article.title}
+            alt={`News article image: ${article.title}`}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
             onError={(e) => {
               const target = e.target as HTMLImageElement;
