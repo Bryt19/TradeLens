@@ -62,6 +62,35 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://trade-lens-finance.vercel.app/" />
+
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "TradeLens",
+        "url": "https://trade-lens-finance.vercel.app/",
+        "description": "Your comprehensive financial dashboard for real-time cryptocurrency prices, stock market updates, and financial news. Track crypto, stocks, and stay informed with the latest market insights.",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://trade-lens-finance.vercel.app/search?q={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": "TradeLens Finance",
+          "url": "https://trade-lens-finance.vercel.app/"
+        },
+        "inLanguage": "en-US",
+        "copyrightYear": "2025",
+        "dateCreated": "2025-01-28",
+        "keywords": "cryptocurrency, crypto, stocks, trading, finance, market data, bitcoin, ethereum, financial news, investment, portfolio, real-time prices"
+      }
+    </script>
+
     <script>
       // Prevent flash of white content by setting theme immediately
       (function () {
