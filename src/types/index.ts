@@ -57,6 +57,43 @@ export interface AlphaVantageTimeSeries {
   };
 }
 
+// Polygon.io API Types
+export interface PolygonQuote {
+  ticker: string;
+  queryCount: number;
+  resultsCount: number;
+  adjusted: boolean;
+  results: Array<{
+    T: string; // ticker
+    v: number; // volume
+    vw: number; // volume weighted average price
+    o: number; // open
+    c: number; // close
+    h: number; // high
+    l: number; // low
+    t: number; // timestamp
+    n: number; // number of transactions
+  }>;
+  status: string;
+  request_id: string;
+  count: number;
+}
+
+export interface PolygonTicker {
+  ticker: string;
+  name: string;
+  market: string;
+  locale: string;
+  primary_exchange: string;
+  type: string;
+  active: boolean;
+  currency_name: string;
+  cik?: string;
+  composite_figi?: string;
+  share_class_figi?: string;
+  last_updated_utc: string;
+}
+
 export interface NewsArticle {
   title: string;
   description: string;

@@ -4,6 +4,8 @@ import {
   CoinGeckoChartData,
   AlphaVantageQuote,
   AlphaVantageTimeSeries,
+  PolygonQuote,
+  PolygonTicker,
   NewsAPIResponse,
   APIError,
 } from "../types";
@@ -31,8 +33,7 @@ const NEWS_API_KEY =
   import.meta.env.VITE_NEWS_API_KEY || "3fe36ec1033c41c8976ff40d29045443";
 const NEWSDATA_API_KEY = import.meta.env.VITE_NEWSDATA_API_KEY;
 const CRYPTOPANIC_API_KEY = import.meta.env.VITE_CRYPTOPANIC_API_KEY;
-const POLYGON_API_KEY =
-  import.meta.env.VITE_POLYGON_API_KEY || "pCyi5q7sEX041L7fqAWWOjfGkN4EpW7a";
+const POLYGON_API_KEY = "jjl8Zd3Yp1weLsN9io1LcYYwNzUbD0SS";
 const WORLDNEWS_API_KEY =
   import.meta.env.VITE_WORLDNEWS_API_KEY || "fb06661485d9499b9169ec21a44509d2";
 const GNEWS_API_KEY =
@@ -310,6 +311,81 @@ export const newsService = {
         totalResults: allDemoNews.length,
         articles: allDemoNews.slice(startIndex, endIndex),
       };
+    }
+  },
+};
+
+// Polygon.io Stock Services
+export const polygonStockService = {
+  // Get stock quote (latest price)
+  getStockQuote: async (symbol: string): Promise<PolygonQuote> => {
+    try {
+      const response = await polygonAPI.get(
+        `/v2/aggs/ticker/${symbol}/prev?adjusted=true&apikey=${POLYGON_API_KEY}`
+      );
+
+      if (!response.data.results || response.data.results.length === 0) {
+        throw new Error(`No data found for symbol: ${symbol}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error as AxiosError);
+    }
+  },
+
+  // Get historical stock data
+  getHistoricalData: async (
+    symbol: string,
+    timespan: "day" | "week" | "month" = "day",
+    limit: number = 30
+  ): Promise<PolygonQuote> => {
+    try {
+      const multiplier = timespan === "day" ? 1 : timespan === "week" ? 7 : 30;
+      const from = new Date();
+      from.setDate(from.getDate() - limit * multiplier);
+      const fromDate = from.toISOString().split("T")[0];
+      const toDate = new Date().toISOString().split("T")[0];
+
+      const response = await polygonAPI.get(
+        `/v2/aggs/ticker/${symbol}/range/${multiplier}/${timespan}/${fromDate}/${toDate}?adjusted=true&sort=asc&apikey=${POLYGON_API_KEY}`
+      );
+
+      if (!response.data.results || response.data.results.length === 0) {
+        throw new Error(`No historical data found for symbol: ${symbol}`);
+      }
+
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error as AxiosError);
+    }
+  },
+
+  // Search for stocks
+  searchStocks: async (query: string): Promise<PolygonTicker[]> => {
+    try {
+      const response = await polygonAPI.get(
+        `/v3/reference/tickers?search=${encodeURIComponent(
+          query
+        )}&active=true&limit=10&apikey=${POLYGON_API_KEY}`
+      );
+
+      return response.data.results || [];
+    } catch (error) {
+      throw handleAPIError(error as AxiosError);
+    }
+  },
+
+  // Get real-time stock data (if available in your plan)
+  getRealtimeData: async (symbol: string): Promise<any> => {
+    try {
+      const response = await polygonAPI.get(
+        `/v2/last/trade/${symbol}?apikey=${POLYGON_API_KEY}`
+      );
+
+      return response.data;
+    } catch (error) {
+      throw handleAPIError(error as AxiosError);
     }
   },
 };
