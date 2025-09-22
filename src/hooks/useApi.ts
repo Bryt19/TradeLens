@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import {
   coinGeckoService,
   alphaVantageService,
+  polygonStockService,
   newsService,
   newsDataService,
   polygonNewsService,
@@ -10,6 +11,7 @@ import {
 import {
   CoinGeckoCoin,
   AlphaVantageQuote,
+  PolygonQuote,
   NewsArticle,
   APIError,
 } from "../types";
@@ -85,16 +87,103 @@ export const useCryptoChart = (id: string, days: number = 30) => {
   );
 };
 
-// Hook for stock quote
+// Hook for stock quote with Polygon primary, Alpha Vantage fallback
 export const useStockQuote = (symbol: string) => {
-  return useApi(
-    () => alphaVantageService.getStockQuote(symbol),
-    `stock-${symbol}`,
-    [symbol]
-  );
+  const [data, setData] = useState<AlphaVantageQuote | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!symbol) {
+      setData(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Try to get cached data first
+      const cachedData = storage.get(
+        `stock-${symbol}`,
+        null
+      ) as AlphaVantageQuote | null;
+      if (cachedData) {
+        setData(cachedData);
+      }
+
+      try {
+        // Try Polygon first
+        const polygonData = await polygonStockService.getStockQuote(symbol);
+
+        // Convert Polygon format to Alpha Vantage format for compatibility
+        const latestResult =
+          polygonData.results[polygonData.results.length - 1];
+        const previousResult =
+          polygonData.results[polygonData.results.length - 2];
+
+        const change =
+          latestResult.c - (previousResult ? previousResult.c : latestResult.o);
+        const changePercent = previousResult
+          ? (change / previousResult.c) * 100
+          : 0;
+
+        const convertedData: AlphaVantageQuote = {
+          "01. symbol": polygonData.ticker,
+          "02. open": latestResult.o.toString(),
+          "03. high": latestResult.h.toString(),
+          "04. low": latestResult.l.toString(),
+          "05. price": latestResult.c.toString(),
+          "06. volume": latestResult.v.toString(),
+          "07. latest trading day": new Date(latestResult.t)
+            .toISOString()
+            .split("T")[0],
+          "08. previous close": previousResult
+            ? previousResult.c.toString()
+            : latestResult.o.toString(),
+          "09. change": change.toString(),
+          "10. change percent": `${changePercent.toFixed(2)}%`,
+        };
+
+        setData(convertedData);
+        storage.set(`stock-${symbol}`, convertedData);
+      } catch (polygonError) {
+        console.warn("Polygon failed, trying Alpha Vantage:", polygonError);
+
+        // Fallback to Alpha Vantage
+        const alphaVantageData = await alphaVantageService.getStockQuote(
+          symbol
+        );
+        setData(alphaVantageData);
+        storage.set(`stock-${symbol}`, alphaVantageData);
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch stock data";
+      setError(errorMessage);
+
+      // If we have cached data, keep showing it
+      const cachedData = storage.get(
+        `stock-${symbol}`,
+        null
+      ) as AlphaVantageQuote | null;
+      if (cachedData) {
+        setData(cachedData);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [symbol]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
 };
 
-// Hook for stock time series data
+// Hook for stock time series data with Polygon primary
 export const useStockChart = (
   symbol: string,
   functionType:
@@ -102,11 +191,100 @@ export const useStockChart = (
     | "TIME_SERIES_WEEKLY"
     | "TIME_SERIES_MONTHLY" = "TIME_SERIES_DAILY"
 ) => {
-  return useApi(
-    () => alphaVantageService.getTimeSeriesData(symbol, functionType),
-    `stock-chart-${symbol}-${functionType}`,
-    [symbol, functionType]
-  );
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = useCallback(async () => {
+    if (!symbol) {
+      setData(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Try to get cached data first
+      const cachedData = storage.get(
+        `stock-chart-${symbol}-${functionType}`,
+        null
+      );
+      if (cachedData) {
+        setData(cachedData);
+      }
+
+      try {
+        // Try Polygon first
+        const timespan =
+          functionType === "TIME_SERIES_DAILY"
+            ? "day"
+            : functionType === "TIME_SERIES_WEEKLY"
+            ? "week"
+            : "month";
+        const limit =
+          functionType === "TIME_SERIES_DAILY"
+            ? 30
+            : functionType === "TIME_SERIES_WEEKLY"
+            ? 12
+            : 12;
+
+        const polygonData = await polygonStockService.getHistoricalData(
+          symbol,
+          timespan,
+          limit
+        );
+
+        // Convert Polygon format to Alpha Vantage format for compatibility
+        const convertedData: any = {};
+        polygonData.results.forEach((result: any) => {
+          const date = new Date(result.t).toISOString().split("T")[0];
+          convertedData[date] = {
+            "1. open": result.o.toString(),
+            "2. high": result.h.toString(),
+            "3. low": result.l.toString(),
+            "4. close": result.c.toString(),
+            "5. volume": result.v.toString(),
+          };
+        });
+
+        setData(convertedData);
+        storage.set(`stock-chart-${symbol}-${functionType}`, convertedData);
+      } catch (polygonError) {
+        console.warn("Polygon failed, trying Alpha Vantage:", polygonError);
+
+        // Fallback to Alpha Vantage
+        const alphaVantageData = await alphaVantageService.getTimeSeriesData(
+          symbol,
+          functionType
+        );
+        setData(alphaVantageData);
+        storage.set(`stock-chart-${symbol}-${functionType}`, alphaVantageData);
+      }
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to fetch chart data";
+      setError(errorMessage);
+
+      // If we have cached data, keep showing it
+      const cachedData = storage.get(
+        `stock-chart-${symbol}-${functionType}`,
+        null
+      );
+      if (cachedData) {
+        setData(cachedData);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, [symbol, functionType]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  return { data, loading, error, refetch: fetchData };
 };
 
 // Hook for financial news (using Polygon as primary source)
@@ -202,13 +380,23 @@ export const useSearch = () => {
     try {
       const [cryptoResults, stockResults] = await Promise.allSettled([
         coinGeckoService.searchCryptos(query),
-        alphaVantageService.searchStocks(query),
+        polygonStockService.searchStocks(query),
       ]);
 
       const crypto =
         cryptoResults.status === "fulfilled" ? cryptoResults.value.coins : [];
+
+      // Convert Polygon tickers to the expected format
       const stocks =
-        stockResults.status === "fulfilled" ? stockResults.value : [];
+        stockResults.status === "fulfilled"
+          ? stockResults.value.map((ticker: any) => ({
+              "1. symbol": ticker.ticker,
+              "2. name": ticker.name,
+              "3. type": ticker.type,
+              "4. region": ticker.locale,
+              "8. currency": ticker.currency_name,
+            }))
+          : [];
 
       setSearchResults({ crypto, stocks });
     } catch (err) {
