@@ -230,7 +230,7 @@ const About: React.FC = () => {
               >
                 <img
                   src={member.image}
-                  alt={member.name}
+                  alt={`${member.name}, ${member.role} at TradeLens`}
                   className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
                 />
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">

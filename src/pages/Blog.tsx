@@ -1,11 +1,20 @@
 import React, { useState } from "react";
-import { Calendar, User, ArrowRight, Tag, Clock, Filter } from "lucide-react";
+import {
+  Calendar,
+  User,
+  ArrowRight,
+  Tag,
+  Clock,
+  Filter,
+  X,
+} from "lucide-react";
 
 const Blog: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<any>(null);
 
   const blogPosts = [
     {
@@ -20,6 +29,54 @@ const Blog: React.FC = () => {
       image:
         "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=600&h=300&fit=crop",
       featured: true,
+      content: `
+        <p>The cryptocurrency market continues to evolve at a rapid pace, with 2024 bringing forth several groundbreaking trends that are reshaping how we think about digital asset trading. From institutional adoption to regulatory clarity, the landscape is becoming more sophisticated and accessible than ever before.</p>
+        
+        <h3>Institutional Adoption Accelerates</h3>
+        <p>One of the most significant developments this year has been the accelerated pace of institutional adoption. Major corporations, pension funds, and investment firms are now allocating substantial portions of their portfolios to cryptocurrencies. This trend is driven by several factors:</p>
+        
+        <ul>
+          <li>Improved regulatory frameworks providing clearer guidelines</li>
+          <li>Enhanced security measures and custody solutions</li>
+          <li>Growing recognition of crypto as a legitimate asset class</li>
+          <li>Diversification benefits in traditional portfolios</li>
+        </ul>
+        
+        <h3>DeFi Integration with Traditional Finance</h3>
+        <p>Decentralized Finance (DeFi) protocols are increasingly integrating with traditional financial systems, creating hybrid solutions that offer the benefits of both worlds. This integration is enabling:</p>
+        
+        <ul>
+          <li>Seamless cross-chain transactions</li>
+          <li>Automated yield farming strategies</li>
+          <li>Decentralized lending and borrowing</li>
+          <li>Real-time market data and analytics</li>
+        </ul>
+        
+        <h3>AI-Powered Trading Strategies</h3>
+        <p>Artificial Intelligence is revolutionizing cryptocurrency trading by providing sophisticated analysis tools and automated trading strategies. Machine learning algorithms can now:</p>
+        
+        <ul>
+          <li>Analyze market sentiment in real-time</li>
+          <li>Identify trading patterns across multiple timeframes</li>
+          <li>Execute trades based on predictive models</li>
+          <li>Manage risk through dynamic portfolio allocation</li>
+        </ul>
+        
+        <h3>Regulatory Clarity and Compliance</h3>
+        <p>2024 has seen significant progress in regulatory clarity across major jurisdictions. This development is crucial for mainstream adoption as it provides:</p>
+        
+        <ul>
+          <li>Clear guidelines for compliance</li>
+          <li>Protection for retail investors</li>
+          <li>Framework for institutional participation</li>
+          <li>International cooperation on standards</li>
+        </ul>
+        
+        <h3>Looking Ahead</h3>
+        <p>As we move forward, the cryptocurrency market is expected to become more mature, stable, and integrated with traditional financial systems. The trends we're seeing today are just the beginning of a fundamental transformation in how we think about money, investments, and financial services.</p>
+        
+        <p>For traders and investors, staying informed about these trends is crucial for making informed decisions and capitalizing on emerging opportunities in this dynamic market.</p>
+      `,
     },
     {
       id: 2,
@@ -33,6 +90,63 @@ const Blog: React.FC = () => {
       image:
         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
       featured: false,
+      content: `
+        <p>Market volatility is one of the most misunderstood aspects of investing, yet it's also one of the most important concepts for new investors to grasp. Understanding volatility can help you make better investment decisions and maintain your composure during turbulent market conditions.</p>
+        
+        <h3>What is Market Volatility?</h3>
+        <p>Market volatility refers to the degree of variation in trading prices over time. It's measured by the standard deviation of returns and indicates how much an investment's value fluctuates. High volatility means prices change dramatically over short periods, while low volatility indicates more stable, predictable price movements.</p>
+        
+        <h3>Types of Volatility</h3>
+        <p>There are two main types of volatility that investors should understand:</p>
+        
+        <ul>
+          <li><strong>Historical Volatility:</strong> Based on past price movements and helps predict future volatility</li>
+          <li><strong>Implied Volatility:</strong> Derived from options prices and reflects market expectations</li>
+        </ul>
+        
+        <h3>Factors Driving Market Volatility</h3>
+        <p>Several factors can increase market volatility:</p>
+        
+        <ul>
+          <li>Economic news and data releases</li>
+          <li>Geopolitical events and uncertainty</li>
+          <li>Central bank policy changes</li>
+          <li>Corporate earnings reports</li>
+          <li>Market sentiment and investor behavior</li>
+        </ul>
+        
+        <h3>Strategies for Managing Volatility</h3>
+        <p>While volatility can't be eliminated, it can be managed through various strategies:</p>
+        
+        <ul>
+          <li><strong>Diversification:</strong> Spread investments across different asset classes and sectors</li>
+          <li><strong>Dollar-Cost Averaging:</strong> Invest fixed amounts regularly regardless of market conditions</li>
+          <li><strong>Long-term Perspective:</strong> Focus on long-term goals rather than short-term fluctuations</li>
+          <li><strong>Risk Management:</strong> Set stop-loss orders and position sizing limits</li>
+        </ul>
+        
+        <h3>Volatility as an Opportunity</h3>
+        <p>Experienced investors often view volatility as an opportunity rather than a threat. Market downturns can present buying opportunities for quality assets at discounted prices. However, this requires:</p>
+        
+        <ul>
+          <li>Thorough research and analysis</li>
+          <li>Emotional discipline</li>
+          <li>Adequate cash reserves</li>
+          <li>Clear investment criteria</li>
+        </ul>
+        
+        <h3>Building Volatility Resilience</h3>
+        <p>Developing resilience to market volatility takes time and experience. Key practices include:</p>
+        
+        <ul>
+          <li>Regular portfolio reviews and rebalancing</li>
+          <li>Staying informed about market conditions</li>
+          <li>Maintaining realistic expectations</li>
+          <li>Seeking professional advice when needed</li>
+        </ul>
+        
+        <p>Remember, volatility is a normal part of investing. By understanding its nature and implementing proper risk management strategies, you can navigate market volatility with confidence and achieve your long-term financial goals.</p>
+      `,
     },
     {
       id: 3,
@@ -46,6 +160,77 @@ const Blog: React.FC = () => {
       image:
         "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=300&fit=crop",
       featured: false,
+      content: `
+        <p>Integrating financial data APIs into your applications requires careful planning and adherence to best practices to ensure reliability, security, and optimal performance. Whether you're building a trading platform, portfolio tracker, or financial analytics tool, following these guidelines will help you create robust integrations.</p>
+        
+        <h3>API Selection and Evaluation</h3>
+        <p>Choosing the right API provider is crucial for your application's success. Consider these factors:</p>
+        
+        <ul>
+          <li><strong>Data Quality:</strong> Ensure the API provides accurate, real-time data</li>
+          <li><strong>Coverage:</strong> Verify the API covers the markets and instruments you need</li>
+          <li><strong>Reliability:</strong> Check uptime statistics and service level agreements</li>
+          <li><strong>Rate Limits:</strong> Understand request limits and pricing tiers</li>
+          <li><strong>Documentation:</strong> Look for comprehensive, well-maintained documentation</li>
+        </ul>
+        
+        <h3>Security Best Practices</h3>
+        <p>Financial data APIs require special attention to security:</p>
+        
+        <ul>
+          <li><strong>API Key Management:</strong> Store keys securely and rotate them regularly</li>
+          <li><strong>HTTPS Only:</strong> Always use encrypted connections</li>
+          <li><strong>Input Validation:</strong> Validate all user inputs before making API calls</li>
+          <li><strong>Error Handling:</strong> Implement proper error handling without exposing sensitive information</li>
+          <li><strong>Rate Limiting:</strong> Implement client-side rate limiting to avoid hitting API limits</li>
+        </ul>
+        
+        <h3>Performance Optimization</h3>
+        <p>Optimize your API integration for better performance:</p>
+        
+        <ul>
+          <li><strong>Caching:</strong> Implement intelligent caching strategies</li>
+          <li><strong>Batch Requests:</strong> Combine multiple requests when possible</li>
+          <li><strong>Async Processing:</strong> Use asynchronous calls to avoid blocking</li>
+          <li><strong>Connection Pooling:</strong> Reuse HTTP connections</li>
+          <li><strong>Data Compression:</strong> Use compression for large data transfers</li>
+        </ul>
+        
+        <h3>Error Handling and Resilience</h3>
+        <p>Build resilient integrations that can handle failures gracefully:</p>
+        
+        <ul>
+          <li><strong>Retry Logic:</strong> Implement exponential backoff for failed requests</li>
+          <li><strong>Circuit Breaker:</strong> Prevent cascading failures</li>
+          <li><strong>Fallback Data:</strong> Use cached data when APIs are unavailable</li>
+          <li><strong>Monitoring:</strong> Track API performance and error rates</li>
+          <li><strong>Alerting:</strong> Set up alerts for critical failures</li>
+        </ul>
+        
+        <h3>Data Management</h3>
+        <p>Proper data management is essential for financial applications:</p>
+        
+        <ul>
+          <li><strong>Data Validation:</strong> Validate API responses before processing</li>
+          <li><strong>Data Transformation:</strong> Normalize data from different sources</li>
+          <li><strong>Storage Strategy:</strong> Choose appropriate storage solutions</li>
+          <li><strong>Data Retention:</strong> Implement proper data retention policies</li>
+          <li><strong>Backup and Recovery:</strong> Ensure data can be recovered in case of failures</li>
+        </ul>
+        
+        <h3>Testing and Monitoring</h3>
+        <p>Comprehensive testing and monitoring are crucial:</p>
+        
+        <ul>
+          <li><strong>Unit Testing:</strong> Test individual API integration components</li>
+          <li><strong>Integration Testing:</strong> Test end-to-end API workflows</li>
+          <li><strong>Load Testing:</strong> Test performance under various load conditions</li>
+          <li><strong>Monitoring:</strong> Track API usage, performance, and errors</li>
+          <li><strong>Logging:</strong> Implement comprehensive logging for debugging</li>
+        </ul>
+        
+        <p>By following these best practices, you can create robust, secure, and performant financial API integrations that provide reliable data to your users while maintaining high standards of security and performance.</p>
+      `,
     },
     {
       id: 4,
@@ -280,6 +465,16 @@ const Blog: React.FC = () => {
     }
   };
 
+  // Handle blog post selection
+  const handleReadMore = (post: any) => {
+    setSelectedPost(post);
+  };
+
+  // Handle modal close
+  const handleCloseModal = () => {
+    setSelectedPost(null);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -351,7 +546,7 @@ const Blog: React.FC = () => {
                   <div className="md:w-1/2">
                     <img
                       src={post.image}
-                      alt={post.title}
+                      alt={`Featured blog post image: ${post.title} by ${post.author}`}
                       className="w-full h-64 md:h-full object-cover"
                     />
                   </div>
@@ -387,7 +582,10 @@ const Blog: React.FC = () => {
                           <span>{post.readTime}</span>
                         </div>
                       </div>
-                      <button className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                      <button
+                        onClick={() => handleReadMore(post)}
+                        className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
+                      >
                         <span>Read More</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
@@ -422,7 +620,7 @@ const Blog: React.FC = () => {
                 >
                   <img
                     src={post.image}
-                    alt={post.title}
+                    alt={`Blog article image: ${post.title} - ${post.category} article`}
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-6">
@@ -452,7 +650,10 @@ const Blog: React.FC = () => {
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                         {new Date(post.date).toLocaleDateString()}
                       </span>
-                      <button className="flex items-center space-x-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
+                      <button
+                        onClick={() => handleReadMore(post)}
+                        className="flex items-center space-x-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
+                      >
                         <span>Read</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
@@ -513,6 +714,123 @@ const Blog: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Blog Post Modal */}
+      {selectedPost && (
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+            onClick={handleCloseModal}
+          />
+
+          {/* Modal */}
+          <div className="flex min-h-full items-center justify-center p-4">
+            <div className="relative w-full max-w-4xl bg-white dark:bg-gray-900 rounded-lg shadow-xl">
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-3 py-1 rounded-full text-sm font-medium">
+                      {selectedPost.category}
+                    </span>
+                    {selectedPost.featured && (
+                      <span className="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-3 py-1 rounded-full text-sm font-medium">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <button
+                  onClick={handleCloseModal}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              {/* Content */}
+              <div className="p-6">
+                {/* Article Header */}
+                <div className="mb-8">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    {selectedPost.title}
+                  </h1>
+
+                  {/* Author and Date Info */}
+                  <div className="flex items-center space-x-6 text-sm text-gray-500 dark:text-gray-400 mb-6">
+                    <div className="flex items-center space-x-2">
+                      <User className="w-4 h-4" />
+                      <span>{selectedPost.author}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>
+                        {new Date(selectedPost.date).toLocaleDateString()}
+                      </span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Clock className="w-4 h-4" />
+                      <span>{selectedPost.readTime}</span>
+                    </div>
+                  </div>
+
+                  {/* Featured Image */}
+                  <div className="mb-8">
+                    <img
+                      src={selectedPost.image}
+                      alt={`${selectedPost.title} - Featured image`}
+                      className="w-full h-64 md:h-80 object-cover rounded-lg"
+                    />
+                  </div>
+                </div>
+
+                {/* Article Content */}
+                {selectedPost.content ? (
+                  <div
+                    className="prose prose-lg max-w-none dark:prose-invert"
+                    dangerouslySetInnerHTML={{ __html: selectedPost.content }}
+                  />
+                ) : (
+                  <div className="prose prose-lg max-w-none dark:prose-invert">
+                    <p>{selectedPost.excerpt}</p>
+                    <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mt-6">
+                      <p className="text-yellow-800 dark:text-yellow-200 text-sm">
+                        <strong>Note:</strong> This is a preview article. The
+                        full content is coming soon!
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Article Footer */}
+                <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center space-x-2">
+                        <User className="w-4 h-4" />
+                        <span>By {selectedPost.author}</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Calendar className="w-4 h-4" />
+                        <span>
+                          {new Date(selectedPost.date).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleCloseModal}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    >
+                      Close Article
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
