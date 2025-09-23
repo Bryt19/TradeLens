@@ -5,7 +5,6 @@ import {
   TrendingDown,
   ExternalLink,
   Globe,
-  Calendar,
   BarChart3,
 } from "lucide-react";
 import { CoinGeckoCoin } from "../types";
@@ -34,11 +33,15 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
   const isPositive = priceChange >= 0;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+    try {
+      return new Date(dateString).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch (error) {
+      return "Date unavailable";
+    }
   };
 
   return (
@@ -57,12 +60,13 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
             <div className="flex items-center space-x-4">
               <img
                 src={coin.image}
-                alt={coin.name}
+                alt={`${coin.name} (${coin.symbol}) cryptocurrency logo`}
                 className="w-12 h-12 rounded-full"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.src =
                     "https://via.placeholder.com/48x48/6B7280/FFFFFF?text=?";
+                  target.alt = `${coin.name} cryptocurrency logo (placeholder)`;
                 }}
               />
               <div>
@@ -121,7 +125,7 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
                     </span>
                   </div>
                   <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(coin.high_24h)}
+                    {coin.high_24h ? formatCurrency(coin.high_24h) : "N/A"}
                   </p>
                 </div>
                 <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
@@ -132,7 +136,7 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
                     </span>
                   </div>
                   <p className="text-xl font-bold text-gray-900 dark:text-white">
-                    {formatCurrency(coin.low_24h)}
+                    {coin.low_24h ? formatCurrency(coin.low_24h) : "N/A"}
                   </p>
                 </div>
               </div>
@@ -148,7 +152,7 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
                   </span>
                 </div>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {formatLargeNumber(coin.market_cap)}
+                  {coin.market_cap ? formatLargeNumber(coin.market_cap) : "N/A"}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Rank #{coin.market_cap_rank || "N/A"}
@@ -163,7 +167,9 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
                   </span>
                 </div>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {formatLargeNumber(coin.total_volume)}
+                  {coin.total_volume
+                    ? formatLargeNumber(coin.total_volume)
+                    : "N/A"}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   Volume/Market Cap:{" "}
@@ -182,7 +188,9 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
                   </span>
                 </div>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">
-                  {formatLargeNumber(coin.circulating_supply)}
+                  {coin.circulating_supply
+                    ? formatLargeNumber(coin.circulating_supply)
+                    : "N/A"}
                 </p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {coin.total_supply
@@ -277,25 +285,24 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
                 External Links
               </h4>
               <div className="flex flex-wrap gap-4">
-                {coin.homepage && coin.homepage[0] && (
-                  <a
-                    href={coin.homepage[0]}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
-                  >
-                    <Globe className="w-4 h-4" />
-                    <span>Website</span>
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
                 <a
                   href={`https://www.coingecko.com/en/coins/${coin.id}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                 >
-                  <span>CoinGecko</span>
+                  <Globe className="w-4 h-4" />
+                  <span>View on CoinGecko</span>
+                  <ExternalLink className="w-3 h-3" />
+                </a>
+                <a
+                  href={`https://coinmarketcap.com/currencies/${coin.id}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center space-x-2 px-4 py-2 bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300 rounded-lg hover:bg-orange-200 dark:hover:bg-orange-800 transition-colors"
+                >
+                  <Globe className="w-4 h-4" />
+                  <span>View on CoinMarketCap</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
