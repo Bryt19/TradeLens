@@ -10,8 +10,6 @@ import {
   ExternalLink,
   Key,
   Download,
-  Globe,
-  Clock,
 } from "lucide-react";
 
 const API: React.FC = () => {

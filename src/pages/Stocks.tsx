@@ -2,13 +2,13 @@ import React, { useState, useMemo, useEffect } from "react";
 import {
   Search,
   Building2,
-  TrendingUp,
-  TrendingDown,
   Star,
+  BarChart3,
+  Activity,
+  Calendar,
 } from "lucide-react";
 import { useStockQuote } from "../hooks/useApi";
 import { useFavorites } from "../hooks/useApi";
-import StockCard from "../components/StockCard";
 import Loading from "../components/Loading";
 import Chart from "../components/Chart";
 import { debounce } from "../utils/helpers";
@@ -23,7 +23,6 @@ const Stocks: React.FC = () => {
     return localStorage.getItem("selectedStockSymbol") || "";
   });
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
 
   // Demo stock symbols for demonstration
   const demoStocks = [
@@ -62,7 +61,6 @@ const Stocks: React.FC = () => {
           return;
         }
 
-        setIsSearching(true);
         try {
           // In a real app, you would call the search API here
           // For demo purposes, we'll simulate search results
@@ -82,8 +80,6 @@ const Stocks: React.FC = () => {
         } catch (err) {
           console.error("Search error:", err);
           setSearchResults([]);
-        } finally {
-          setIsSearching(false);
         }
       }, 300),
     []
@@ -104,7 +100,7 @@ const Stocks: React.FC = () => {
   };
 
   // Generate sample chart data for demo
-  const generateSampleChartData = (symbol: string) => {
+  const generateSampleChartData = () => {
     const data: { timestamp: number; value: number }[] = [];
     const now = Date.now();
     const dayInMs = 24 * 60 * 60 * 1000;
@@ -119,9 +115,7 @@ const Stocks: React.FC = () => {
     return data;
   };
 
-  const sampleChartData = selectedSymbol
-    ? generateSampleChartData(selectedSymbol)
-    : [];
+  const sampleChartData = selectedSymbol ? generateSampleChartData() : [];
 
   // Generate demo stock data when API fails
   const generateDemoStockData = (symbol: string): AlphaVantageQuote => {
@@ -287,53 +281,200 @@ const Stocks: React.FC = () => {
             )}
 
             {displayStockData && (
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                    Current Price
+              <div className="space-y-6">
+                {/* Primary Metrics */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                    <div className="text-xs sm:text-sm text-blue-600 dark:text-blue-400 font-medium mb-1">
+                      Current Price
+                    </div>
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                      ${parseFloat(displayStockData["05. price"]).toFixed(2)}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Last updated: {new Date().toLocaleTimeString()}
+                    </div>
                   </div>
-                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
-                    ${parseFloat(displayStockData["05. price"]).toFixed(2)}
+
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
+                      Change
+                    </div>
+                    <div
+                      className={`text-xl sm:text-2xl lg:text-3xl font-bold ${
+                        parseFloat(displayStockData["09. change"]) >= 0
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {parseFloat(displayStockData["09. change"]) >= 0
+                        ? "+"
+                        : ""}
+                      ${parseFloat(displayStockData["09. change"]).toFixed(2)}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      vs previous close
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                    <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-medium mb-1">
+                      Change %
+                    </div>
+                    <div
+                      className={`text-xl sm:text-2xl lg:text-3xl font-bold ${
+                        parseFloat(displayStockData["10. change percent"]) >= 0
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {parseFloat(displayStockData["10. change percent"]) >= 0
+                        ? "+"
+                        : ""}
+                      {displayStockData["10. change percent"]}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      daily performance
+                    </div>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg p-4 border border-purple-200 dark:border-purple-800">
+                    <div className="text-xs sm:text-sm text-purple-600 dark:text-purple-400 font-medium mb-1">
+                      Volume
+                    </div>
+                    <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 dark:text-white">
+                      {parseInt(
+                        displayStockData["06. volume"]
+                      ).toLocaleString()}
+                    </div>
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      shares traded
+                    </div>
                   </div>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                    Change
+
+                {/* Additional Stock Information */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {/* Trading Details */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                      <Activity className="w-5 h-5 mr-2 text-green-600" />
+                      Trading Details
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                            Open
+                          </div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                            ${displayStockData["02. open"]}
+                          </div>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                            Previous Close
+                          </div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                            ${displayStockData["08. previous close"]}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                            Day High
+                          </div>
+                          <div className="text-sm font-semibold text-green-600">
+                            ${displayStockData["03. high"]}
+                          </div>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                          <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                            Day Low
+                          </div>
+                          <div className="text-sm font-semibold text-red-600">
+                            ${displayStockData["04. low"]}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3">
+                        <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">
+                          Latest Trading Day
+                        </div>
+                        <div className="text-sm font-semibold text-gray-900 dark:text-white flex items-center">
+                          <Calendar className="w-4 h-4 mr-1" />
+                          {new Date(
+                            displayStockData["07. latest trading day"]
+                          ).toLocaleDateString("en-US", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div
-                    className={`text-lg sm:text-xl lg:text-2xl font-bold ${
-                      parseFloat(displayStockData["09. change"]) >= 0
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {parseFloat(displayStockData["09. change"]) >= 0 ? "+" : ""}
-                    ${parseFloat(displayStockData["09. change"]).toFixed(2)}
-                  </div>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                    Change %
-                  </div>
-                  <div
-                    className={`text-lg sm:text-xl lg:text-2xl font-bold ${
-                      parseFloat(displayStockData["10. change percent"]) >= 0
-                        ? "text-green-600"
-                        : "text-red-600"
-                    }`}
-                  >
-                    {parseFloat(displayStockData["10. change percent"]) >= 0
-                      ? "+"
-                      : ""}
-                    {displayStockData["10. change percent"]}
-                  </div>
-                </div>
-                <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 sm:p-4">
-                  <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
-                    Volume
-                  </div>
-                  <div className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 dark:text-white">
-                    {parseInt(displayStockData["06. volume"]).toLocaleString()}
+
+                  {/* Quick Stats */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                      <BarChart3 className="w-5 h-5 mr-2 text-blue-600" />
+                      Quick Stats
+                    </h3>
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Market Cap
+                        </span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                          ${(Math.random() * 500 + 50).toFixed(0)}B
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          P/E Ratio
+                        </span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {(Math.random() * 30 + 10).toFixed(1)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          52W High
+                        </span>
+                        <span className="text-sm font-semibold text-green-600">
+                          $
+                          {(
+                            parseFloat(displayStockData["05. price"]) *
+                            (1.1 + Math.random() * 0.3)
+                          ).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          52W Low
+                        </span>
+                        <span className="text-sm font-semibold text-red-600">
+                          $
+                          {(
+                            parseFloat(displayStockData["05. price"]) *
+                            (0.6 + Math.random() * 0.3)
+                          ).toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center py-2">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          Beta
+                        </span>
+                        <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                          {(Math.random() * 2 + 0.5).toFixed(2)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -353,43 +494,132 @@ const Stocks: React.FC = () => {
             </p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {stockFavorites.map((symbol) => (
-                <div
-                  key={symbol}
-                  className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                        <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              {stockFavorites.map((symbol) => {
+                // Get the actual stock data for this favorite
+                const favoriteStockData =
+                  stockData && selectedSymbol === symbol ? stockData : null;
+
+                // Use actual data if available, otherwise use demo data
+                const price = favoriteStockData
+                  ? parseFloat(favoriteStockData["05. price"])
+                  : Math.random() * 200 + 50;
+                const change = favoriteStockData
+                  ? parseFloat(favoriteStockData["09. change"])
+                  : (Math.random() - 0.5) * 10;
+                const changePercent = favoriteStockData
+                  ? parseFloat(favoriteStockData["10. change percent"])
+                  : (Math.random() - 0.5) * 5;
+                const volume = favoriteStockData
+                  ? parseInt(favoriteStockData["06. volume"])
+                  : Math.floor(Math.random() * 10000000);
+                const isPositive = change >= 0;
+
+                return (
+                  <div
+                    key={symbol}
+                    className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-full flex items-center justify-center">
+                          <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 dark:text-white">
+                            {symbol}
+                          </h4>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            {symbol} Inc.
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-900 dark:text-white">
-                          {symbol}
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {symbol} Inc.
-                        </p>
+                      <button
+                        onClick={() => toggleStockFavorite(symbol)}
+                        className="text-red-500 hover:text-red-600 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                        aria-label="Remove from favorites"
+                      >
+                        <Star className="w-4 h-4 fill-current" />
+                      </button>
+                    </div>
+
+                    {/* Price Info */}
+                    <div className="space-y-2 mb-3">
+                      <div className="flex justify-between items-center">
+                        <span className="text-lg font-bold text-gray-900 dark:text-white">
+                          ${price.toFixed(2)}
+                        </span>
+                        <span
+                          className={`text-sm font-semibold ${
+                            isPositive ? "text-green-600" : "text-red-600"
+                          }`}
+                        >
+                          {isPositive ? "+" : ""}
+                          {change.toFixed(2)} ({isPositive ? "+" : ""}
+                          {changePercent.toFixed(2)}%)
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Last updated: {new Date().toLocaleTimeString()}
                       </div>
                     </div>
-                    <button
-                      onClick={() => toggleStockFavorite(symbol)}
-                      className="text-red-500 hover:text-red-600 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
-                      aria-label="Remove from favorites"
-                    >
-                      <Star className="w-4 h-4 fill-current" />
-                    </button>
-                  </div>
-                  <div className="mt-3">
+
+                    {/* Quick Stats */}
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          Volume
+                        </div>
+                        <div className="text-xs font-semibold text-gray-900 dark:text-white">
+                          {volume.toLocaleString()}
+                        </div>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          Market Cap
+                        </div>
+                        <div className="text-xs font-semibold text-gray-900 dark:text-white">
+                          ${(Math.random() * 100 + 10).toFixed(0)}B
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Additional Trading Info */}
+                    {favoriteStockData && (
+                      <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                          <div className="text-xs text-gray-600 dark:text-gray-400">
+                            Day High
+                          </div>
+                          <div className="text-xs font-semibold text-green-600">
+                            $
+                            {parseFloat(favoriteStockData["03. high"]).toFixed(
+                              2
+                            )}
+                          </div>
+                        </div>
+                        <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                          <div className="text-xs text-gray-600 dark:text-gray-400">
+                            Day Low
+                          </div>
+                          <div className="text-xs font-semibold text-red-600">
+                            $
+                            {parseFloat(favoriteStockData["04. low"]).toFixed(
+                              2
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <button
                       onClick={() => handleSymbolSelect(symbol)}
-                      className="w-full text-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium transition-colors"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-3 rounded-lg transition-colors"
                     >
-                      View Details
+                      View Full Details
                     </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
