@@ -19,11 +19,11 @@ const Blog: React.FC = () => {
   const blogPosts = [
     {
       id: 1,
-      title: "The Future of Cryptocurrency Trading: Trends to Watch in 2025",
+      title: "The Future of Cryptocurrency Trading: Trends to Watch in 2024",
       excerpt:
         "Explore the latest trends shaping the cryptocurrency market and how they're revolutionizing trading strategies.",
       author: "Sarah Chen",
-      date: "2025-09-15",
+      date: "2024-01-15",
       readTime: "5 min read",
       category: "Cryptocurrency",
       image:
@@ -62,6 +62,16 @@ const Blog: React.FC = () => {
           <li>Manage risk through dynamic portfolio allocation</li>
         </ul>
         
+        <h3>Regulatory Clarity and Compliance</h3>
+        <p>2024 has seen significant progress in regulatory clarity across major jurisdictions. This development is crucial for mainstream adoption as it provides:</p>
+        
+        <ul>
+          <li>Clear guidelines for compliance</li>
+          <li>Protection for retail investors</li>
+          <li>Framework for institutional participation</li>
+          <li>International cooperation on standards</li>
+        </ul>
+        
         <h3>Looking Ahead</h3>
         <p>As we move forward, the cryptocurrency market is expected to become more mature, stable, and integrated with traditional financial systems. The trends we're seeing today are just the beginning of a fundamental transformation in how we think about money, investments, and financial services.</p>
         
@@ -74,8 +84,8 @@ const Blog: React.FC = () => {
       excerpt:
         "Learn how to navigate market volatility and make informed investment decisions during uncertain times.",
       author: "Michael Rodriguez",
-      date: "2025-09-12",
-      readTime: "5 min read",
+      date: "2024-01-12",
+      readTime: "7 min read",
       category: "Education",
       image:
         "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
@@ -115,6 +125,16 @@ const Blog: React.FC = () => {
           <li><strong>Risk Management:</strong> Set stop-loss orders and position sizing limits</li>
         </ul>
         
+        <h3>Volatility as an Opportunity</h3>
+        <p>Experienced investors often view volatility as an opportunity rather than a threat. Market downturns can present buying opportunities for quality assets at discounted prices. However, this requires:</p>
+        
+        <ul>
+          <li>Thorough research and analysis</li>
+          <li>Emotional discipline</li>
+          <li>Adequate cash reserves</li>
+          <li>Clear investment criteria</li>
+        </ul>
+        
         <h3>Building Volatility Resilience</h3>
         <p>Developing resilience to market volatility takes time and experience. Key practices include:</p>
         
@@ -134,7 +154,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Discover the essential best practices for integrating financial data APIs into your applications.",
       author: "Emily Johnson",
-      date: "2025-09-10",
+      date: "2024-01-10",
       readTime: "6 min read",
       category: "Technology",
       image:
@@ -214,11 +234,11 @@ const Blog: React.FC = () => {
     },
     {
       id: 4,
-      title: "Stock Market Analysis: Q4 2024 Performance Review",
+      title: "Stock Market Analysis: Q4 2023 Performance Review",
       excerpt:
-        "A comprehensive analysis of stock market performance in Q4 2024 and what it means for investors.",
+        "A comprehensive analysis of stock market performance in Q4 2023 and what it means for investors.",
       author: "Bright Akoto",
-      date: "2025-09-08",
+      date: "2024-01-08",
       readTime: "8 min read",
       category: "Analysis",
       image:
@@ -231,7 +251,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Learn how to build a well-diversified investment portfolio that can weather market fluctuations.",
       author: "Sarah Chen",
-      date: "2025-09-05",
+      date: "2024-01-05",
       readTime: "9 min read",
       category: "Education",
       image:
@@ -244,7 +264,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Why real-time market data is crucial for trading success and how to leverage it effectively.",
       author: "Michael Rodriguez",
-      date: "2025-09-03",
+      date: "2024-01-03",
       readTime: "4 min read",
       category: "Trading",
       image:
@@ -257,7 +277,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Analyzing the impact of Bitcoin ETF approval on cryptocurrency markets and investor sentiment.",
       author: "Sarah Chen",
-      date: "2025-09-01",
+      date: "2024-01-01",
       readTime: "6 min read",
       category: "Cryptocurrency",
       image:
@@ -270,7 +290,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Essential risk management techniques every cryptocurrency investor should know and implement.",
       author: "Emily Johnson",
-      date: "2025-08-29",
+      date: "2023-12-28",
       readTime: "7 min read",
       category: "Education",
       image:
@@ -283,7 +303,7 @@ const Blog: React.FC = () => {
       excerpt:
         "How machine learning algorithms are revolutionizing financial data analysis and prediction.",
       author: "Bright Akoto",
-      date: "2025-08-25",
+      date: "2023-12-25",
       readTime: "8 min read",
       category: "Technology",
       image:
@@ -296,7 +316,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Learn how to analyze market sentiment using various tools and techniques for better trading decisions.",
       author: "Michael Rodriguez",
-      date: "2025-08-22",
+      date: "2023-12-22",
       readTime: "5 min read",
       category: "Analysis",
       image:
@@ -309,7 +329,7 @@ const Blog: React.FC = () => {
       excerpt:
         "A comprehensive comparison of day trading and long-term investing strategies to help you choose your path.",
       author: "Sarah Chen",
-      date: "2025-08-20",
+      date: "2023-12-20",
       readTime: "9 min read",
       category: "Trading",
       image:
@@ -323,7 +343,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Exploring the impact of Ethereum's upgrade on decentralized finance and smart contract capabilities.",
       author: "Emily Johnson",
-      date: "2025-08-18",
+      date: "2023-12-18",
       readTime: "6 min read",
       category: "Cryptocurrency",
       image:
@@ -336,7 +356,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Learn how to research and identify promising altcoins before they become mainstream investments.",
       author: "Michael Rodriguez",
-      date: "2025-08-15",
+      date: "2023-12-15",
       readTime: "7 min read",
       category: "Cryptocurrency",
       image:
@@ -350,7 +370,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Discover how blockchain technology is revolutionizing industries beyond digital currencies.",
       author: "Emily Johnson",
-      date: "2025-08-05",
+      date: "2023-12-05",
       readTime: "6 min read",
       category: "Technology",
       image:
@@ -364,7 +384,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Key economic indicators that every investor should monitor for informed decision making.",
       author: "Sarah Chen",
-      date: "2025-08-02",
+      date: "2023-11-28",
       readTime: "6 min read",
       category: "Analysis",
       image:
@@ -378,7 +398,7 @@ const Blog: React.FC = () => {
       excerpt:
         "Essential options trading strategies that every beginner should understand before getting started.",
       author: "Emily Johnson",
-      date: "2025-07-30",
+      date: "2023-11-25",
       readTime: "9 min read",
       category: "Trading",
       image:
