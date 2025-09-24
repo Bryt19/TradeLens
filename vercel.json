@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/((?!api|sitemap.xml|robots.txt|google197a424fdf0a9b86.html|favicon.ico|.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2|ttf|eot)$).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
@@ -11,20 +11,7 @@
       "headers": [
         {
           "key": "Content-Type",
-          "value": "application/xml; charset=utf-8"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=3600"
-        }
-      ]
-    },
-    {
-      "source": "/robots.txt",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/plain; charset=utf-8"
+          "value": "application/xml"
         }
       ]
     },
