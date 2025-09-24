@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://trade-lens-finance.vercel.app/sitemap.xml
+Sitemap: https://trade-lens-finance.vercel.app/api/sitemap.xml
 
 # Allow all search engines to crawl all pages including API page
 # Allow API page to be indexed for better discoverability
