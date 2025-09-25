@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User, LogOut, Settings } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import SettingsModal from "./SettingsModal";
 import ConfirmModal from "./ConfirmModal";
