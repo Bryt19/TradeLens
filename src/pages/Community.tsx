@@ -156,7 +156,7 @@ const Community: React.FC = () => {
       title: "Bitspenda",
       description:
         "A secure and efficient payment platform for digital transactions",
-      author: "BRIGHT KPORTIKLAH",
+      author: "Bright Kportiklah",
       stars: 189,
       language: "Next.js",
       lastUpdated: "3 days ago",
