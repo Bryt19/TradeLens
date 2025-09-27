@@ -23,6 +23,7 @@ import Cookies from "./pages/Cookies";
 import Features from "./pages/Features";
 import Contact from "./pages/Contact";
 import Login from "./pages/Login";
+import Platforms from "./pages/Platforms";
 import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopOnRouteChange from "./components/ScrollToTopOnRouteChange";
@@ -65,6 +66,7 @@ function App() {
                     }
                   />
                   <Route path="/login" element={<Login />} />
+                  <Route path="/platforms" element={<Platforms />} />
                   <Route
                     path="/pricing"
                     element={
