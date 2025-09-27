@@ -5,6 +5,7 @@ import {
   Coins,
   BarChart3,
   Newspaper,
+  Monitor,
   Sun,
   Moon,
   Menu,
@@ -24,6 +25,7 @@ const Navbar: React.FC = () => {
     { name: "Home", href: "/", icon: TrendingUp },
     { name: "Crypto", href: "/crypto", icon: Coins },
     { name: "Stocks", href: "/stocks", icon: BarChart3 },
+    { name: "Platforms", href: "/platforms", icon: Monitor },
     { name: "News", href: "/news", icon: Newspaper },
   ];
 
