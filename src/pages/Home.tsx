@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Coins, BarChart3, Newspaper, ArrowRight } from "lucide-react";
+import { Coins, BarChart3, Newspaper, Monitor, ArrowRight } from "lucide-react";
 import { useCryptocurrencies, useFinancialNews } from "../hooks/useApi";
 import { useFavorites } from "../hooks/useApi";
 import CryptoCard from "../components/CryptoCard";
@@ -78,6 +78,13 @@ const Home: React.FC = () => {
       link: "/stocks",
     },
     {
+      icon: Monitor,
+      title: "Trading Platforms",
+      description:
+        "Discover the best trading platforms across different categories.",
+      link: "/platforms",
+    },
+    {
       icon: Newspaper,
       title: "Financial News",
       description: "Stay updated with the latest financial and crypto news.",
@@ -146,7 +153,7 @@ const Home: React.FC = () => {
               Comprehensive financial tools and data at your fingertips
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
