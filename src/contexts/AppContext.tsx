@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from "react";
+import { createContext, useContext, useReducer, useEffect } from "react";
 import type { ReactNode, Dispatch } from "react";
 import { AppState, LocalStorageData } from "../types";
 import { supabase } from "../lib/supabase";

@@ -1,13 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  Search,
-  Filter,
-  TrendingUp,
-  TrendingDown,
-  Star,
-  Plus,
-} from "lucide-react";
+import { Search, TrendingUp, TrendingDown, Star, Plus } from "lucide-react";
 import { useCryptocurrencies } from "../hooks/useApi";
 import {
   getFavorites,
@@ -18,7 +11,7 @@ import {
 import CryptoCard from "../components/CryptoCard";
 import CryptoDetailsModal from "../components/CryptoDetailsModal";
 import Loading from "../components/Loading";
-import Chart from "../components/Chart";
+// import Chart from "../components/Chart";
 import { debounce } from "../utils/helpers";
 import { CoinGeckoCoin } from "../types";
 import { useAuth } from "../contexts/AuthContext";
@@ -172,7 +165,7 @@ const Crypto: React.FC = () => {
   // Check if we can load more
   const canLoadMore =
     displayCount < Math.min(filteredAndSortedData.length, 100);
-  const hasMoreData = filteredAndSortedData.length > displayCount;
+  // const hasMoreData = filteredAndSortedData.length > displayCount;
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     debouncedSearch(e.target.value);
