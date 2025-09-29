@@ -49,29 +49,43 @@ const Crypto: React.FC = () => {
 
   const toggleCryptoFavorite = useCallback(
     async (coinId: string) => {
+      if (!authState.user) {
+        navigate("/login", { replace: false });
+        return;
+      }
+
+      const isFav = cryptoFavorites.includes(coinId);
+
+      // Optimistic update - update UI immediately
+      if (isFav) {
+        setCryptoFavorites((prev) => prev.filter((id) => id !== coinId));
+      } else {
+        setCryptoFavorites((prev) => [...prev, coinId]);
+        // optional toast event preserved
+        try {
+          window.dispatchEvent(
+            new CustomEvent("favorite:add", {
+              detail: { type: "crypto", id: coinId },
+            })
+          );
+        } catch {}
+      }
+
       try {
-        if (!authState.user) {
-          navigate("/login", { replace: false });
-          return;
-        }
-        const isFav = cryptoFavorites.includes(coinId);
+        // Sync with database in background
         if (isFav) {
           await removeFavorite(coinId, "coin");
         } else {
           await saveFavorite(coinId, "coin");
-          // optional toast event preserved
-          try {
-            window.dispatchEvent(
-              new CustomEvent("favorite:add", {
-                detail: { type: "crypto", id: coinId },
-              })
-            );
-          } catch {}
         }
       } catch (e) {
         console.error("toggleCryptoFavorite error", e);
-      } finally {
-        refreshFavorites();
+        // Revert optimistic update on error
+        if (isFav) {
+          setCryptoFavorites((prev) => [...prev, coinId]);
+        } else {
+          setCryptoFavorites((prev) => prev.filter((id) => id !== coinId));
+        }
       }
     },
     [authState.user, cryptoFavorites, navigate, refreshFavorites]

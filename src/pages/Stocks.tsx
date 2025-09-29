@@ -52,28 +52,42 @@ const Stocks: React.FC = () => {
 
   const toggleStockFavorite = useCallback(
     async (symbol: string) => {
+      if (!authState.user) {
+        navigate("/login", { replace: false });
+        return;
+      }
+
+      const isFav = stockFavorites.includes(symbol);
+
+      // Optimistic update - update UI immediately
+      if (isFav) {
+        setStockFavorites((prev) => prev.filter((s) => s !== symbol));
+      } else {
+        setStockFavorites((prev) => [...prev, symbol]);
+        try {
+          window.dispatchEvent(
+            new CustomEvent("favorite:add", {
+              detail: { type: "stock", id: symbol },
+            })
+          );
+        } catch {}
+      }
+
       try {
-        if (!authState.user) {
-          navigate("/login", { replace: false });
-          return;
-        }
-        const isFav = stockFavorites.includes(symbol);
+        // Sync with database in background
         if (isFav) {
           await removeFavorite(symbol, "stock");
         } else {
           await saveFavorite(symbol, "stock");
-          try {
-            window.dispatchEvent(
-              new CustomEvent("favorite:add", {
-                detail: { type: "stock", id: symbol },
-              })
-            );
-          } catch {}
         }
       } catch (e) {
         console.error("toggleStockFavorite error", e);
-      } finally {
-        refreshFavorites();
+        // Revert optimistic update on error
+        if (isFav) {
+          setStockFavorites((prev) => [...prev, symbol]);
+        } else {
+          setStockFavorites((prev) => prev.filter((s) => s !== symbol));
+        }
       }
     },
     [authState.user, stockFavorites, navigate, refreshFavorites]
