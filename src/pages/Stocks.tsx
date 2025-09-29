@@ -1,4 +1,5 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Search,
   Building2,
@@ -8,15 +9,75 @@ import {
   Calendar,
 } from "lucide-react";
 import { useStockQuote } from "../hooks/useApi";
-import { useFavorites } from "../hooks/useApi";
+import {
+  getFavorites,
+  saveFavorite,
+  removeFavorite,
+  splitFavorites,
+} from "../services/favorites";
+import { useAuth } from "../contexts/AuthContext";
 import Loading from "../components/Loading";
 import Chart from "../components/Chart";
 import { debounce } from "../utils/helpers";
 import { AlphaVantageQuote } from "../types";
 
 const Stocks: React.FC = () => {
-  const { isStockFavorite, toggleStockFavorite, stockFavorites } =
-    useFavorites();
+  const navigate = useNavigate();
+  const { authState } = useAuth();
+  const [stockFavorites, setStockFavorites] = useState<string[]>([]);
+  // Load favorites for current user and keep in state
+  const refreshFavorites = useCallback(async () => {
+    try {
+      const rows = await getFavorites();
+      const { stocks } = splitFavorites(rows);
+      setStockFavorites(stocks);
+    } catch (e) {
+      console.error("Failed to refresh favorites", e);
+      setStockFavorites([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authState.user) {
+      refreshFavorites();
+    } else {
+      setStockFavorites([]);
+    }
+  }, [authState.user, refreshFavorites]);
+
+  const isStockFavorite = useCallback(
+    (symbol: string) => stockFavorites.includes(symbol),
+    [stockFavorites]
+  );
+
+  const toggleStockFavorite = useCallback(
+    async (symbol: string) => {
+      try {
+        if (!authState.user) {
+          navigate("/login", { replace: false });
+          return;
+        }
+        const isFav = stockFavorites.includes(symbol);
+        if (isFav) {
+          await removeFavorite(symbol, "stock");
+        } else {
+          await saveFavorite(symbol, "stock");
+          try {
+            window.dispatchEvent(
+              new CustomEvent("favorite:add", {
+                detail: { type: "stock", id: symbol },
+              })
+            );
+          } catch {}
+        }
+      } catch (e) {
+        console.error("toggleStockFavorite error", e);
+      } finally {
+        refreshFavorites();
+      }
+    },
+    [authState.user, stockFavorites, navigate, refreshFavorites]
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSymbol, setSelectedSymbol] = useState<string>(() => {
     // Load selected symbol from localStorage on component mount

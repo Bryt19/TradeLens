@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search,
@@ -9,7 +9,12 @@ import {
   Plus,
 } from "lucide-react";
 import { useCryptocurrencies } from "../hooks/useApi";
-import { useFavorites } from "../hooks/useApi";
+import {
+  getFavorites,
+  saveFavorite,
+  removeFavorite,
+  splitFavorites,
+} from "../services/favorites";
 import CryptoCard from "../components/CryptoCard";
 import CryptoDetailsModal from "../components/CryptoDetailsModal";
 import Loading from "../components/Loading";
@@ -22,7 +27,63 @@ const Crypto: React.FC = () => {
   const navigate = useNavigate();
   const { authState } = useAuth();
   const { data: cryptoData, loading, error } = useCryptocurrencies(100);
-  const { isCryptoFavorite, toggleCryptoFavorite } = useFavorites();
+  const [cryptoFavorites, setCryptoFavorites] = useState<string[]>([]);
+  // Load favorites for current user and keep in state
+  const refreshFavorites = useCallback(async () => {
+    try {
+      const rows = await getFavorites();
+      const { crypto } = splitFavorites(rows);
+      setCryptoFavorites(crypto);
+    } catch (e) {
+      console.error("Failed to refresh favorites", e);
+      setCryptoFavorites([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    // Load when user logs in or changes
+    if (authState.user) {
+      refreshFavorites();
+    } else {
+      setCryptoFavorites([]);
+    }
+  }, [authState.user, refreshFavorites]);
+
+  const isCryptoFavorite = useCallback(
+    (coinId: string) => cryptoFavorites.includes(coinId),
+    [cryptoFavorites]
+  );
+
+  const toggleCryptoFavorite = useCallback(
+    async (coinId: string) => {
+      try {
+        if (!authState.user) {
+          navigate("/login", { replace: false });
+          return;
+        }
+        const isFav = cryptoFavorites.includes(coinId);
+        if (isFav) {
+          await removeFavorite(coinId, "coin");
+        } else {
+          await saveFavorite(coinId, "coin");
+          // optional toast event preserved
+          try {
+            window.dispatchEvent(
+              new CustomEvent("favorite:add", {
+                detail: { type: "crypto", id: coinId },
+              })
+            );
+          } catch {}
+        }
+      } catch (e) {
+        console.error("toggleCryptoFavorite error", e);
+      } finally {
+        refreshFavorites();
+      }
+    },
+    [authState.user, cryptoFavorites, navigate, refreshFavorites]
+  );
+
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState<
     "market_cap" | "price" | "change_24h" | "volume"

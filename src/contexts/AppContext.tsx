@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useReducer, useEffect } from "react";
 import type { ReactNode, Dispatch } from "react";
 import { AppState, LocalStorageData } from "../types";
+import { supabase } from "../lib/supabase";
+import { getFavorites, splitFavorites } from "../services/favorites.ts";
 
 // Action Types
 type AppAction =
@@ -10,6 +12,11 @@ type AppAction =
   | { type: "REMOVE_CRYPTO_FAVORITE"; payload: string }
   | { type: "ADD_STOCK_FAVORITE"; payload: string }
   | { type: "REMOVE_STOCK_FAVORITE"; payload: string }
+  | {
+      type: "SET_ALL_FAVORITES";
+      payload: { crypto: string[]; stocks: string[] };
+    }
+  | { type: "CLEAR_FAVORITES" }
   | {
       type: "SET_NOTIFICATION_PREF";
       payload: { key: "favoriteAdded"; value: boolean };
@@ -93,6 +100,21 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
             (symbol) => symbol !== action.payload
           ),
         },
+      };
+
+    case "SET_ALL_FAVORITES":
+      return {
+        ...state,
+        favorites: {
+          crypto: action.payload.crypto,
+          stocks: action.payload.stocks,
+        },
+      };
+
+    case "CLEAR_FAVORITES":
+      return {
+        ...state,
+        favorites: { crypto: [], stocks: [] },
       };
 
     case "SET_LOADING":
@@ -180,6 +202,39 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     document.documentElement.classList.toggle("dark", state.theme === "dark");
   }, [state.theme]);
+
+  // Auto-load favorites on auth change and on mount
+  useEffect(() => {
+    let isMounted = true;
+    const loadIfLoggedIn = async () => {
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (error) throw error;
+        if (!user) {
+          dispatch({ type: "CLEAR_FAVORITES" });
+          return;
+        }
+        const rows = await getFavorites();
+        if (!isMounted) return;
+        const split = splitFavorites(rows);
+        dispatch({ type: "SET_ALL_FAVORITES", payload: split });
+      } catch (e) {
+        console.error("Failed to load favorites", e);
+      }
+    };
+
+    loadIfLoggedIn();
+    const { data } = supabase.auth.onAuthStateChange(() => {
+      loadIfLoggedIn();
+    });
+    return () => {
+      isMounted = false;
+      data.subscription.unsubscribe();
+    };
+  }, []);
 
   return (
     <AppContext.Provider value={{ state, dispatch }}>
