@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react";
+import { saveContactMessage } from "../services/messages";
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,8 @@ const Contact: React.FC = () => {
     message: "",
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -25,21 +28,44 @@ const Contact: React.FC = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate form submission
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsSubmitted(false);
-      setFormData({
-        name: "",
-        email: "",
-        company: "",
-        phone: "",
-        plan: "",
-        message: "",
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const result = await saveContactMessage({
+        name: formData.name,
+        email: formData.email,
+        company: formData.company || undefined,
+        phone: formData.phone || undefined,
+        plan: formData.plan || undefined,
+        message: formData.message,
       });
-    }, 3000);
+
+      if (result) {
+        setIsSubmitted(true);
+        // Reset form after successful submission
+        setTimeout(() => {
+          setIsSubmitted(false);
+          setFormData({
+            name: "",
+            email: "",
+            company: "",
+            phone: "",
+            plan: "",
+            message: "",
+          });
+        }, 3000);
+      } else {
+        setSubmitError("Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
+      setSubmitError("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const contactInfo = [
@@ -296,12 +322,35 @@ const Contact: React.FC = () => {
                     />
                   </div>
 
+                  {/* Error Message */}
+                  {submitError && (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+                      <p className="text-red-600 dark:text-red-400 text-sm">
+                        {submitError}
+                      </p>
+                    </div>
+                  )}
+
                   <button
                     type="submit"
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2"
+                    disabled={isSubmitting}
+                    className={`w-full font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2 ${
+                      isSubmitting
+                        ? "bg-gray-400 cursor-not-allowed text-white"
+                        : "bg-blue-600 hover:bg-blue-700 text-white"
+                    }`}
                   >
-                    <Send className="w-5 h-5" />
-                    <span>Send Message</span>
+                    {isSubmitting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <span>Sending...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-5 h-5" />
+                        <span>Send Message</span>
+                      </>
+                    )}
                   </button>
                 </form>
               )}
