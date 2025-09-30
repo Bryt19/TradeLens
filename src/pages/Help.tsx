@@ -74,7 +74,13 @@ const Help: React.FC = () => {
   };
 
   const handleEmailSupport = () => {
-    setShowEmailForm(true);
+    const email = "tradelens25@gmail.com";
+    const subject = encodeURIComponent("Support Request");
+    const body = encodeURIComponent(
+      "Hi TradeLens Support,\n\nPlease describe your issue here...\n\nThanks,"
+    );
+    window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+    showNotification("info", "Opening your email client...");
   };
 
   const handlePhoneSupport = () => {
