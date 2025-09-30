@@ -21,8 +21,10 @@ const Crypto: React.FC = () => {
   const { authState } = useAuth();
   const { data: cryptoData, loading, error } = useCryptocurrencies(100);
   const [cryptoFavorites, setCryptoFavorites] = useState<string[]>([]);
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
   // Load favorites for current user and keep in state
   const refreshFavorites = useCallback(async () => {
+    setFavoritesLoading(true);
     try {
       const rows = await getFavorites();
       const { crypto } = splitFavorites(rows);
@@ -30,21 +32,37 @@ const Crypto: React.FC = () => {
     } catch (e) {
       console.error("Failed to refresh favorites", e);
       setCryptoFavorites([]);
+    } finally {
+      setFavoritesLoading(false);
     }
   }, []);
 
+  // Load favorites immediately on mount and when user changes
   useEffect(() => {
-    // Load when user logs in or changes
     if (authState.user) {
+      // Load favorites immediately without waiting for other effects
       refreshFavorites();
     } else {
       setCryptoFavorites([]);
     }
   }, [authState.user, refreshFavorites]);
 
-  const isCryptoFavorite = useCallback(
-    (coinId: string) => cryptoFavorites.includes(coinId),
+  // Pre-load favorites on component mount for faster initial render
+  useEffect(() => {
+    if (authState.user && cryptoFavorites.length === 0) {
+      refreshFavorites();
+    }
+  }, []);
+
+  // Create favorites Set for O(1) lookup performance
+  const favoritesSet = useMemo(
+    () => new Set(cryptoFavorites),
     [cryptoFavorites]
+  );
+
+  const isCryptoFavorite = useCallback(
+    (coinId: string) => favoritesSet.has(coinId),
+    [favoritesSet]
   );
 
   const toggleCryptoFavorite = useCallback(
@@ -96,11 +114,28 @@ const Crypto: React.FC = () => {
     "market_cap" | "price" | "change_24h" | "volume"
   >("market_cap");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(() => {
+    // Load from localStorage on mount
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("crypto-show-favorites-only");
+      return saved === "true";
+    }
+    return false;
+  });
   const [displayCount, setDisplayCount] = useState(20); // Start with 20, max 100
   const [selectedCoin, setSelectedCoin] = useState<CoinGeckoCoin | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSorting, setIsSorting] = useState(false);
+
+  // Save showFavoritesOnly to localStorage when it changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(
+        "crypto-show-favorites-only",
+        showFavoritesOnly.toString()
+      );
+    }
+  }, [showFavoritesOnly]);
 
   // Debounced search
   const debouncedSearch = useMemo(
@@ -108,24 +143,25 @@ const Crypto: React.FC = () => {
     []
   );
 
-  // Filter and sort data
+  // Filter and sort data with optimized performance
   const filteredAndSortedData = useMemo(() => {
     if (!cryptoData) return [];
 
     let filtered = cryptoData;
 
-    // Filter by search query
+    // Filter by search query (optimized with early return)
     if (searchQuery) {
+      const queryLower = searchQuery.toLowerCase();
       filtered = filtered.filter(
         (coin) =>
-          coin.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          coin.symbol.toLowerCase().includes(searchQuery.toLowerCase())
+          coin.name.toLowerCase().includes(queryLower) ||
+          coin.symbol.toLowerCase().includes(queryLower)
       );
     }
 
-    // Filter by favorites
+    // Filter by favorites using Set for O(1) lookup
     if (showFavoritesOnly) {
-      filtered = filtered.filter((coin) => isCryptoFavorite(coin.id));
+      filtered = filtered.filter((coin) => favoritesSet.has(coin.id));
     }
 
     // Sort data with optimized comparison
@@ -168,7 +204,7 @@ const Crypto: React.FC = () => {
     sortBy,
     sortOrder,
     showFavoritesOnly,
-    isCryptoFavorite,
+    favoritesSet,
   ]);
 
   // Get displayed data (limited by displayCount)
@@ -298,19 +334,37 @@ const Crypto: React.FC = () => {
               {/* Favorites Filter */}
               <button
                 onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+                disabled={favoritesLoading}
                 className={`flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
                   showFavoritesOnly
                     ? "bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300"
                     : "bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700"
-                }`}
+                } ${favoritesLoading ? "opacity-50 cursor-wait" : ""}`}
               >
-                <Star
-                  className={`w-4 h-4 ${
-                    showFavoritesOnly ? "fill-current" : ""
-                  }`}
-                />
-                <span className="hidden sm:inline">Favorites</span>
-                <span className="sm:hidden">★</span>
+                {favoritesLoading ? (
+                  <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <Star
+                    className={`w-4 h-4 ${
+                      showFavoritesOnly ? "fill-current" : ""
+                    }`}
+                  />
+                )}
+                <span className="hidden sm:inline">
+                  Favorites{" "}
+                  {!favoritesLoading &&
+                    cryptoFavorites.length > 0 &&
+                    `(${cryptoFavorites.length})`}
+                </span>
+                <span className="sm:hidden">
+                  {favoritesLoading
+                    ? "..."
+                    : `★${
+                        cryptoFavorites.length > 0
+                          ? ` ${cryptoFavorites.length}`
+                          : ""
+                      }`}
+                </span>
               </button>
             </div>
           </div>
@@ -372,23 +426,28 @@ const Crypto: React.FC = () => {
               isSorting ? "opacity-90 scale-[0.99]" : "opacity-100 scale-100"
             }`}
           >
-            {displayedData.map((coin, index) => (
-              <div
-                key={coin.id}
-                className="transition-all duration-300 ease-out"
-                style={{
-                  animationDelay: isSorting ? `${index * 10}ms` : "0ms",
-                  transform: isSorting ? "translateY(2px)" : "translateY(0)",
-                }}
-              >
-                <CryptoCard
-                  coin={coin}
-                  isFavorite={isCryptoFavorite(coin.id)}
-                  onToggleFavorite={toggleCryptoFavorite}
-                  onClick={() => handleViewDetails(coin)}
-                />
-              </div>
-            ))}
+            {displayedData.map((coin, index) => {
+              const isFavorite = isCryptoFavorite(coin.id);
+              const handleClick = () => handleViewDetails(coin);
+
+              return (
+                <div
+                  key={coin.id}
+                  className="transition-all duration-300 ease-out"
+                  style={{
+                    animationDelay: isSorting ? `${index * 10}ms` : "0ms",
+                    transform: isSorting ? "translateY(2px)" : "translateY(0)",
+                  }}
+                >
+                  <CryptoCard
+                    coin={coin}
+                    isFavorite={isFavorite}
+                    onToggleFavorite={toggleCryptoFavorite}
+                    onClick={handleClick}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
 
