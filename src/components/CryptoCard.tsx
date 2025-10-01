@@ -15,6 +15,7 @@ interface CryptoCardProps {
   onToggleFavorite: (coinId: string) => void;
   onClick?: () => void;
   className?: string;
+  showFavorite?: boolean;
 }
 
 import { useAuth } from "../contexts/AuthContext";
@@ -25,6 +26,7 @@ const CryptoCard: React.FC<CryptoCardProps> = ({
   onToggleFavorite,
   onClick,
   className = "",
+  showFavorite = true,
 }) => {
   const { authState } = useAuth();
   const handleToggleFavorite = (e: React.MouseEvent) => {
@@ -70,7 +72,7 @@ const CryptoCard: React.FC<CryptoCardProps> = ({
               </p>
             </div>
           </div>
-          {authState.user ? (
+          {authState.user && showFavorite ? (
             <button
               onClick={handleToggleFavorite}
               className={`p-1.5 sm:p-2 rounded-full transition-colors flex-shrink-0 ${

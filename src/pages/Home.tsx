@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Coins, BarChart3, Newspaper, Monitor, ArrowRight } from "lucide-react";
 import { useCryptocurrencies, useFinancialNews } from "../hooks/useApi";
-import { useFavorites } from "../hooks/useApi";
 import CryptoCard from "../components/CryptoCard";
 import CryptoDetailsModal from "../components/CryptoDetailsModal";
 import NewsCard from "../components/NewsCard";
@@ -24,7 +23,6 @@ const Home: React.FC = () => {
     loading: newsLoading,
     error: newsError,
   } = useFinancialNews(1, 6);
-  const { isCryptoFavorite, toggleCryptoFavorite } = useFavorites();
   const [selectedCoin, setSelectedCoin] = useState<CoinGeckoCoin | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -240,9 +238,10 @@ const Home: React.FC = () => {
                   <CryptoCard
                     key={coin.id}
                     coin={coin}
-                    isFavorite={isCryptoFavorite(coin.id)}
-                    onToggleFavorite={toggleCryptoFavorite}
+                    isFavorite={false}
+                    onToggleFavorite={() => {}}
                     onClick={() => handleViewDetails(coin)}
+                    showFavorite={false}
                   />
                 ))}
               </div>
