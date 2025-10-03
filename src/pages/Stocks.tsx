@@ -8,7 +8,7 @@ import {
   Activity,
   Calendar,
 } from "lucide-react";
-import { useStockQuote } from "../hooks/useApi";
+import { useStockQuote, useStockChart } from "../hooks/useApi";
 import {
   getFavorites,
   saveFavorite,
@@ -119,6 +119,11 @@ const Stocks: React.FC = () => {
   ];
 
   const { data: stockData, loading, error } = useStockQuote(selectedSymbol);
+  const {
+    data: chartData,
+    loading: chartLoading,
+    error: chartError,
+  } = useStockChart(selectedSymbol, "TIME_SERIES_DAILY");
 
   // Set search query when component mounts with saved symbol
   useEffect(() => {
@@ -174,23 +179,72 @@ const Stocks: React.FC = () => {
     localStorage.setItem("selectedStockSymbol", symbol);
   };
 
-  // Generate sample chart data for demo
-  const generateSampleChartData = () => {
-    const data: { timestamp: number; value: number }[] = [];
-    const now = Date.now();
-    const dayInMs = 24 * 60 * 60 * 1000;
-    const basePrice = 100 + Math.random() * 200; // Random base price between 100-300
+  // Process real chart data from API (handles both Alpha Vantage and Polygon formats)
+  const processChartData = (timeSeriesData: any) => {
+    if (!timeSeriesData || typeof timeSeriesData !== "object") return [];
 
-    for (let i = 29; i >= 0; i--) {
-      data.push({
-        timestamp: now - i * dayInMs,
-        value: basePrice + (Math.random() - 0.5) * 20, // Random variation
-      });
+    const data: { timestamp: number; value: number }[] = [];
+
+    // Check if it's Alpha Vantage format (date keys with "4. close" values)
+    if (timeSeriesData && Object.keys(timeSeriesData).length > 0) {
+      const firstKey = Object.keys(timeSeriesData)[0];
+      const firstValue = timeSeriesData[firstKey];
+
+      // Alpha Vantage format: dates as keys, objects with "4. close" as values
+      if (typeof firstValue === "object" && firstValue["4. close"]) {
+        Object.entries(timeSeriesData).forEach(
+          ([date, values]: [string, any]) => {
+            if (values && typeof values === "object" && values["4. close"]) {
+              const timestamp = new Date(date).getTime();
+              const closePrice = parseFloat(values["4. close"]);
+
+              if (!isNaN(timestamp) && !isNaN(closePrice)) {
+                data.push({
+                  timestamp,
+                  value: closePrice,
+                });
+              }
+            }
+          }
+        );
+      }
+      // Polygon format: array of objects with 't' (timestamp) and 'c' (close) properties
+      else if (
+        Array.isArray(timeSeriesData) ||
+        (firstValue &&
+          typeof firstValue === "object" &&
+          firstValue.t !== undefined)
+      ) {
+        const dataArray = Array.isArray(timeSeriesData)
+          ? timeSeriesData
+          : Object.values(timeSeriesData);
+
+        dataArray.forEach((item: any) => {
+          if (
+            item &&
+            typeof item === "object" &&
+            item.c !== undefined &&
+            item.t !== undefined
+          ) {
+            const timestamp = new Date(item.t).getTime();
+            const closePrice = parseFloat(item.c);
+
+            if (!isNaN(timestamp) && !isNaN(closePrice)) {
+              data.push({
+                timestamp,
+                value: closePrice,
+              });
+            }
+          }
+        });
+      }
     }
-    return data;
+
+    // Sort by timestamp (oldest first) and limit to last 30 days
+    return data.sort((a, b) => a.timestamp - b.timestamp).slice(-30);
   };
 
-  const sampleChartData = selectedSymbol ? generateSampleChartData() : [];
+  const realChartData = chartData ? processChartData(chartData) : [];
 
   // Generate demo stock data when API fails
   const generateDemoStockData = (symbol: string): AlphaVantageQuote => {
@@ -327,12 +381,36 @@ const Stocks: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 Price Chart (30 Days)
               </h3>
-              <Chart
-                data={sampleChartData}
-                type="area"
-                height={300}
-                color="#3B82F6"
-              />
+              {chartLoading ? (
+                <div
+                  className="flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg"
+                  style={{ height: 300 }}
+                >
+                  <Loading text="Loading chart data..." />
+                </div>
+              ) : chartError || !realChartData.length ? (
+                <div
+                  className="flex items-center justify-center bg-gray-50 dark:bg-gray-800 rounded-lg p-8"
+                  style={{ height: 300 }}
+                >
+                  <div className="text-center">
+                    <p className="text-gray-500 dark:text-gray-400 mb-2">
+                      Unable to load chart data
+                    </p>
+                    <p className="text-sm text-gray-400 dark:text-gray-500">
+                      Historical data may not be available for this symbol
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <Chart
+                  data={realChartData}
+                  type="area"
+                  height={300}
+                  color="#3B82F6"
+                  name="Price"
+                />
+              )}
             </div>
 
             {/* Stock Quote */}

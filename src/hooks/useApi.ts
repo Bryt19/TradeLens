@@ -3,18 +3,10 @@ import {
   coinGeckoService,
   alphaVantageService,
   polygonStockService,
-  newsService,
-  newsDataService,
   polygonNewsService,
   cryptoPanicService,
 } from "../services/api";
-import {
-  CoinGeckoCoin,
-  AlphaVantageQuote,
-  PolygonQuote,
-  NewsArticle,
-  APIError,
-} from "../types";
+import { CoinGeckoCoin, AlphaVantageQuote } from "../types";
 import { storage } from "../utils/helpers";
 
 // Generic hook for API calls with caching and error handling
@@ -410,6 +402,22 @@ export const useSearch = () => {
 };
 
 // Hook for managing favorites
+// Hook for Fear & Greed Index
+export const useFearAndGreedIndex = () => {
+  return useApi(
+    async () => {
+      const response = await fetch("https://api.alternative.me/fng/");
+      if (!response.ok) {
+        throw new Error("Failed to fetch Fear & Greed Index");
+      }
+      const data = await response.json();
+      return data;
+    },
+    "fear-and-greed-index",
+    []
+  );
+};
+
 export const useFavorites = () => {
   const [cryptoFavorites, setCryptoFavorites] = useState<string[]>([]);
   const [stockFavorites, setStockFavorites] = useState<string[]>([]);

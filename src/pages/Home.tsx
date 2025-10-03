@@ -6,7 +6,7 @@ import CryptoCard from "../components/CryptoCard";
 import CryptoDetailsModal from "../components/CryptoDetailsModal";
 import NewsCard from "../components/NewsCard";
 import Loading from "../components/Loading";
-import Chart from "../components/Chart";
+import MarketSentimentGauge from "../components/MarketSentimentGauge";
 import { CoinGeckoCoin } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 
@@ -28,23 +28,6 @@ const Home: React.FC = () => {
 
   const topCryptos = cryptoData?.slice(0, 6) || [];
   const newsArticles = newsData?.articles?.slice(0, 6) || [];
-
-  // Generate sample chart data for demo
-  const generateSampleChartData = () => {
-    const data: { timestamp: number; value: number }[] = [];
-    const now = Date.now();
-    const dayInMs = 24 * 60 * 60 * 1000;
-
-    for (let i = 29; i >= 0; i--) {
-      data.push({
-        timestamp: now - i * dayInMs,
-        value: 45000 + Math.random() * 10000 - 5000,
-      });
-    }
-    return data;
-  };
-
-  const sampleChartData = generateSampleChartData();
 
   const handleViewDetails = (coin: CoinGeckoCoin) => {
     if (!authState.user) {
@@ -192,19 +175,9 @@ const Home: React.FC = () => {
             </p>
           </div>
 
-          {/* Sample Chart */}
+          {/* Market Sentiment Gauge */}
           <div className="mb-12">
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-md">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Bitcoin Price Trend (30 Days)
-              </h3>
-              <Chart
-                data={sampleChartData}
-                type="area"
-                height={300}
-                color="#3B82F6"
-              />
-            </div>
+            <MarketSentimentGauge height={300} />
           </div>
 
           {/* Top Cryptocurrencies */}
