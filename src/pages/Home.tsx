@@ -171,7 +171,7 @@ const Home: React.FC = () => {
               Market Overview
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-300">
-              Top cryptocurrencies and market trends
+              Top cryptocurrencies and Market sentiment
             </p>
           </div>
 

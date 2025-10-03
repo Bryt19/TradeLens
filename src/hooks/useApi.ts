@@ -418,6 +418,109 @@ export const useFearAndGreedIndex = () => {
   );
 };
 
+// Hook for fetching multiple stock quotes (for favorites)
+export const useMultipleStockQuotes = (symbols: string[]) => {
+  const [data, setData] = useState<Record<string, AlphaVantageQuote | null>>(
+    {}
+  );
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchMultipleQuotes = useCallback(async () => {
+    if (symbols.length === 0) {
+      setData({});
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const promises = symbols.map(async (symbol) => {
+        try {
+          // Try to get cached data first
+          const cachedData = storage.get(
+            `stock-${symbol}`,
+            null
+          ) as AlphaVantageQuote | null;
+          if (cachedData) {
+            return { symbol, data: cachedData };
+          }
+
+          // Try Polygon first
+          const polygonData = await polygonStockService.getStockQuote(symbol);
+          const latestResult =
+            polygonData.results[polygonData.results.length - 1];
+          const previousResult =
+            polygonData.results[polygonData.results.length - 2];
+
+          const change =
+            latestResult.c -
+            (previousResult ? previousResult.c : latestResult.o);
+          const changePercent = previousResult
+            ? (change / previousResult.c) * 100
+            : 0;
+
+          const convertedData: AlphaVantageQuote = {
+            "01. symbol": polygonData.ticker,
+            "02. open": latestResult.o.toString(),
+            "03. high": latestResult.h.toString(),
+            "04. low": latestResult.l.toString(),
+            "05. price": latestResult.c.toString(),
+            "06. volume": latestResult.v.toString(),
+            "07. latest trading day": new Date(latestResult.t)
+              .toISOString()
+              .split("T")[0],
+            "08. previous close": previousResult
+              ? previousResult.c.toString()
+              : latestResult.o.toString(),
+            "09. change": change.toString(),
+            "10. change percent": `${changePercent.toFixed(2)}%`,
+          };
+
+          storage.set(`stock-${symbol}`, convertedData);
+          return { symbol, data: convertedData };
+        } catch (polygonError) {
+          try {
+            // Fallback to Alpha Vantage
+            const alphaVantageData = await alphaVantageService.getStockQuote(
+              symbol
+            );
+            storage.set(`stock-${symbol}`, alphaVantageData);
+            return { symbol, data: alphaVantageData };
+          } catch (alphaError) {
+            console.warn(`Failed to fetch data for ${symbol}:`, alphaError);
+            return { symbol, data: null };
+          }
+        }
+      });
+
+      const results = await Promise.allSettled(promises);
+      const newData: Record<string, AlphaVantageQuote | null> = {};
+
+      results.forEach((result) => {
+        if (result.status === "fulfilled") {
+          newData[result.value.symbol] = result.value.data;
+        }
+      });
+
+      setData(newData);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to fetch stock data"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, [symbols]);
+
+  useEffect(() => {
+    fetchMultipleQuotes();
+  }, [fetchMultipleQuotes]);
+
+  return { data, loading, error, refetch: fetchMultipleQuotes };
+};
+
 export const useFavorites = () => {
   const [cryptoFavorites, setCryptoFavorites] = useState<string[]>([]);
   const [stockFavorites, setStockFavorites] = useState<string[]>([]);

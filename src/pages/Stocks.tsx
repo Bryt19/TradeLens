@@ -8,7 +8,11 @@ import {
   Activity,
   Calendar,
 } from "lucide-react";
-import { useStockQuote, useStockChart } from "../hooks/useApi";
+import {
+  useStockQuote,
+  useStockChart,
+  useMultipleStockQuotes,
+} from "../hooks/useApi";
 import {
   getFavorites,
   saveFavorite,
@@ -124,6 +128,8 @@ const Stocks: React.FC = () => {
     loading: chartLoading,
     error: chartError,
   } = useStockChart(selectedSymbol, "TIME_SERIES_DAILY");
+  const { data: favoriteStocksData, loading: favoriteStocksLoading } =
+    useMultipleStockQuotes(stockFavorites);
 
   // Set search query when component mounts with saved symbol
   useEffect(() => {
@@ -637,9 +643,17 @@ const Stocks: React.FC = () => {
 
         {/* Favorites Section */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Your Favorite Stocks
-          </h3>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Your Favorite Stocks
+            </h3>
+            {favoriteStocksLoading && (
+              <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                Loading prices...
+              </div>
+            )}
+          </div>
           {stockFavorites.length === 0 ? (
             <p className="text-gray-500 dark:text-gray-400 text-center py-8">
               No favorite stocks yet. Search for stocks and add them to your
@@ -649,22 +663,50 @@ const Stocks: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {stockFavorites.map((symbol) => {
                 // Get the actual stock data for this favorite
-                const favoriteStockData =
-                  stockData && selectedSymbol === symbol ? stockData : null;
+                const favoriteStockData = favoriteStocksData[symbol];
 
-                // Use actual data if available, otherwise use demo data
-                const price = favoriteStockData
-                  ? parseFloat(favoriteStockData["05. price"])
-                  : Math.random() * 200 + 50;
-                const change = favoriteStockData
-                  ? parseFloat(favoriteStockData["09. change"])
-                  : (Math.random() - 0.5) * 10;
-                const changePercent = favoriteStockData
-                  ? parseFloat(favoriteStockData["10. change percent"])
-                  : (Math.random() - 0.5) * 5;
-                const volume = favoriteStockData
-                  ? parseInt(favoriteStockData["06. volume"])
-                  : Math.floor(Math.random() * 10000000);
+                // Use real data if available, otherwise show loading state
+                if (!favoriteStockData) {
+                  return (
+                    <div
+                      key={symbol}
+                      className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30 rounded-full flex items-center justify-center">
+                            <Building2 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-gray-900 dark:text-white">
+                              {symbol}
+                            </h4>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              {symbol} Inc.
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => toggleStockFavorite(symbol)}
+                          className="text-red-500 hover:text-red-600 p-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                          aria-label="Remove from favorites"
+                        >
+                          <Star className="w-4 h-4 fill-current" />
+                        </button>
+                      </div>
+                      <div className="flex items-center justify-center py-4">
+                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                      </div>
+                    </div>
+                  );
+                }
+
+                const price = parseFloat(favoriteStockData["05. price"]);
+                const change = parseFloat(favoriteStockData["09. change"]);
+                const changePercent = parseFloat(
+                  favoriteStockData["10. change percent"]
+                );
+                const volume = parseInt(favoriteStockData["06. volume"]);
                 const isPositive = change >= 0;
 
                 return (
@@ -737,32 +779,25 @@ const Stocks: React.FC = () => {
                     </div>
 
                     {/* Additional Trading Info */}
-                    {favoriteStockData && (
-                      <div className="grid grid-cols-2 gap-2 mb-3">
-                        <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
-                          <div className="text-xs text-gray-600 dark:text-gray-400">
-                            Day High
-                          </div>
-                          <div className="text-xs font-semibold text-green-600">
-                            $
-                            {parseFloat(favoriteStockData["03. high"]).toFixed(
-                              2
-                            )}
-                          </div>
+                    <div className="grid grid-cols-2 gap-2 mb-3">
+                      <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          Day High
                         </div>
-                        <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
-                          <div className="text-xs text-gray-600 dark:text-gray-400">
-                            Day Low
-                          </div>
-                          <div className="text-xs font-semibold text-red-600">
-                            $
-                            {parseFloat(favoriteStockData["04. low"]).toFixed(
-                              2
-                            )}
-                          </div>
+                        <div className="text-xs font-semibold text-green-600">
+                          $
+                          {parseFloat(favoriteStockData["03. high"]).toFixed(2)}
                         </div>
                       </div>
-                    )}
+                      <div className="bg-gray-50 dark:bg-gray-700 rounded p-2">
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          Day Low
+                        </div>
+                        <div className="text-xs font-semibold text-red-600">
+                          ${parseFloat(favoriteStockData["04. low"]).toFixed(2)}
+                        </div>
+                      </div>
+                    </div>
 
                     <button
                       onClick={() => handleSymbolSelect(symbol)}
