@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   TrendingUp,
   Coins,
@@ -19,6 +19,7 @@ const Navbar: React.FC = () => {
   const { state, dispatch } = useApp();
   const { authState } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
 
   const navigation = [
@@ -35,6 +36,15 @@ const Navbar: React.FC = () => {
 
   const isActive = (path: string) => {
     return location.pathname === path;
+  };
+
+  const handleNavigation = (href: string) => {
+    if (!authState.user) {
+      // Redirect to login with the intended destination
+      navigate("/login", { state: { from: { pathname: href } } });
+    } else {
+      navigate(href);
+    }
   };
 
   return (
@@ -57,34 +67,37 @@ const Navbar: React.FC = () => {
           <div className="hidden md:flex items-center space-x-8">
             {navigation.map((item) => {
               const Icon = item.icon;
-              const disabled = !authState.user;
+              const isProtected = item.href !== "/"; // Home is not protected
               const content = (
                 <div
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
                     isActive(item.href)
                       ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
                       : "text-gray-600 dark:text-gray-300"
                   } ${
-                    disabled
-                      ? "opacity-50 cursor-not-allowed"
+                    !authState.user && isProtected
+                      ? "opacity-75 hover:opacity-100"
                       : "hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
                   }`}
                   title={
-                    disabled ? "Please sign in to access this page" : undefined
+                    !authState.user && isProtected
+                      ? "Click to sign in"
+                      : undefined
                   }
+                  onClick={() => {
+                    if (isProtected) {
+                      handleNavigation(item.href);
+                    } else {
+                      navigate(item.href);
+                    }
+                  }}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{item.name}</span>
                 </div>
               );
 
-              return disabled ? (
-                <div key={item.name}>{content}</div>
-              ) : (
-                <Link key={item.name} to={item.href}>
-                  {content}
-                </Link>
-              );
+              return <div key={item.name}>{content}</div>;
             })}
           </div>
 
@@ -128,42 +141,44 @@ const Navbar: React.FC = () => {
           </div>
         </div>
 
-        {/* Mobile Navigation (disabled when logged out) */}
+        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 dark:border-gray-700">
               {navigation.map((item) => {
                 const Icon = item.icon;
-                const disabled = !authState.user;
-                const classes = `flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors ${
+                const isProtected = item.href !== "/"; // Home is not protected
+                const classes = `flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors cursor-pointer ${
                   isActive(item.href)
                     ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
                     : "text-gray-600 dark:text-gray-300"
                 } ${
-                  disabled
-                    ? "opacity-50"
+                  !authState.user && isProtected
+                    ? "opacity-75 hover:opacity-100"
                     : "hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`;
 
-                return disabled ? (
+                return (
                   <div
                     key={item.name}
                     className={classes}
-                    title="Please sign in to access this page"
+                    title={
+                      !authState.user && isProtected
+                        ? "Click to sign in"
+                        : undefined
+                    }
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      if (isProtected) {
+                        handleNavigation(item.href);
+                      } else {
+                        navigate(item.href);
+                      }
+                    }}
                   >
                     <Icon className="w-5 h-5" />
                     <span>{item.name}</span>
                   </div>
-                ) : (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className={classes}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.name}</span>
-                  </Link>
                 );
               })}
             </div>

@@ -66,7 +66,14 @@ function App() {
                     }
                   />
                   <Route path="/login" element={<Login />} />
-                  <Route path="/platforms" element={<Platforms />} />
+                  <Route
+                    path="/platforms"
+                    element={
+                      <ProtectedRoute>
+                        <Platforms />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route
                     path="/pricing"
                     element={
