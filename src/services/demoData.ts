@@ -581,10 +581,14 @@ export const generateMoreNewsData = (
       `Market participants are evaluating the implications of ${title.toLowerCase()} on long-term investment strategies.`,
     ];
 
+    // Create unique URLs and titles to prevent duplicates
+    const uniqueId = `${category || "general"}-${index}-${Date.now()}`;
+    const uniqueTitle = `${title} - Update ${index + 1}`;
+
     return {
-      title: title,
+      title: uniqueTitle,
       description: descriptions[index % descriptions.length],
-      url: `https://example.com/news-${category || "general"}-${index}`,
+      url: `https://example.com/news-${uniqueId}`,
       urlToImage: `https://images.unsplash.com/photo-${
         1550000000000 + index + Math.floor(Math.random() * 1000)
       }?w=400&h=250&fit=crop`,

@@ -80,6 +80,19 @@ const News: React.FC = () => {
     return shuffled;
   };
 
+  // Deduplicate articles based on title and URL
+  const deduplicateArticles = (articles: any[]) => {
+    const seen = new Set();
+    return articles.filter((article) => {
+      const key = `${article.title}-${article.url}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+  };
+
   const getCurrentData = () => {
     // Use demo data as fallback when API fails
     const getDemoData = (category: NewsCategory) => {
@@ -106,32 +119,32 @@ const News: React.FC = () => {
     switch (category) {
       case "financial":
         return {
-          data: shuffleArray(
+          data: deduplicateArticles(shuffleArray(
             financialNews?.articles || getDemoData("financial")
-          ),
+          )),
           loading: financialLoading,
           error: financialError,
           refetch: refetchFinancial,
         };
       case "crypto":
         return {
-          data: shuffleArray(cryptoNews?.articles || getDemoData("crypto")),
+          data: deduplicateArticles(shuffleArray(cryptoNews?.articles || getDemoData("crypto"))),
           loading: cryptoLoading,
           error: cryptoError,
           refetch: refetchCrypto,
         };
       case "business":
         return {
-          data: shuffleArray(businessNews?.articles || getDemoData("business")),
+          data: deduplicateArticles(shuffleArray(businessNews?.articles || getDemoData("business"))),
           loading: businessLoading,
           error: businessError,
           refetch: refetchBusiness,
         };
       case "trending":
         return {
-          data: shuffleArray(
+          data: deduplicateArticles(shuffleArray(
             trendingCryptoNews?.articles || getDemoData("trending")
-          ),
+          )),
           loading: trendingLoading,
           error: trendingError,
           refetch: refetchTrending,
@@ -149,12 +162,12 @@ const News: React.FC = () => {
 
         const allArticles =
           apiArticles.length > 0
-            ? shuffleArray(apiArticles).sort(
+            ? deduplicateArticles(shuffleArray(apiArticles)).sort(
                 (a, b) =>
                   new Date(b.publishedAt).getTime() -
                   new Date(a.publishedAt).getTime()
               )
-            : shuffleArray(getDemoData("all")).sort(
+            : deduplicateArticles(shuffleArray(getDemoData("all"))).sort(
                 (a, b) =>
                   new Date(b.publishedAt).getTime() -
                   new Date(a.publishedAt).getTime()
