@@ -170,7 +170,7 @@ const Community: React.FC = () => {
       stars: 127,
       language: "JavaScript",
       lastUpdated: "5 days ago",
-      url: "https://my-to-do-list-nine-iota.vercel.app/",
+      url: "https://task-flow-organizer.vercel.app/login.html",
     },
   ];
 
