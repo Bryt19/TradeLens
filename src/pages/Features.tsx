@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import AnimatedCounter from "../components/AnimatedCounter";
 
 const Features: React.FC = () => {
   const features = [
@@ -99,9 +100,11 @@ const Features: React.FC = () => {
             <div className="flex flex-wrap justify-center gap-8 mt-12">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center">
-                  <div className="text-3xl md:text-4xl font-bold text-yellow-300">
-                    {stat.value}
-                  </div>
+                  <AnimatedCounter
+                    value={stat.value}
+                    duration={2000}
+                    className="text-3xl md:text-4xl font-bold text-yellow-300"
+                  />
                   <div className="text-blue-100 mt-2">{stat.label}</div>
                 </div>
               ))}
