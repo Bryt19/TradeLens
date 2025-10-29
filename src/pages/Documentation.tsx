@@ -16,9 +16,7 @@ import {
 } from "lucide-react";
 
 const Documentation: React.FC = () => {
-  const [expandedSections, setExpandedSections] = useState<string[]>([
-    "getting-started",
-  ]);
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showScrollButtons, setShowScrollButtons] = useState(false);
   const [isHovering, setIsHovering] = useState(false);

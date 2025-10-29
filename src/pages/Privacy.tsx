@@ -12,9 +12,7 @@ import {
 
 const Privacy: React.FC = () => {
   const lastUpdated = "January 1, 2024";
-  const [expandedSections, setExpandedSections] = useState<string[]>([
-    "information-we-collect",
-  ]);
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) =>

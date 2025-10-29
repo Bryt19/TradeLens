@@ -12,9 +12,7 @@ import {
 
 const Terms: React.FC = () => {
   const lastUpdated = "January 1, 2024";
-  const [expandedSections, setExpandedSections] = useState<string[]>([
-    "acceptance-of-terms",
-  ]);
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
   const toggleSection = (sectionId: string) => {
     setExpandedSections((prev) =>

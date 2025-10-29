@@ -26,9 +26,7 @@ const Help: React.FC = () => {
   const [selectedArticle, setSelectedArticle] = useState<
     (typeof popularArticles)[0] | null
   >(null);
-  const [expandedFaqSections, setExpandedFaqSections] = useState<string[]>([
-    "getting-started",
-  ]);
+  const [expandedFaqSections, setExpandedFaqSections] = useState<string[]>([]);
   const [notification, setNotification] = useState<{
     type: "success" | "info" | "error";
     message: string;
