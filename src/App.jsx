@@ -28,6 +28,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import ScrollToTop from "./components/ScrollToTop";
 import ScrollToTopOnRouteChange from "./components/ScrollToTopOnRouteChange";
 import FavoriteToast from "./components/FavoriteToast";
+import ConnectionStatus from "./components/ConnectionStatus";
 
 function App() {
   return (
@@ -181,6 +182,7 @@ function App() {
                 </Routes>
               </main>
               <FavoriteToast />
+              <ConnectionStatus />
               <ScrollToTop />
               <Footer />
             </div>
