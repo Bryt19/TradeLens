@@ -60,7 +60,13 @@ const ConnectionStatus: React.FC = () => {
   return (
     <>
       <div className="fixed bottom-0 left-1/2 -translate-x-1/2 z-50 w-full max-w-sm px-4 pb-4">
-        <div className="bg-gray-900 dark:bg-gray-800 text-white rounded-lg px-4 py-3 shadow-lg animate-slide-up">
+        <div
+          className={`${
+            isOnline
+              ? "bg-green-600 dark:bg-green-700"
+              : "bg-gray-900 dark:bg-gray-800"
+          } text-white rounded-lg px-4 py-3 shadow-lg animate-slide-up`}
+        >
           <p className="text-sm text-center">
             {isOnline ? "You're online" : "You're offline"}
           </p>
