@@ -1,43 +1,59 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const ConnectionStatus: React.FC = () => {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [showNotification, setShowNotification] = useState(false);
-  const [wasOffline, setWasOffline] = useState(false);
+  const wasOfflineRef = useRef(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      if (wasOffline) {
+      // Clear any existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      
+      // Only show "online" notification if we were previously offline
+      if (wasOfflineRef.current) {
         setShowNotification(true);
         // Auto-hide after 2 seconds (YouTube style)
-        const timer = setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
           setShowNotification(false);
+          wasOfflineRef.current = false;
         }, 2000);
-        return () => clearTimeout(timer);
       }
     };
 
     const handleOffline = () => {
       setIsOnline(false);
-      setWasOffline(true);
+      wasOfflineRef.current = true;
+      // Show notification immediately when going offline
       setShowNotification(true);
+      // Clear any existing timeout
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
 
-    // Set initial state
+    // Set initial state - show immediately if offline on page load
     if (!navigator.onLine) {
-      setWasOffline(true);
+      wasOfflineRef.current = true;
       setShowNotification(true);
     }
 
-    window.addEventListener("online", handleOnline);
-    window.addEventListener("offline", handleOffline);
+    // Add event listeners for immediate detection
+    window.addEventListener("online", handleOnline, false);
+    window.addEventListener("offline", handleOffline, false);
 
     return () => {
-      window.removeEventListener("online", handleOnline);
-      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline, false);
+      window.removeEventListener("offline", handleOffline, false);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
-  }, [wasOffline]);
+  }, []); // Empty dependency array - set up once
 
   if (!showNotification) return null;
 
