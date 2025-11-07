@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Calendar,
   User,
@@ -7,14 +7,40 @@ import {
   Clock,
   Filter,
   X,
+  RefreshCw,
 } from "lucide-react";
+import {
+  polygonNewsService,
+  gnewsService,
+  newsDataService,
+} from "../services/api";
+import { NewsArticle } from "../types";
+
+interface BlogPost {
+  id: number;
+  title: string;
+  excerpt: string;
+  author: string;
+  date: string;
+  readTime: string;
+  category: string;
+  image: string;
+  featured?: boolean;
+  content?: string;
+  url?: string;
+  source?: string;
+  isNews?: boolean;
+}
 
 const Blog: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedPost, setSelectedPost] = useState<any>(null);
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [isLoadingNews, setIsLoadingNews] = useState(true);
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
 
   // Function to generate realistic recent dates
   const generateRecentDate = (daysAgo: number) => {
@@ -24,7 +50,8 @@ const Blog: React.FC = () => {
     return pastDate.toISOString().split("T")[0];
   };
 
-  const blogPosts = [
+  // Default hardcoded blog posts (fallback)
+  const defaultBlogPosts: BlogPost[] = [
     {
       id: 1,
       title: "The Future of Cryptocurrency Trading: Trends to Watch in 2025",
@@ -405,6 +432,192 @@ const Blog: React.FC = () => {
     },
   ];
 
+  // Transform news article to blog post format
+  const transformNewsToBlogPost = (article: NewsArticle, index: number): BlogPost => {
+    const publishedDate = new Date(article.publishedAt);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - publishedDate.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(diffTime / (1000 * 60 * 60));
+    const diffMinutes = Math.floor(diffTime / (1000 * 60));
+
+    let timeAgo = "";
+    if (diffDays > 0) {
+      timeAgo = `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    } else if (diffHours > 0) {
+      timeAgo = `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
+    } else {
+      timeAgo = `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""} ago`;
+    }
+
+    // Estimate read time based on description length
+    const wordCount = (article.description || article.title || "").split(" ").length;
+    const readTime = Math.max(2, Math.ceil(wordCount / 200));
+
+    // Determine category based on content
+    const titleLower = article.title.toLowerCase();
+    const descLower = (article.description || "").toLowerCase();
+    let category = "Analysis";
+    if (
+      titleLower.includes("crypto") ||
+      titleLower.includes("bitcoin") ||
+      titleLower.includes("ethereum") ||
+      descLower.includes("crypto") ||
+      descLower.includes("bitcoin") ||
+      descLower.includes("ethereum")
+    ) {
+      category = "Cryptocurrency";
+    } else if (
+      titleLower.includes("trading") ||
+      titleLower.includes("trade") ||
+      descLower.includes("trading")
+    ) {
+      category = "Trading";
+    } else if (
+      titleLower.includes("learn") ||
+      titleLower.includes("guide") ||
+      titleLower.includes("how to") ||
+      descLower.includes("learn")
+    ) {
+      category = "Education";
+    } else if (
+      titleLower.includes("tech") ||
+      titleLower.includes("blockchain") ||
+      titleLower.includes("ai") ||
+      descLower.includes("technology")
+    ) {
+      category = "Technology";
+    }
+
+    return {
+      id: 1000 + index, // Start from 1000 to avoid conflicts with hardcoded posts
+      title: article.title,
+      excerpt: article.description || article.title,
+      author: article.source.name || "News Source",
+      date: publishedDate.toISOString().split("T")[0],
+      readTime: `${readTime} min read`,
+      category,
+      image:
+        article.urlToImage ||
+        "https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&h=300&fit=crop",
+      featured: index === 0, // First news article is featured
+      url: article.url,
+      source: article.source.name,
+      isNews: true,
+      content: `
+        <p>${article.description || article.title}</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-4">
+          Published ${timeAgo} • Source: <a href="${article.url}" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">${article.source.name}</a>
+        </p>
+        <div class="mt-6">
+          <a href="${article.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+            Read Full Article <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+          </a>
+        </div>
+      `,
+    };
+  };
+
+  // Fetch real-time news from multiple APIs
+  const fetchRealTimeNews = async () => {
+    setIsLoadingNews(true);
+    try {
+      const newsArticles: NewsArticle[] = [];
+      const promises: Promise<any>[] = [];
+
+      // Try multiple news sources in parallel
+      // Priority: Polygon > GNews > NewsData > NewsAPI > WorldNews
+      promises.push(
+        polygonNewsService
+          .getFinancialNews(1, 10)
+          .then((response) => {
+            if (response.articles) {
+              newsArticles.push(...response.articles.slice(0, 5));
+            }
+          })
+          .catch(() => {})
+      );
+
+      promises.push(
+        polygonNewsService
+          .getCryptoNews(1, 10)
+          .then((response) => {
+            if (response.articles) {
+              newsArticles.push(...response.articles.slice(0, 5));
+            }
+          })
+          .catch(() => {})
+      );
+
+      promises.push(
+        gnewsService
+          .getFinancialNews(1, 10)
+          .then((response) => {
+            if (response.articles && newsArticles.length < 15) {
+              newsArticles.push(...response.articles.slice(0, 5));
+            }
+          })
+          .catch(() => {})
+      );
+
+      promises.push(
+        newsDataService
+          .getFinancialNews(1, 10)
+          .then((response) => {
+            if (response.articles && newsArticles.length < 20) {
+              newsArticles.push(...response.articles.slice(0, 5));
+            }
+          })
+          .catch(() => {})
+      );
+
+      await Promise.allSettled(promises);
+
+      // Remove duplicates based on title
+      const uniqueArticles = newsArticles.filter(
+        (article, index, self) =>
+          index ===
+          self.findIndex(
+            (a) => a.title.toLowerCase() === article.title.toLowerCase()
+          )
+      );
+
+      // Sort by published date (newest first)
+      uniqueArticles.sort(
+        (a, b) =>
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+      );
+
+      // Transform news articles to blog posts
+      const newsPosts = uniqueArticles
+        .slice(0, 20)
+        .map((article, index) => transformNewsToBlogPost(article, index));
+
+      // Combine with hardcoded posts (news first, then hardcoded)
+      const allPosts = [...newsPosts, ...defaultBlogPosts];
+      setBlogPosts(allPosts);
+      setLastRefresh(new Date());
+    } catch (error) {
+      console.error("Error fetching news:", error);
+      // Fallback to default posts if news fetch fails
+      setBlogPosts(defaultBlogPosts);
+    } finally {
+      setIsLoadingNews(false);
+    }
+  };
+
+  // Fetch news on component mount and set up auto-refresh
+  useEffect(() => {
+    fetchRealTimeNews();
+
+    // Auto-refresh news every 10 minutes
+    const refreshInterval = setInterval(() => {
+      fetchRealTimeNews();
+    }, 10 * 60 * 1000); // 10 minutes
+
+    return () => clearInterval(refreshInterval);
+  }, []);
+
   const categories = [
     "All",
     "Cryptocurrency",
@@ -464,8 +677,18 @@ const Blog: React.FC = () => {
   };
 
   // Handle blog post selection
-  const handleReadMore = (post: any) => {
-    setSelectedPost(post);
+  const handleReadMore = (post: BlogPost) => {
+    // If it's a news article with external URL, open in new tab
+    if (post.isNews && post.url) {
+      window.open(post.url, "_blank", "noopener,noreferrer");
+    } else {
+      setSelectedPost(post);
+    }
+  };
+
+  // Handle manual refresh
+  const handleRefresh = () => {
+    fetchRealTimeNews();
   };
 
   // Handle modal close
@@ -478,13 +701,34 @@ const Blog: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            TradeLens Blog
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white">
+              TradeLens Blog
+            </h1>
+            <button
+              onClick={handleRefresh}
+              disabled={isLoadingNews}
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              title="Refresh news"
+            >
+              <RefreshCw
+                className={`w-5 h-5 ${isLoadingNews ? "animate-spin" : ""}`}
+              />
+            </button>
+          </div>
+          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-2">
             Stay informed with the latest insights, analysis, and trends in
             financial markets, cryptocurrency, and trading strategies.
           </p>
+          {isLoadingNews ? (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Loading real-time news...
+            </p>
+          ) : (
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Last updated: {lastRefresh.toLocaleTimeString()}
+            </p>
+          )}
         </div>
 
         {/* Categories Filter */}
@@ -556,6 +800,11 @@ const Blog: React.FC = () => {
                       <span className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-3 py-1 rounded-full text-sm">
                         {post.category}
                       </span>
+                      {post.isNews && (
+                        <span className="bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-3 py-1 rounded-full text-sm font-medium">
+                          Live News
+                        </span>
+                      )}
                     </div>
                     <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
                       {post.title}
@@ -584,7 +833,7 @@ const Blog: React.FC = () => {
                         onClick={() => handleReadMore(post)}
                         className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
                       >
-                        <span>Read More</span>
+                        <span>{post.isNews ? "Read Article" : "Read More"}</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -627,6 +876,11 @@ const Blog: React.FC = () => {
                       <span className="text-sm text-gray-500 dark:text-gray-400">
                         {post.category}
                       </span>
+                      {post.isNews && (
+                        <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full">
+                          Live News
+                        </span>
+                      )}
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2">
                       {post.title}
@@ -652,7 +906,7 @@ const Blog: React.FC = () => {
                         onClick={() => handleReadMore(post)}
                         className="flex items-center space-x-1 text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
                       >
-                        <span>Read</span>
+                        <span>{post.isNews ? "Read Article" : "Read"}</span>
                         <ArrowRight className="w-4 h-4" />
                       </button>
                     </div>
