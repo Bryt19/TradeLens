@@ -8,7 +8,9 @@ import {
   BarChart3,
   ChevronDown,
   ChevronUp,
+  Globe,
 } from "lucide-react";
+import { AnimatedFaqAccordion } from "../components/ui/animated-faq-accordion";
 
 const Cookies: React.FC = () => {
   const lastUpdated = "January 1, 2024";
@@ -238,184 +240,30 @@ const Cookies: React.FC = () => {
 
         {/* Cookie Types */}
         <div className="mb-8">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
-          <button
-            onClick={() => toggleSection("cookie-types")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleSection("cookie-types");
-              }
-            }}
-            aria-expanded={expandedSections.includes("cookie-types")}
-            aria-controls="cookie-types-content"
-            className="w-full p-8 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Types of Cookies We Use
-              </h2>
-              {expandedSections.includes("cookie-types") ? (
-                <ChevronUp className="w-6 h-6 text-gray-400" aria-hidden="true" />
-              ) : (
-                <ChevronDown className="w-6 h-6 text-gray-400" aria-hidden="true" />
-              )}
-            </div>
-          </button>
-            {expandedSections.includes("cookie-types") && (
-              <div id="cookie-types-content" className="px-8 pb-8" role="region">
-                <div className="space-y-6">
-                  {cookieTypes.map((cookieType, index) => {
-                    const Icon = cookieType.icon;
-                    return (
-                      <div
-                        key={index}
-                        className="bg-gray-50 dark:bg-gray-800 rounded-xl p-6"
-                      >
-                        <div className="flex items-start space-x-4 mb-4">
-                          <Icon className="w-8 h-8 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
-                          <div className="flex-1">
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                              {cookieType.type}
-                            </h3>
-                            <p className="text-gray-600 dark:text-gray-300 mb-3">
-                              {cookieType.description}
-                            </p>
-                            <div className="flex items-center space-x-4 text-sm">
-                              <span className="text-gray-500 dark:text-gray-400">
-                                <strong>Purpose:</strong> {cookieType.purpose}
-                              </span>
-                              <span className="text-gray-500 dark:text-gray-400">
-                                <strong>Retention:</strong>{" "}
-                                {cookieType.retention}
-                              </span>
-                              <span
-                                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                  cookieType.canDisable
-                                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                                    : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200"
-                                }`}
-                              >
-                                {cookieType.canDisable
-                                  ? "Can Disable"
-                                  : "Required"}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-gray-900 dark:text-white mb-3">
-                            Examples:
-                          </h4>
-                          <ul className="space-y-2">
-                            {cookieType.examples.map(
-                              (example, exampleIndex) => (
-                                <li
-                                  key={exampleIndex}
-                                  className="text-gray-600 dark:text-gray-300 flex items-start space-x-2"
-                                >
-                                  <span className="text-blue-500 mt-1">•</span>
-                                  <span>{example}</span>
-                                </li>
-                              )
-                            )}
-                          </ul>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
+          <AnimatedFaqAccordion
+            items={cookieTypes.map((cookieType, index) => ({
+              icon: cookieType.icon,
+              value: `cookie-type-${index}`,
+              question: cookieType.type,
+              answer: `${cookieType.description}\n\nPurpose: ${cookieType.purpose}\nRetention: ${cookieType.retention}\nStatus: ${cookieType.canDisable ? "Can Disable" : "Required"}\n\nExamples:\n${cookieType.examples.map((ex) => `• ${ex}`).join("\n")}`,
+            }))}
+            className="max-w-none"
+          />
         </div>
 
         {/* Third-Party Services */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg mb-8">
-          <button
-            onClick={() => toggleSection("third-party-services")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleSection("third-party-services");
-              }
-            }}
-            aria-expanded={expandedSections.includes("third-party-services")}
-            aria-controls="third-party-services-content"
-            className="w-full p-8 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Third-Party Services
-              </h2>
-              {expandedSections.includes("third-party-services") ? (
-                <ChevronUp className="w-6 h-6 text-gray-400" aria-hidden="true" />
-              ) : (
-                <ChevronDown className="w-6 h-6 text-gray-400" aria-hidden="true" />
-              )}
-            </div>
-          </button>
-          {expandedSections.includes("third-party-services") && (
-            <div id="third-party-services-content" className="px-8 pb-8" role="region">
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                We use third-party services that may set their own cookies.
-                These services help us provide better functionality and
-                analytics.
-              </p>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200 dark:border-gray-700">
-                      <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                        Service
-                      </th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                        Purpose
-                      </th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                        Cookies
-                      </th>
-                      <th className="text-left py-3 px-4 font-semibold text-gray-900 dark:text-white">
-                        Retention
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                    {thirdPartyServices.map((service, index) => (
-                      <tr key={index}>
-                        <td className="py-3 px-4">
-                          <div>
-                            <p className="font-medium text-gray-900 dark:text-white">
-                              {service.name}
-                            </p>
-                            <a
-                              href={service.privacyPolicy}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 dark:text-blue-400 hover:underline text-sm"
-                            >
-                              Privacy Policy
-                            </a>
-                          </div>
-                        </td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-300">
-                          {service.purpose}
-                        </td>
-                        <td className="py-3 px-4">
-                          <code className="text-sm text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
-                            {service.cookies.join(", ")}
-                          </code>
-                        </td>
-                        <td className="py-3 px-4 text-gray-600 dark:text-gray-300">
-                          {service.retention}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+        <div className="mb-8">
+          <AnimatedFaqAccordion
+            items={[
+              {
+                icon: Database,
+                value: "third-party-services",
+                question: "Third-Party Services",
+                answer: `We use third-party services that may set their own cookies. These services help us provide better functionality and analytics.\n\n${thirdPartyServices.map((service) => `${service.name}\nPurpose: ${service.purpose}\nCookies: ${service.cookies.join(", ")}\nRetention: ${service.retention}\nPrivacy Policy: ${service.privacyPolicy}`).join("\n\n")}`,
+              },
+            ]}
+            className="max-w-none"
+          />
         </div>
 
         {/* Cookie Settings */}
@@ -555,74 +403,18 @@ const Cookies: React.FC = () => {
         </div>
 
         {/* Browser Settings */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg mb-8">
-          <button
-            onClick={() => toggleSection("browser-settings")}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                toggleSection("browser-settings");
-              }
-            }}
-            aria-expanded={expandedSections.includes("browser-settings")}
-            aria-controls="browser-settings-content"
-            className="w-full p-8 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Browser Cookie Settings
-              </h2>
-              {expandedSections.includes("browser-settings") ? (
-                <ChevronUp className="w-6 h-6 text-gray-400" aria-hidden="true" />
-              ) : (
-                <ChevronDown className="w-6 h-6 text-gray-400" aria-hidden="true" />
-              )}
-            </div>
-          </button>
-          {expandedSections.includes("browser-settings") && (
-            <div id="browser-settings-content" className="px-8 pb-8" role="region">
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
-                You can also control cookies through your browser settings.
-                Here's how to manage cookies in popular browsers:
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    Chrome
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Settings → Privacy and security → Cookies and other site
-                    data
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    Firefox
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Options → Privacy & Security → Cookies and Site Data
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    Safari
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Preferences → Privacy → Manage Website Data
-                  </p>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-                    Edge
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Settings → Cookies and site permissions → Cookies and site
-                    data
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+        <div className="mb-8">
+          <AnimatedFaqAccordion
+            items={[
+              {
+                icon: Globe,
+                value: "browser-settings",
+                question: "Browser Cookie Settings",
+                answer: `You can also control cookies through your browser settings. Here's how to manage cookies in popular browsers:\n\nChrome\nSettings → Privacy and security → Cookies and other site data\n\nFirefox\nOptions → Privacy & Security → Cookies and Site Data\n\nSafari\nPreferences → Privacy → Manage Website Data\n\nEdge\nSettings → Cookies and site permissions → Cookies and site data`,
+              },
+            ]}
+            className="max-w-none"
+          />
         </div>
 
         {/* Contact Information */}

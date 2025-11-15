@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-  Search,
   Building2,
   Star,
   BarChart3,
@@ -24,6 +23,7 @@ import Loading from "../components/Loading";
 import Chart from "../components/Chart";
 import { debounce } from "../utils/helpers";
 import { AlphaVantageQuote } from "../types";
+import { AnimatedSearchBar } from "../components/ui/animated-search-bar";
 
 const Stocks: React.FC = () => {
   const navigate = useNavigate();
@@ -171,8 +171,7 @@ const Stocks: React.FC = () => {
     []
   );
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
+  const handleSearchChange = (query: string) => {
     setSearchQuery(query);
     debouncedSearch(query);
   };
@@ -291,39 +290,28 @@ const Stocks: React.FC = () => {
 
         {/* Search Section */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder="Search for stocks (e.g., AAPL, MSFT, GOOGL)..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white text-base"
-            />
-
-            {/* Search Results Dropdown */}
-            {searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
-                {searchResults.map((result, index) => (
-                  <button
-                    key={index}
-                    onClick={() => handleSymbolSelect(result["1. symbol"])}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 text-left hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center space-x-3"
-                  >
-                    <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0" />
-                    <div className="min-w-0 flex-1">
-                      <div className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">
-                        {result["1. symbol"]}
-                      </div>
-                      <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
-                        {result["2. name"]}
-                      </div>
-                    </div>
-                  </button>
-                ))}
+          <AnimatedSearchBar
+            placeholder="Search for stocks (e.g., AAPL, MSFT, GOOGL)..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            results={searchResults}
+            onResultSelect={(result) => handleSymbolSelect(result["1. symbol"])}
+            renderResult={(result) => (
+              <div className="flex items-center space-x-3 w-full">
+                <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <div className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">
+                    {result["1. symbol"]}
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
+                    {result["2. name"]}
+                  </div>
+                </div>
               </div>
             )}
-          </div>
+            className="w-full"
+            inputClassName="text-base py-2 sm:py-3"
+          />
 
           {/* Demo Symbols */}
           <div className="mt-4">

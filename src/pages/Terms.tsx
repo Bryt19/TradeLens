@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   FileText,
   AlertTriangle,
@@ -6,21 +6,11 @@ import {
   Shield,
   Users,
   CreditCard,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
+import { AnimatedFaqAccordion } from "../components/ui/animated-faq-accordion";
 
 const Terms: React.FC = () => {
   const lastUpdated = "January 1, 2024";
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
-
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections((prev) =>
-      prev.includes(sectionId)
-        ? prev.filter((id) => id !== sectionId)
-        : [...prev, sectionId]
-    );
-  };
 
   const sections = [
     {
@@ -264,61 +254,23 @@ const Terms: React.FC = () => {
 
         {/* Main Content */}
         <div className="space-y-8">
-          {sections.map((section) => {
-            const Icon = section.icon;
-            const isExpanded = expandedSections.includes(section.id);
-            return (
-              <div
-                key={section.id}
-                className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg"
-              >
-                <button
-                  onClick={() => toggleSection(section.id)}
-                  className="w-full p-8 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                        {section.title}
-                      </h2>
-                    </div>
-                    {isExpanded ? (
-                      <ChevronUp className="w-6 h-6 text-gray-400" />
-                    ) : (
-                      <ChevronDown className="w-6 h-6 text-gray-400" />
-                    )}
-                  </div>
-                </button>
-                {isExpanded && (
-                  <div className="px-8 pb-8">
-                    <div className="space-y-4">
-                      {section.content.map((item, index) => (
-                        <div key={index}>
-                          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
-                            {item.text}
-                          </p>
-                          {item.items && (
-                            <ul className="space-y-2 ml-4">
-                              {item.items.map((listItem, itemIndex) => (
-                                <li
-                                  key={itemIndex}
-                                  className="text-gray-600 dark:text-gray-300 flex items-start space-x-2"
-                                >
-                                  <span className="text-blue-500 mt-1">•</span>
-                                  <span>{listItem}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          <AnimatedFaqAccordion
+            items={sections.map((section) => ({
+              icon: section.icon,
+              value: section.id,
+              question: section.title,
+              answer: section.content
+                .map((item) => {
+                  let answerText = item.text;
+                  if (item.items && item.items.length > 0) {
+                    answerText += "\n\n" + item.items.map((listItem) => `• ${listItem}`).join("\n");
+                  }
+                  return answerText;
+                })
+                .join("\n\n"),
+            }))}
+            className="max-w-none"
+          />
         </div>
 
         {/* Contact Information */}

@@ -14,6 +14,7 @@ import {
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
+import { AnimatedSearchBar } from "../components/ui/animated-search-bar";
 
 const Documentation: React.FC = () => {
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
@@ -246,16 +247,14 @@ print(stock_quote)`;
             into your applications.
           </p>
           <div className="max-w-md mx-auto">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search documentation..."
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white text-base"
-              />
-            </div>
+            <AnimatedSearchBar
+              placeholder="Search documentation..."
+              value={searchQuery}
+              onChange={(value) => handleSearch(value)}
+              showResults={false}
+              className="w-full"
+              inputClassName="text-base py-3"
+            />
           </div>
         </div>
 

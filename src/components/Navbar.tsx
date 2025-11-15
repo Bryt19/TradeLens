@@ -6,14 +6,14 @@ import {
   BarChart3,
   Newspaper,
   Monitor,
-  Sun,
-  Moon,
   Menu,
   X,
 } from "lucide-react";
 import { useApp } from "../contexts/AppContext";
 import UserProfile from "./UserProfile";
 import { useAuth } from "../contexts/AuthContext";
+import { PillBase } from "./ui/3d-adaptive-navigation-bar";
+import { ThemeToggle } from "./ui/theme-toggle";
 
 const Navbar: React.FC = () => {
   const { state, dispatch } = useApp();
@@ -21,6 +21,38 @@ const Navbar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(true);
+  const lastScrollY = React.useRef(0);
+
+  React.useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          // Show navbar at the top of the page
+          if (currentScrollY < 10) {
+            setIsVisible(true);
+          } 
+          // Hide navbar when scrolling down, show when scrolling up
+          else if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+            setIsVisible(false);
+          } else if (currentScrollY < lastScrollY.current) {
+            setIsVisible(true);
+          }
+          
+          lastScrollY.current = currentScrollY;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const navigation = [
     { name: "Home", href: "/", icon: TrendingUp },
@@ -30,8 +62,17 @@ const Navbar: React.FC = () => {
     { name: "News", href: "/news", icon: Newspaper },
   ];
 
-  const toggleTheme = () => {
-    dispatch({ type: "TOGGLE_THEME" });
+  // Navigation items for 3D pill (matching the navigation structure)
+  const pillNavItems = navigation.map((item) => ({
+    label: item.name,
+    id: item.name.toLowerCase(),
+    href: item.href,
+  }));
+
+  const handleThemeChange = (newTheme: "light" | "dark") => {
+    if (newTheme !== state.theme) {
+      dispatch({ type: "SET_THEME", payload: newTheme });
+    }
   };
 
   const isActive = (path: string) => {
@@ -48,79 +89,56 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="bg-white dark:bg-black shadow-lg border-b border-gray-200 dark:border-gray-800">
+    <nav 
+      className={`sticky top-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-xl border-b border-gray-300/50 dark:border-gray-700/50 transition-transform duration-300 ease-in-out ${
+        isVisible ? "translate-y-0" : "-translate-y-full"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white">
+              <span className="text-xl font-bold text-gray-900 dark:text-white drop-shadow-sm">
                 TradeLens
               </span>
             </Link>
           </div>
 
-          {/* Desktop Navigation (disabled when logged out) */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navigation.map((item) => {
-              const Icon = item.icon;
-              const isProtected = item.href !== "/"; // Home is not protected
-              const content = (
-                <div
-                  className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors cursor-pointer ${
-                    isActive(item.href)
-                      ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-                      : "text-gray-600 dark:text-gray-300"
-                  } ${
-                    !authState.user && isProtected
-                      ? "opacity-75 hover:opacity-100"
-                      : "hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
-                  }`}
-                  title={
-                    !authState.user && isProtected
-                      ? "Click to sign in"
-                      : undefined
-                  }
-                  onClick={() => {
-                    if (isProtected) {
-                      handleNavigation(item.href);
-                    } else {
-                      navigate(item.href);
-                    }
-                  }}
-                >
-                  <Icon className="w-4 h-4" />
-                  <span>{item.name}</span>
-                </div>
-              );
-
-              return <div key={item.name}>{content}</div>;
-            })}
+          {/* Desktop Navigation - 3D Adaptive Pill */}
+          <div className="hidden md:flex items-center justify-center flex-1">
+            <PillBase
+              navItems={pillNavItems}
+              theme={state.theme}
+              onItemClick={(href) => {
+                const item = navigation.find(nav => nav.href === href);
+                const isProtected = item?.href !== "/"; // Home is not protected
+                if (isProtected) {
+                  handleNavigation(href);
+                } else {
+                  navigate(href);
+                }
+              }}
+            />
           </div>
 
           {/* Theme Toggle, Auth, & Mobile Menu Button */}
           <div className="flex items-center space-x-4">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-              aria-label="Toggle theme"
-            >
-              {state.theme === "light" ? (
-                <Moon className="w-5 h-5" />
-              ) : (
-                <Sun className="w-5 h-5" />
-              )}
-            </button>
+            <ThemeToggle
+              theme={state.theme}
+              onThemeChange={handleThemeChange}
+              className="backdrop-blur-sm"
+            />
 
             {authState.user ? (
               <UserProfile />
             ) : (
               <Link
                 to="/login"
-                className="px-3 py-2 rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl"
               >
                 Login
               </Link>
@@ -129,7 +147,7 @@ const Navbar: React.FC = () => {
             {/* Mobile menu button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-md text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="md:hidden p-2 rounded-md text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/80 dark:hover:bg-gray-700/80 transition-colors backdrop-blur-sm"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? (
@@ -144,18 +162,18 @@ const Navbar: React.FC = () => {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-200 dark:border-gray-700">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-300/50 dark:border-gray-700/50 bg-white/98 dark:bg-black/98 backdrop-blur-md">
               {navigation.map((item) => {
                 const Icon = item.icon;
                 const isProtected = item.href !== "/"; // Home is not protected
                 const classes = `flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors cursor-pointer ${
                   isActive(item.href)
-                    ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-                    : "text-gray-600 dark:text-gray-300"
+                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-semibold"
+                    : "text-gray-700 dark:text-gray-200"
                 } ${
                   !authState.user && isProtected
                     ? "opacity-75 hover:opacity-100"
-                    : "hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                    : "hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/80 dark:hover:bg-gray-700/80"
                 }`;
 
                 return (

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import AnimatedCounter from "../components/AnimatedCounter";
+import { CyberneticBentoGrid } from "../components/ui/cybernetic-bento-grid";
 
 const Features: React.FC = () => {
   const features = [
@@ -114,7 +115,7 @@ const Features: React.FC = () => {
       </div>
 
       {/* Features Grid */}
-      <div className="py-20">
+      <div className="py-20 bg-gray-50 dark:bg-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -126,32 +127,8 @@ const Features: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 hover:shadow-xl transition-shadow duration-300"
-              >
-                <div className="text-4xl mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                  {feature.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  {feature.description}
-                </p>
-                <ul className="space-y-2">
-                  {feature.benefits.map((benefit, benefitIndex) => (
-                    <li
-                      key={benefitIndex}
-                      className="flex items-center text-sm text-gray-700 dark:text-gray-300"
-                    >
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mr-3"></span>
-                      {benefit}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <div className="bg-gray-50 dark:bg-black">
+            <CyberneticBentoGrid className="min-h-0" />
           </div>
         </div>
       </div>

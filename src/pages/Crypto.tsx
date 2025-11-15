@@ -15,6 +15,7 @@ import Loading from "../components/Loading";
 import { debounce } from "../utils/helpers";
 import { CoinGeckoCoin } from "../types";
 import { useAuth } from "../contexts/AuthContext";
+import { AnimatedSearchBar } from "../components/ui/animated-search-bar";
 
 const Crypto: React.FC = () => {
   const navigate = useNavigate();
@@ -137,11 +138,9 @@ const Crypto: React.FC = () => {
     }
   }, [showFavoritesOnly]);
 
-  // Debounced search
-  const debouncedSearch = useMemo(
-    () => debounce((query: string) => setSearchQuery(query), 300),
-    []
-  );
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value); // Update immediately for responsive input
+  };
 
   // Filter and sort data with optimized performance
   const filteredAndSortedData = useMemo(() => {
@@ -217,10 +216,6 @@ const Crypto: React.FC = () => {
     displayCount < Math.min(filteredAndSortedData.length, 100);
   // const hasMoreData = filteredAndSortedData.length > displayCount;
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    debouncedSearch(e.target.value);
-  };
-
   const handleSortChange = (newSortBy: typeof sortBy) => {
     // Instant visual feedback
     setIsSorting(true);
@@ -282,15 +277,14 @@ const Crypto: React.FC = () => {
           <div className="space-y-4">
             {/* Search */}
             <div className="w-full">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search cryptocurrencies..."
-                  className="w-full pl-10 pr-4 py-2 sm:py-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white text-base"
-                  onChange={handleSearchChange}
-                />
-              </div>
+              <AnimatedSearchBar
+                placeholder="Search cryptocurrencies..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                showResults={false}
+                className="w-full"
+                inputClassName="text-base py-2 sm:py-3"
+              />
             </div>
 
             {/* Sort Options and Favorites Filter */}

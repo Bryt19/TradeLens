@@ -7,9 +7,9 @@ import {
   Mail,
   Phone,
   ChevronRight,
-  ChevronDown,
-  ChevronUp,
 } from "lucide-react";
+import { AnimatedSearchBar } from "../components/ui/animated-search-bar";
+import { AnimatedFaqAccordion } from "../components/ui/animated-faq-accordion";
 
 const Help: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +26,6 @@ const Help: React.FC = () => {
   const [selectedArticle, setSelectedArticle] = useState<
     (typeof popularArticles)[0] | null
   >(null);
-  const [expandedFaqSections, setExpandedFaqSections] = useState<string[]>([]);
   const [notification, setNotification] = useState<{
     type: "success" | "info" | "error";
     message: string;
@@ -49,14 +48,6 @@ const Help: React.FC = () => {
 
   const handleArticleClick = (article: (typeof popularArticles)[0]) => {
     setSelectedArticle(article);
-  };
-
-  const toggleFaqSection = (sectionId: string) => {
-    setExpandedFaqSections((prev) =>
-      prev.includes(sectionId)
-        ? prev.filter((id) => id !== sectionId)
-        : [...prev, sectionId]
-    );
   };
 
   const handleLiveChat = () => {
@@ -313,12 +304,20 @@ const Help: React.FC = () => {
     },
   ];
 
-  const filteredQuestions = faqCategories.flatMap((category) =>
-    category.questions.filter(
-      (q) =>
-        q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        q.answer.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+  // Flatten FAQ categories into a single list for the accordion
+  const allFaqs = faqCategories.flatMap((category,) =>
+    category.questions.map((faq, questionIndex) => ({
+      icon: category.icon,
+      value: `${category.id}-${questionIndex}`,
+      question: faq.question,
+      answer: faq.answer,
+    }))
+  );
+
+  const filteredQuestions = allFaqs.filter(
+    (q) =>
+      q.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      q.answer.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -334,16 +333,14 @@ const Help: React.FC = () => {
             in touch with our support team.
           </p>
           <div className="max-w-2xl mx-auto">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search for help articles, FAQs, or topics..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-800 dark:text-white text-lg"
-              />
-            </div>
+            <AnimatedSearchBar
+              placeholder="Search for help articles, FAQs, or topics..."
+              value={searchQuery}
+              onChange={(value) => setSearchQuery(value)}
+              showResults={false}
+              className="w-full"
+              inputClassName="text-lg py-4 pl-12"
+            />
           </div>
         </div>
 
@@ -394,21 +391,7 @@ const Help: React.FC = () => {
               Search Results for "{searchQuery}"
             </h2>
             {filteredQuestions.length > 0 ? (
-              <div className="space-y-4">
-                {filteredQuestions.map((question, index) => (
-                  <div
-                    key={index}
-                    className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6"
-                  >
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                      {question.question}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300">
-                      {question.answer}
-                    </p>
-                  </div>
-                ))}
-              </div>
+              <AnimatedFaqAccordion items={filteredQuestions} />
             ) : (
               <div className="text-center py-12">
                 <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -458,53 +441,7 @@ const Help: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
                 Frequently Asked Questions
               </h2>
-              <div className="space-y-6">
-                {faqCategories.map((category) => {
-                  const Icon = category.icon;
-                  const isExpanded = expandedFaqSections.includes(category.id);
-                  return (
-                    <div
-                      key={category.id}
-                      className="bg-white dark:bg-gray-900 rounded-lg shadow-md"
-                    >
-                      <button
-                        onClick={() => toggleFaqSection(category.id)}
-                        className="w-full p-6 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                              {category.title}
-                            </h3>
-                          </div>
-                          {isExpanded ? (
-                            <ChevronUp className="w-5 h-5 text-gray-400" />
-                          ) : (
-                            <ChevronDown className="w-5 h-5 text-gray-400" />
-                          )}
-                        </div>
-                      </button>
-                      {isExpanded && (
-                        <div className="p-6">
-                          <div className="space-y-6">
-                            {category.questions.map((faq, index) => (
-                              <div key={index}>
-                                <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                                  {faq.question}
-                                </h4>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                  {faq.answer}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+              <AnimatedFaqAccordion items={allFaqs} />
             </div>
           </>
         )}
