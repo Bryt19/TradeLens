@@ -64,8 +64,8 @@ const Pricing: React.FC = () => {
     },
     {
       name: "Enterprise",
-      price: "Custom",
-      period: "contact us",
+      price: "$70",
+      period: "per month",
       description: "Tailored solutions for institutions and large teams",
       icon: Shield,
       features: [
@@ -162,72 +162,6 @@ const Pricing: React.FC = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-50 bg-black">
-
-        {/* Features Comparison */}
-        <div className="bg-neutral-900 border border-neutral-800 rounded-2xl shadow-lg p-8 mb-16">
-          <h2 className="text-3xl font-bold text-white text-center mb-8">
-            Compare Features
-          </h2>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-neutral-700">
-                  <th className="text-left py-4 px-4 font-semibold text-white">
-                    Features
-                  </th>
-                  <th className="text-center py-4 px-4 font-semibold text-white">
-                    Free
-                  </th>
-                  <th className="text-center py-4 px-4 font-semibold text-blue-400">
-                    Pro
-                  </th>
-                  <th className="text-center py-4 px-4 font-semibold text-white">
-                    Enterprise
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-neutral-700">
-                {[
-                  "Real-time crypto prices",
-                  "Stock market data",
-                  "Financial news",
-                  "Portfolio tracking",
-                  "Basic charts",
-                  "Advanced charting",
-                  "Price alerts",
-                  "API access",
-                  "Historical data",
-                  "Priority support",
-                  "Custom integrations",
-                ].map((feature, index) => (
-                  <tr key={index}>
-                    <td className="py-4 px-4 text-gray-300">
-                      {feature}
-                    </td>
-                    <td className="py-4 px-4 text-center">
-                      {index < 5 ? (
-                        <Check className="w-5 h-5 text-green-500 mx-auto" />
-                      ) : (
-                        <span className="text-gray-500">—</span>
-                      )}
-                    </td>
-                    <td className="py-4 px-4 text-center">
-                      {index < 8 ? (
-                        <Check className="w-5 h-5 text-green-500 mx-auto" />
-                      ) : (
-                        <span className="text-gray-500">—</span>
-                      )}
-                    </td>
-                    <td className="py-4 px-4 text-center">
-                      <Check className="w-5 h-5 text-green-500 mx-auto" />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
         {/* FAQ Section */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-white text-center mb-8">

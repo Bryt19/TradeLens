@@ -116,12 +116,12 @@ const Navbar: React.FC = () => {
               onItemClick={(href) => {
                 const item = navigation.find(nav => nav.href === href);
                 const isProtected = item?.href !== "/"; // Home is not protected
-                if (isProtected) {
+                    if (isProtected) {
                   handleNavigation(href);
-                } else {
+                    } else {
                   navigate(href);
-                }
-              }}
+                    }
+                  }}
             />
           </div>
 
@@ -133,16 +133,7 @@ const Navbar: React.FC = () => {
               className="backdrop-blur-sm"
             />
 
-            {authState.user ? (
-              <UserProfile />
-            ) : (
-              <Link
-                to="/login"
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 transition-colors shadow-lg hover:shadow-xl"
-              >
-                Login
-              </Link>
-            )}
+            {authState.user && <UserProfile />}
 
             {/* Mobile menu button */}
             <button

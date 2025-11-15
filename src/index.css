@@ -2,6 +2,117 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px);
+  }
+}
+
+@keyframes slideRightIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateX(0px);
+  }
+}
+
+@keyframes testimonialIn {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0px);
+    transform: translateY(0px) scale(1);
+  }
+}
+
+/* Sign-in page animations */
+.animate-element {
+  animation: fadeSlideIn 0.6s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-element.animate-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animate-element.animate-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animate-element.animate-delay-250 {
+  animation-delay: 0.25s;
+}
+
+.animate-element.animate-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animate-element.animate-delay-400 {
+  animation-delay: 0.4s;
+}
+
+.animate-element.animate-delay-500 {
+  animation-delay: 0.5s;
+}
+
+.animate-element.animate-delay-600 {
+  animation-delay: 0.6s;
+}
+
+.animate-element.animate-delay-700 {
+  animation-delay: 0.7s;
+}
+
+.animate-element.animate-delay-800 {
+  animation-delay: 0.8s;
+}
+
+.animate-element.animate-delay-900 {
+  animation-delay: 0.9s;
+}
+
+.animate-slide-right {
+  animation: slideRightIn 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-slide-right.animate-delay-300 {
+  animation-delay: 0.3s;
+}
+
+.animate-testimonial {
+  animation: testimonialIn 0.8s ease-out forwards;
+  opacity: 0;
+}
+
+.animate-testimonial.animate-delay-1000 {
+  animation-delay: 1s;
+}
+
+.animate-testimonial.animate-delay-1200 {
+  animation-delay: 1.2s;
+}
+
+.animate-testimonial.animate-delay-1400 {
+  animation-delay: 1.4s;
+}
+
 /* Custom styles */
 @layer base {
   html {

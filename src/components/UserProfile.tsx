@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { LogOut, Settings } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import SettingsModal from "./SettingsModal";
@@ -7,6 +8,7 @@ import Avatar from "./Avatar";
 
 const UserProfile: React.FC = () => {
   const { authState, signOut } = useAuth();
+  const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -19,6 +21,7 @@ const UserProfile: React.FC = () => {
 
   const handleSignOutConfirm = async () => {
     await signOut();
+    navigate("/login");
   };
 
   const handleSettingsClick = () => {

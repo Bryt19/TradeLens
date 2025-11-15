@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AppProvider } from "./contexts/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -30,16 +30,15 @@ import ScrollToTopOnRouteChange from "./components/ScrollToTopOnRouteChange";
 import FavoriteToast from "./components/FavoriteToast";
 import ConnectionStatus from "./components/ConnectionStatus";
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+  const isLoginPage = location.pathname === "/login";
+
   return (
-    <ErrorBoundary>
-      <AuthProvider>
-        <AppProvider>
-          <Router>
-            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-              <Navbar />
-              <ScrollToTopOnRouteChange />
-              <main className="flex-1">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      {!isLoginPage && <Navbar />}
+      <ScrollToTopOnRouteChange />
+      <main className="flex-1">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route
@@ -180,12 +179,22 @@ function App() {
                     }
                   />
                 </Routes>
-              </main>
-              <FavoriteToast />
-              <ConnectionStatus />
-              <ScrollToTop />
-              <Footer />
-            </div>
+      </main>
+      <FavoriteToast />
+      <ConnectionStatus />
+      <ScrollToTop />
+      {!isLoginPage && <Footer />}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <AuthProvider>
+        <AppProvider>
+          <Router>
+            <AppContent />
           </Router>
         </AppProvider>
       </AuthProvider>

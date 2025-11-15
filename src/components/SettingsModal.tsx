@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, User, Mail, Shield, Bell, Palette } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useApp } from "../contexts/AppContext";
@@ -13,6 +13,19 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   const { authState } = useAuth();
   const { state, dispatch } = useApp();
   const [activeTab, setActiveTab] = useState("profile");
+
+  useEffect(() => {
+    if (isOpen) {
+      // Prevent body scroll when modal is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
 
   if (!isOpen || !authState.user) return null;
 
@@ -41,8 +54,8 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md md:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-2 sm:p-4" style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '35vh' }}>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md md:max-w-4xl max-h-[95vh] sm:max-h-[90vh] overflow-hidden mx-auto">
         {/* Mobile Header */}
         <div className="sm:hidden p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center justify-between">
