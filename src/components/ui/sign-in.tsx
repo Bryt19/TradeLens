@@ -135,16 +135,6 @@ export const SignInPage: React.FC<SignInPageProps> = ({
                 </button>
               )}
             </div>
-
-            <p className="animate-element animate-delay-500 text-center text-sm text-gray-600 dark:text-gray-400">
-              New to our platform? <a 
-                href="#" 
-                onClick={(e) => { e.preventDefault(); onCreateAccount?.(); }} 
-                className="text-violet-400 hover:underline transition-colors"
-              >
-                Create Account
-              </a>
-            </p>
           </div>
         </div>
       </section>

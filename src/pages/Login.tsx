@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { SignInPage, Testimonial } from "../components/ui/sign-in";
@@ -99,7 +99,7 @@ const Login = () => {
     <SignInPage
       title={<span className="font-light text-gray-900 dark:text-white tracking-tighter">Welcome to TradeLens</span>}
       description="Access your account and continue your journey with us"
-      heroImageSrc="https://images.unsplash.com/photo-1642615835477-d303d7dc9ee9?w=2160&q=80"
+      heroImageSrc="https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?w=2160&q=80"
       testimonials={sampleTestimonials}
       onGoogleSignIn={handleGoogleSignIn}
       onGithubSignIn={handleGithubSignIn}
