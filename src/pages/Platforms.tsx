@@ -240,7 +240,7 @@ const platformsData = {
       description:
         "BitSpenda is a Ghana-based service that converts Bitcoin to Mobile Money instantly using the Lightning Network.",
       url: "https://send.bitspenda.app",
-      logo: "http://tiny.cc/ix4t001",
+      logo: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT2xgsrGNQLHHY_PVUX-FWKPcy6lviIbSUo9A&s",
     },
     {
       id: "quidax",

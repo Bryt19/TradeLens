@@ -291,22 +291,22 @@ const Stocks: React.FC = () => {
         {/* Search Section */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-4 sm:p-6 mb-6 sm:mb-8">
           <AnimatedSearchBar
-            placeholder="Search for stocks (e.g., AAPL, MSFT, GOOGL)..."
-            value={searchQuery}
-            onChange={handleSearchChange}
+              placeholder="Search for stocks (e.g., AAPL, MSFT, GOOGL)..."
+              value={searchQuery}
+              onChange={handleSearchChange}
             results={searchResults}
             onResultSelect={(result) => handleSymbolSelect(result["1. symbol"])}
             renderResult={(result) => (
               <div className="flex items-center space-x-3 w-full">
-                <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0" />
-                <div className="min-w-0 flex-1">
-                  <div className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">
-                    {result["1. symbol"]}
-                  </div>
-                  <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
-                    {result["2. name"]}
-                  </div>
-                </div>
+                    <Building2 className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 flex-shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="font-medium text-gray-900 dark:text-white text-sm sm:text-base truncate">
+                        {result["1. symbol"]}
+                      </div>
+                      <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 truncate">
+                        {result["2. name"]}
+                      </div>
+                    </div>
               </div>
             )}
             className="w-full"

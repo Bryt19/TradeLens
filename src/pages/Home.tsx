@@ -111,12 +111,12 @@ const Home: React.FC = () => {
                   ) : (
                     <>
                       <InteractiveHoverButton
-                        to="/crypto"
+                  to="/crypto"
                         text="Explore Crypto"
                         className="border-blue-600 bg-blue-600 text-white hover:border-blue-600 [&>div:nth-child(2)]:text-white [&>div:last-child]:bg-white/20"
                       />
                       <InteractiveHoverButton
-                        to="/stocks"
+                  to="/stocks"
                         text="View Stocks"
                         className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:border-white/50 [&>div:nth-child(2)]:text-white [&>div:last-child]:bg-white/20"
                       />

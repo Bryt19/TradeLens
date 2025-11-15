@@ -3,6 +3,7 @@ import { X, User, Mail, Shield, Bell, Palette } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import { useApp } from "../contexts/AppContext";
 import Avatar from "./Avatar";
+import AnimatedBackground from "./ui/animated-background";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -89,46 +90,72 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
             </div>
 
             <nav className="p-4 space-y-2">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                      activeTab === tab.id
-                        ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span className="text-sm font-medium">{tab.label}</span>
-                  </button>
-                );
-              })}
+              <AnimatedBackground
+                defaultValue={activeTab}
+                onValueChange={(id) => id && setActiveTab(id)}
+                className="rounded-lg bg-blue-100 dark:bg-blue-900"
+                transition={{
+                  type: 'spring',
+                  bounce: 0.2,
+                  duration: 0.6,
+                }}
+                enableHover={false}
+              >
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      data-id={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                        activeTab === tab.id
+                          ? "text-blue-700 dark:text-blue-300"
+                          : "text-gray-700 dark:text-gray-300"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="text-sm font-medium">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </AnimatedBackground>
             </nav>
           </div>
 
           {/* Mobile Tab Selector */}
           <div className="sm:hidden border-b border-gray-200 dark:border-gray-700">
-            <div className="flex overflow-x-auto">
-              {tabs.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex-shrink-0 flex items-center space-x-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-                      activeTab === tab.id
-                        ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                        : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span className="hidden xs:inline">{tab.label}</span>
-                  </button>
-                );
-              })}
+            <div className="flex overflow-x-auto relative">
+              <AnimatedBackground
+                defaultValue={activeTab}
+                onValueChange={(id) => id && setActiveTab(id)}
+                className="rounded-t-lg bg-blue-100 dark:bg-blue-900"
+                transition={{
+                  type: 'spring',
+                  bounce: 0.2,
+                  duration: 0.6,
+                }}
+                enableHover={false}
+              >
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  return (
+                    <button
+                      key={tab.id}
+                      data-id={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex-shrink-0 flex items-center space-x-2 px-4 py-3 text-sm font-medium transition-colors relative ${
+                        activeTab === tab.id
+                          ? "text-blue-600 dark:text-blue-400"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="hidden xs:inline">{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </AnimatedBackground>
             </div>
           </div>
 

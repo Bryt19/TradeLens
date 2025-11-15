@@ -2,83 +2,9 @@ import React from "react";
 import { Link } from "react-router-dom";
 import AnimatedCounter from "../components/AnimatedCounter";
 import { CyberneticBentoGrid } from "../components/ui/cybernetic-bento-grid";
+import { FeatureSteps } from "../components/ui/feature-section";
 
 const Features: React.FC = () => {
-  const features = [
-    {
-      title: "Real-time Market Data",
-      description:
-        "Get live cryptocurrency and stock prices with instant updates and comprehensive market analysis.",
-      icon: "📊",
-      benefits: [
-        "Live price feeds",
-        "Market depth analysis",
-        "Historical data",
-        "Technical indicators",
-      ],
-    },
-    {
-      title: "Advanced Charting",
-      description:
-        "Professional-grade charts with multiple timeframes, drawing tools, and technical analysis indicators.",
-      icon: "📈",
-      benefits: [
-        "Multiple chart types",
-        "Drawing tools",
-        "Technical indicators",
-        "Custom timeframes",
-      ],
-    },
-    {
-      title: "Portfolio Management",
-      description:
-        "Track your investments with detailed portfolio analytics, performance metrics, and risk assessment.",
-      icon: "💼",
-      benefits: [
-        "Portfolio tracking",
-        "Performance analytics",
-        "Risk assessment",
-        "Asset allocation",
-      ],
-    },
-    {
-      title: "News & Analysis",
-      description:
-        "Stay informed with the latest market news, expert analysis, and market sentiment indicators.",
-      icon: "📰",
-      benefits: [
-        "Real-time news",
-        "Expert analysis",
-        "Market sentiment",
-        "Custom alerts",
-      ],
-    },
-    {
-      title: "API Integration",
-      description:
-        "Powerful REST API for developers to integrate market data into their applications.",
-      icon: "🔌",
-      benefits: [
-        "REST API",
-        "WebSocket feeds",
-        "SDK libraries",
-        "Rate limiting",
-      ],
-    },
-    {
-      title: "Mobile Responsive",
-      description:
-        "Access your trading dashboard anywhere with our fully responsive mobile-optimized interface.",
-      icon: "📱",
-      benefits: [
-        "Mobile optimized",
-        "Touch-friendly",
-        "Offline support",
-        "Push notifications",
-      ],
-    },
-  ];
-
   const stats = [
     { label: "Supported Assets", value: "10,000+" },
     { label: "Exchange Connections", value: "500+" },
@@ -135,112 +61,50 @@ const Features: React.FC = () => {
 
       {/* Additional Features Section */}
       <div className="bg-white dark:bg-gray-800 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-              Additional Capabilities
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              More features to enhance your trading experience
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div className="space-y-8">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🔔</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Smart Alerts
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Set up custom price alerts, news notifications, and market
-                    condition triggers.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🛡️</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Security & Privacy
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Bank-grade security with encrypted data transmission and
-                    secure API keys.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">⚡</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    High Performance
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Optimized for speed with sub-second data updates and
-                    lightning-fast chart rendering.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🌐</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Global Coverage
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Access markets worldwide with support for multiple
-                    currencies and time zones.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">📊</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Advanced Analytics
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Deep market insights with sentiment analysis, volume
-                    profiles, and correlation matrices.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                  <span className="text-2xl">🔧</span>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    Customization
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Personalize your dashboard with custom layouts, themes, and
-                    widget configurations.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <FeatureSteps
+          features={[
+            {
+              step: "Step 1",
+              title: "Smart Alerts",
+              content: "Set up custom price alerts, news notifications, and market condition triggers to stay ahead of market movements.",
+              image: "https://i2-prod.mirror.co.uk/article35849718.ece/ALTERNATES/s615/0_GettyImages-1416887716.jpg"
+            },
+            {
+              step: "Step 2",
+              title: "Security & Privacy",
+              content: "Bank-grade security with encrypted data transmission and secure API keys to protect your trading data.",
+              image: "https://www.columbiasouthern.edu/media/udobzpao/privacy-issues-in-cybersecurity.jpg"
+            },
+            {
+              step: "Step 3",
+              title: "High Performance",
+              content: "Optimized for speed with sub-second data updates and lightning-fast chart rendering for real-time trading.",
+              image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=2070&q=80"
+            },
+            {
+              step: "Step 4",
+              title: "Global Coverage",
+              content: "Access markets worldwide with support for multiple currencies and time zones across all major exchanges.",
+              image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?w=2070&q=80"
+            },
+            {
+              step: "Step 5",
+              title: "Advanced Analytics",
+              content: "Deep market insights with sentiment analysis, volume profiles, and correlation matrices for informed decisions.",
+              image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=2070&q=80"
+            },
+            {
+              step: "Step 6",
+              title: "Customization",
+              content: "Personalize your dashboard with custom layouts, themes, and widget configurations to match your trading style.",
+              image: "https://www.shutterstock.com/image-photo/business-technology-internet-network-concept-600nw-2463313771.jpg"
+            },
+          ]}
+          title="Additional Capabilities"
+          autoPlayInterval={4000}
+          imageHeight="h-[400px]"
+          className="bg-white dark:bg-gray-800"
+        />
       </div>
 
       {/* CTA Section */}

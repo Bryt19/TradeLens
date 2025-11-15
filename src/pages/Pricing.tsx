@@ -159,7 +159,7 @@ const Pricing: React.FC = () => {
       <div id="pricing-plans" className="relative">
         {/* Animated Pricing Section */}
         <PricingSection4 plans={pricingPlans} />
-      </div>
+        </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-50 bg-black">
         {/* FAQ Section */}

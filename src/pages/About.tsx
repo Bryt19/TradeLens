@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import FadeInOnScroll from "../components/FadeInOnScroll";
 import AnimatedCounter from "../components/AnimatedCounter";
+import RadialOrbitalTimeline from "../components/ui/radial-orbital-timeline";
 
 const About: React.FC = () => {
   const stats = [
@@ -23,30 +24,54 @@ const About: React.FC = () => {
     { number: "150+", label: "Countries", icon: Globe },
   ];
 
-  const values = [
+  const valuesTimeline = [
     {
-      icon: Target,
+      id: 1,
       title: "Transparency",
-      description:
-        "We believe in providing clear, honest information about financial markets and our services.",
+      date: "2023",
+      content:
+        "We believe in providing clear, honest information about financial markets and our services. This commitment to transparency builds trust and empowers our users to make informed decisions.",
+      category: "Core Value",
+      icon: Target,
+      relatedIds: [2, 4],
+      status: "completed" as const,
+      energy: 100,
     },
     {
-      icon: Users,
+      id: 2,
       title: "User-Centric",
-      description:
-        "Every feature we build is designed with our users' needs and feedback in mind.",
+      date: "2023",
+      content:
+        "Every feature we build is designed with our users' needs and feedback in mind. We prioritize user experience and continuously iterate based on real-world usage.",
+      category: "Core Value",
+      icon: Users,
+      relatedIds: [1, 3],
+      status: "completed" as const,
+      energy: 95,
     },
     {
-      icon: Lightbulb,
+      id: 3,
       title: "Innovation",
-      description:
-        "We continuously explore new technologies to improve the financial data experience.",
+      date: "2024",
+      content:
+        "We continuously explore new technologies to improve the financial data experience. Our commitment to innovation drives us to push boundaries and deliver cutting-edge solutions.",
+      category: "Core Value",
+      icon: Lightbulb,
+      relatedIds: [2, 4],
+      status: "in-progress" as const,
+      energy: 85,
     },
     {
-      icon: Shield,
+      id: 4,
       title: "Security",
-      description:
-        "Your data and privacy are our top priorities, protected by enterprise-grade security.",
+      date: "2024",
+      content:
+        "Your data and privacy are our top priorities, protected by enterprise-grade security. We implement industry-leading security measures to safeguard your information.",
+      category: "Core Value",
+      icon: Shield,
+      relatedIds: [1, 3],
+      status: "completed" as const,
+      energy: 100,
     },
   ];
 
@@ -200,29 +225,12 @@ const About: React.FC = () => {
 
         {/* Values */}
         <FadeInOnScroll direction="up" delay={0}>
-          <div className="mb-16">
+          <div className="mb-16 -mx-4 sm:-mx-6 lg:-mx-8">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-12">
               Our Values
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {values.map((value, index) => {
-                const Icon = value.icon;
-                return (
-                  <FadeInOnScroll key={index} direction="up" delay={index * 150}>
-                    <div className="bg-white dark:bg-gray-900 rounded-lg p-6 text-center shadow-md">
-                      <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                        <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                      </div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-                        {value.title}
-                      </h3>
-                      <p className="text-gray-600 dark:text-gray-300 text-sm">
-                        {value.description}
-                      </p>
-                    </div>
-                  </FadeInOnScroll>
-                );
-              })}
+            <div className="bg-black rounded-2xl overflow-hidden">
+              <RadialOrbitalTimeline timelineData={valuesTimeline} />
             </div>
           </div>
         </FadeInOnScroll>
