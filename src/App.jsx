@@ -35,10 +35,10 @@ function AppContent() {
   const isLoginPage = location.pathname === "/login";
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+            <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
       {!isLoginPage && <Navbar />}
-      <ScrollToTopOnRouteChange />
-      <main className="flex-1">
+              <ScrollToTopOnRouteChange />
+              <main className="flex-1">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route
@@ -179,12 +179,12 @@ function AppContent() {
                     }
                   />
                 </Routes>
-      </main>
-      <FavoriteToast />
-      <ConnectionStatus />
-      <ScrollToTop />
+              </main>
+              <FavoriteToast />
+              <ConnectionStatus />
+              <ScrollToTop />
       {!isLoginPage && <Footer />}
-    </div>
+            </div>
   );
 }
 

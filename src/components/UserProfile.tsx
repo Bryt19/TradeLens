@@ -1,105 +1,108 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LogOut, Settings } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import SettingsModal from "./SettingsModal";
 import ConfirmModal from "./ConfirmModal";
-import Avatar from "./Avatar";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverDescription,
+  PopoverBody,
+  PopoverFooter,
+} from "./ui/popover";
+import { Button } from "./ui/button";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 
 const UserProfile: React.FC = () => {
   const { authState, signOut } = useAuth();
   const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSignOutClick = () => {
-    setIsDropdownOpen(false);
     setIsConfirmModalOpen(true);
   };
 
   const handleSignOutConfirm = async () => {
+    setIsConfirmModalOpen(false);
     await signOut();
-    navigate("/login");
+    navigate("/");
   };
 
   const handleSettingsClick = () => {
-    setIsDropdownOpen(false);
     setIsSettingsOpen(true);
   };
-
-  // Handle click outside to close dropdown
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(event.target as Node)
-      ) {
-        setIsDropdownOpen(false);
-      }
-    };
-
-    if (isDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isDropdownOpen]);
 
   if (!authState.user) return null;
 
   const user = authState.user;
   const displayName = user.user_metadata?.full_name || user.email.split("@")[0];
   const avatarUrl = user.user_metadata?.avatar_url;
+  const initials = displayName
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
 
   return (
-    <div className="relative" ref={dropdownRef}>
-      <button
-        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-      >
-        <Avatar src={avatarUrl} alt={displayName} size="sm" />
+    <>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            className="h-auto w-auto rounded-full p-0 hover:bg-transparent"
+          >
+            <div className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
+              <Avatar className="h-8 w-8">
+                <AvatarImage src={avatarUrl} alt={displayName} />
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
         <span className="hidden sm:block font-medium">{displayName}</span>
-      </button>
-
-      {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+            </div>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64" align="end">
+          <PopoverHeader>
             <div className="flex items-center space-x-3">
-              <Avatar src={avatarUrl} alt={displayName} size="md" />
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={avatarUrl} alt={displayName} />
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
               <div>
-                <p className="font-medium text-gray-900 dark:text-white">
-                  {displayName}
-                </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <PopoverTitle>{displayName}</PopoverTitle>
+                <PopoverDescription className="text-xs">
                   {user.email}
-                </p>
+                </PopoverDescription>
               </div>
             </div>
-          </div>
-
-          <div className="p-2">
-            <button
+          </PopoverHeader>
+          <PopoverBody className="space-y-1 px-2 py-1">
+            <Button
+              variant="ghost"
+              className="w-full justify-start"
+              size="sm"
               onClick={handleSettingsClick}
-              className="w-full flex items-center space-x-2 px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
             >
-              <Settings className="w-4 h-4" />
-              <span>Settings</span>
-            </button>
-
-            <button
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </Button>
+            <Button
+              variant="ghost"
+              className="w-full justify-start text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20"
+              size="sm"
               onClick={handleSignOutClick}
-              className="w-full flex items-center space-x-2 px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
             >
-              <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
-            </button>
-          </div>
-        </div>
-      )}
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign Out
+            </Button>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
 
       <SettingsModal
         isOpen={isSettingsOpen}
@@ -116,7 +119,7 @@ const UserProfile: React.FC = () => {
         cancelText="Cancel"
         type="danger"
       />
-    </div>
+    </>
   );
 };
 

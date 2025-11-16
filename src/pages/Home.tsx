@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
 import { useCryptocurrencies, useFinancialNews } from "../hooks/useApi";
@@ -46,6 +46,57 @@ const Home: React.FC = () => {
     setIsModalOpen(false);
     setSelectedCoin(null);
   };
+
+  // Mockup crypto pairs that rotate every 24 hours
+  const mockupCryptoPairs = [
+    { gainer: { symbol: "SOL", price: "$98.45", change: "+5.3%" }, loser: { symbol: "ADA", price: "$0.52", change: "-2.1%" } },
+    { gainer: { symbol: "BTC", price: "$43,250", change: "+3.8%" }, loser: { symbol: "ETH", price: "$2,340", change: "-1.5%" } },
+    { gainer: { symbol: "BNB", price: "$312.50", change: "+4.2%" }, loser: { symbol: "XRP", price: "$0.58", change: "-2.8%" } },
+    { gainer: { symbol: "DOGE", price: "$0.085", change: "+6.1%" }, loser: { symbol: "MATIC", price: "$0.78", change: "-1.9%" } },
+    { gainer: { symbol: "AVAX", price: "$38.90", change: "+4.7%" }, loser: { symbol: "DOT", price: "$6.45", change: "-2.3%" } },
+    { gainer: { symbol: "LINK", price: "$14.20", change: "+5.5%" }, loser: { symbol: "UNI", price: "$5.80", change: "-1.7%" } },
+    { gainer: { symbol: "ATOM", price: "$9.65", change: "+3.9%" }, loser: { symbol: "LTC", price: "$72.30", change: "-2.5%" } },
+  ];
+
+  // Get the current crypto pair based on 24-hour rotation
+  const currentCryptoPair = useMemo(() => {
+    const getCurrentPairIndex = () => {
+      const storageKey = "tradelens_mockup_crypto_index";
+      const storageTimestampKey = "tradelens_mockup_crypto_timestamp";
+      
+      // Get stored values
+      const storedIndex = localStorage.getItem(storageKey);
+      const storedTimestamp = localStorage.getItem(storageTimestampKey);
+      
+      const now = Date.now();
+      const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+      
+      // Check if we have a stored timestamp and if it's been less than 24 hours
+      if (storedIndex !== null && storedTimestamp !== null) {
+        const timestamp = parseInt(storedTimestamp, 10);
+        const timeDiff = now - timestamp;
+        
+        // If less than 24 hours have passed, use the stored index
+        if (timeDiff < twentyFourHours) {
+          return parseInt(storedIndex, 10);
+        }
+      }
+      
+      // Calculate new index based on days since epoch
+      // This ensures consistent rotation across all users
+      const daysSinceEpoch = Math.floor(now / twentyFourHours);
+      const newIndex = daysSinceEpoch % mockupCryptoPairs.length;
+      
+      // Store the new index and timestamp
+      localStorage.setItem(storageKey, newIndex.toString());
+      localStorage.setItem(storageTimestampKey, now.toString());
+      
+      return newIndex;
+    };
+    
+    const index = getCurrentPairIndex();
+    return mockupCryptoPairs[index];
+  }, []);
 
 
   return (
@@ -187,10 +238,10 @@ const Home: React.FC = () => {
                           <TrendingUp className="w-4 h-4 text-green-600" />
                         </div>
                         <div className="flex items-center justify-between mb-2">
-                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">SOL</div>
+                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">{currentCryptoPair.gainer.symbol}</div>
                         </div>
-                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">$98.45</div>
-                        <div className="text-sm font-bold text-green-600 dark:text-green-400">+5.3%</div>
+                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">{currentCryptoPair.gainer.price}</div>
+                        <div className="text-sm font-bold text-green-600 dark:text-green-400">{currentCryptoPair.gainer.change}</div>
                       </div>
                       {/* Top Loser */}
                       <div className="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 p-4 rounded-xl border-2 border-red-200 dark:border-red-800">
@@ -199,10 +250,10 @@ const Home: React.FC = () => {
                           <TrendingDown className="w-4 h-4 text-red-600" />
                         </div>
                         <div className="flex items-center justify-between mb-2">
-                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">ADA</div>
+                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">{currentCryptoPair.loser.symbol}</div>
                         </div>
-                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">$0.52</div>
-                        <div className="text-sm font-bold text-red-600 dark:text-red-400">-2.1%</div>
+                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">{currentCryptoPair.loser.price}</div>
+                        <div className="text-sm font-bold text-red-600 dark:text-red-400">{currentCryptoPair.loser.change}</div>
                       </div>
                     </div>
 

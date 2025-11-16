@@ -278,13 +278,13 @@ const Crypto: React.FC = () => {
             {/* Search */}
             <div className="w-full">
               <AnimatedSearchBar
-                placeholder="Search cryptocurrencies..."
+                  placeholder="Search cryptocurrencies..."
                 value={searchQuery}
-                onChange={handleSearchChange}
+                  onChange={handleSearchChange}
                 showResults={false}
                 className="w-full"
                 inputClassName="text-base py-2 sm:py-3"
-              />
+                />
             </div>
 
             {/* Sort Options and Favorites Filter */}
