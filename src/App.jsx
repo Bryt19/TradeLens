@@ -154,30 +154,9 @@ function AppContent() {
                       </ProtectedRoute>
                     }
                   />
-                  <Route
-                    path="/privacy"
-                    element={
-                      <ProtectedRoute>
-                        <Privacy />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/terms"
-                    element={
-                      <ProtectedRoute>
-                        <Terms />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/cookies"
-                    element={
-                      <ProtectedRoute>
-                        <Cookies />
-                      </ProtectedRoute>
-                    }
-                  />
+                  <Route path="/privacy" element={<Privacy />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/cookies" element={<Cookies />} />
                 </Routes>
               </main>
               <FavoriteToast />
