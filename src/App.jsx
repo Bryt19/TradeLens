@@ -130,30 +130,9 @@ function AppContent() {
                       </ProtectedRoute>
                     }
                   />
-                  <Route
-                    path="/docs"
-                    element={
-                      <ProtectedRoute>
-                        <Documentation />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/help"
-                    element={
-                      <ProtectedRoute>
-                        <Help />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/community"
-                    element={
-                      <ProtectedRoute>
-                        <Community />
-                      </ProtectedRoute>
-                    }
-                  />
+                  <Route path="/docs" element={<Documentation />} />
+                  <Route path="/help" element={<Help />} />
+                  <Route path="/community" element={<Community />} />
                   <Route path="/privacy" element={<Privacy />} />
                   <Route path="/terms" element={<Terms />} />
                   <Route path="/cookies" element={<Cookies />} />

@@ -26,9 +26,9 @@ export function ThemeToggle({ className, theme = "dark", onThemeChange }: ThemeT
   return (
     <div
       className={cn(
-        "flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-300",
-        isDark 
-          ? "bg-zinc-950 border border-zinc-800" 
+        "relative inline-flex items-center w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-300 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent",
+        isDark
+          ? "bg-zinc-950 border border-zinc-800"
           : "bg-white border border-zinc-200",
         className
       )}
@@ -46,7 +46,7 @@ export function ThemeToggle({ className, theme = "dark", onThemeChange }: ThemeT
       <div className="flex justify-between items-center w-full relative">
         <div
           className={cn(
-            "flex justify-center items-center w-6 h-6 rounded-full transition-all duration-300 absolute left-1",
+            "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300 absolute left-1 shadow-sm",
             isDark 
               ? "transform translate-x-0 bg-zinc-800" 
               : "transform translate-x-8 bg-gray-200"
