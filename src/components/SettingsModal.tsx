@@ -101,24 +101,24 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                 }}
                 enableHover={false}
               >
-                {tabs.map((tab) => {
-                  const Icon = tab.icon;
-                  return (
-                    <button
-                      key={tab.id}
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
                       data-id={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
-                        activeTab === tab.id
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${
+                      activeTab === tab.id
                           ? "text-blue-700 dark:text-blue-300"
                           : "text-gray-700 dark:text-gray-300"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="text-sm font-medium">{tab.label}</span>
-                    </button>
-                  );
-                })}
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="text-sm font-medium">{tab.label}</span>
+                  </button>
+                );
+              })}
               </AnimatedBackground>
             </nav>
           </div>
@@ -137,24 +137,24 @@ const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
                 }}
                 enableHover={false}
               >
-                {tabs.map((tab) => {
-                  const Icon = tab.icon;
-                  return (
-                    <button
-                      key={tab.id}
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
                       data-id={tab.id}
-                      onClick={() => setActiveTab(tab.id)}
+                    onClick={() => setActiveTab(tab.id)}
                       className={`flex-shrink-0 flex items-center space-x-2 px-4 py-3 text-sm font-medium transition-colors relative ${
-                        activeTab === tab.id
+                      activeTab === tab.id
                           ? "text-blue-600 dark:text-blue-400"
                           : "text-gray-500 dark:text-gray-400"
-                      }`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="hidden xs:inline">{tab.label}</span>
-                    </button>
-                  );
-                })}
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    <span className="hidden xs:inline">{tab.label}</span>
+                  </button>
+                );
+              })}
               </AnimatedBackground>
             </div>
           </div>
