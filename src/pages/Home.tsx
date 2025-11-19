@@ -1,7 +1,11 @@
 import React, { useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight, TrendingUp, TrendingDown } from "lucide-react";
-import { useCryptocurrencies, useFinancialNews } from "../hooks/useApi";
+import {
+  useCryptocurrencies,
+  useFinancialNews,
+  useMultipleStockQuotes,
+} from "../hooks/useApi";
 import CryptoCard from "../components/CryptoCard";
 import CryptoDetailsModal from "../components/CryptoDetailsModal";
 import NewsCard from "../components/NewsCard";
@@ -32,6 +36,12 @@ const Home: React.FC = () => {
 
   const topCryptos = cryptoData?.slice(0, 6) || [];
   const newsArticles = newsData?.articles?.slice(0, 6) || [];
+  const stockSymbols = useMemo(() => ["GOOGL", "AMZN", "NVDA"], []);
+  const {
+    data: stockQuotes,
+    loading: stockLoading,
+    error: stockError,
+  } = useMultipleStockQuotes(stockSymbols);
 
   const handleViewDetails = (coin: CoinGeckoCoin) => {
     if (!authState.user) {
@@ -47,56 +57,72 @@ const Home: React.FC = () => {
     setSelectedCoin(null);
   };
 
-  // Mockup crypto pairs that rotate every 24 hours
-  const mockupCryptoPairs = [
-    { gainer: { symbol: "SOL", price: "$98.45", change: "+5.3%" }, loser: { symbol: "ADA", price: "$0.52", change: "-2.1%" } },
-    { gainer: { symbol: "BTC", price: "$43,250", change: "+3.8%" }, loser: { symbol: "ETH", price: "$2,340", change: "-1.5%" } },
-    { gainer: { symbol: "BNB", price: "$312.50", change: "+4.2%" }, loser: { symbol: "XRP", price: "$0.58", change: "-2.8%" } },
-    { gainer: { symbol: "DOGE", price: "$0.085", change: "+6.1%" }, loser: { symbol: "MATIC", price: "$0.78", change: "-1.9%" } },
-    { gainer: { symbol: "AVAX", price: "$38.90", change: "+4.7%" }, loser: { symbol: "DOT", price: "$6.45", change: "-2.3%" } },
-    { gainer: { symbol: "LINK", price: "$14.20", change: "+5.5%" }, loser: { symbol: "UNI", price: "$5.80", change: "-1.7%" } },
-    { gainer: { symbol: "ATOM", price: "$9.65", change: "+3.9%" }, loser: { symbol: "LTC", price: "$72.30", change: "-2.5%" } },
-  ];
+  const formatPrice = (price?: number | null) => {
+    if (price === undefined || price === null) return "—";
+    const minimumFractionDigits = price < 1 ? 4 : 2;
+    return price.toLocaleString("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits,
+      maximumFractionDigits: minimumFractionDigits,
+    });
+  };
 
-  // Get the current crypto pair based on 24-hour rotation
-  const currentCryptoPair = useMemo(() => {
-    const getCurrentPairIndex = () => {
-      const storageKey = "tradelens_mockup_crypto_index";
-      const storageTimestampKey = "tradelens_mockup_crypto_timestamp";
-      
-      // Get stored values
-      const storedIndex = localStorage.getItem(storageKey);
-      const storedTimestamp = localStorage.getItem(storageTimestampKey);
-      
-      const now = Date.now();
-      const twentyFourHours = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-      
-      // Check if we have a stored timestamp and if it's been less than 24 hours
-      if (storedIndex !== null && storedTimestamp !== null) {
-        const timestamp = parseInt(storedTimestamp, 10);
-        const timeDiff = now - timestamp;
-        
-        // If less than 24 hours have passed, use the stored index
-        if (timeDiff < twentyFourHours) {
-          return parseInt(storedIndex, 10);
-        }
-      }
-      
-      // Calculate new index based on days since epoch
-      // This ensures consistent rotation across all users
-      const daysSinceEpoch = Math.floor(now / twentyFourHours);
-      const newIndex = daysSinceEpoch % mockupCryptoPairs.length;
-      
-      // Store the new index and timestamp
-      localStorage.setItem(storageKey, newIndex.toString());
-      localStorage.setItem(storageTimestampKey, now.toString());
-      
-      return newIndex;
+  const formatChange = (change?: number | null) => {
+    if (change === undefined || change === null || Number.isNaN(change)) {
+      return "—";
+    }
+    const rounded = change.toFixed(2);
+    return `${change >= 0 ? "+" : ""}${rounded}%`;
+  };
+
+  const { topGainer, topLoser } = useMemo(() => {
+    if (!cryptoData || cryptoData.length === 0) {
+      return { topGainer: null, topLoser: null };
+    }
+
+    const sorted = [...cryptoData].sort(
+      (a, b) =>
+        (b.price_change_percentage_24h ?? -Infinity) -
+        (a.price_change_percentage_24h ?? -Infinity)
+    );
+
+    const gainer = sorted.find(
+      (coin) => coin.price_change_percentage_24h !== undefined
+    );
+    const loser = [...sorted]
+      .reverse()
+      .find((coin) => coin.price_change_percentage_24h !== undefined);
+
+    return {
+      topGainer: gainer || sorted[0] || null,
+      topLoser: loser || sorted[sorted.length - 1] || null,
     };
-    
-    const index = getCurrentPairIndex();
-    return mockupCryptoPairs[index];
-  }, []);
+  }, [cryptoData]);
+
+  const stockRows = useMemo(() => {
+    return stockSymbols.map((symbol) => {
+      const quote = stockQuotes?.[symbol] ?? null;
+      const price = quote ? parseFloat(quote["05. price"]) : null;
+      const changePercentRaw = quote?.["10. change percent"] || null;
+      const changeValue =
+        changePercentRaw !== null
+          ? parseFloat(changePercentRaw.replace("%", ""))
+          : quote
+          ? parseFloat(quote["09. change"])
+          : null;
+
+      return {
+        symbol,
+        price: price !== null && !Number.isNaN(price) ? price : null,
+        displayPrice: price !== null && !Number.isNaN(price) ? formatPrice(price) : "—",
+        changePercent:
+          changePercentRaw !== null && !Number.isNaN(changeValue)
+            ? changeValue
+            : null,
+      };
+    });
+  }, [stockQuotes, stockSymbols]);
 
 
   return (
@@ -234,26 +260,62 @@ const Home: React.FC = () => {
                       {/* Top Gainer */}
                       <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-xl border-2 border-green-200 dark:border-green-800">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">Top Gainer</span>
+                          <span className="text-xs font-semibold text-green-700 dark:text-green-400 uppercase tracking-wide">
+                            Top Gainer
+                          </span>
                           <TrendingUp className="w-4 h-4 text-green-600" />
                         </div>
                         <div className="flex items-center justify-between mb-2">
-                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">{currentCryptoPair.gainer.symbol}</div>
+                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            {topGainer ? topGainer.symbol.toUpperCase() : "—"}
+                          </div>
                         </div>
-                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">{currentCryptoPair.gainer.price}</div>
-                        <div className="text-sm font-bold text-green-600 dark:text-green-400">{currentCryptoPair.gainer.change}</div>
+                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                          {cryptoLoading && !topGainer
+                            ? "Fetching..."
+                            : formatPrice(topGainer?.current_price ?? null)}
+                        </div>
+                        <div
+                          className={`text-sm font-bold ${
+                            (topGainer?.price_change_percentage_24h ?? 0) >= 0
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-red-600 dark:text-red-400"
+                          }`}
+                        >
+                          {cryptoLoading && !topGainer
+                            ? "—"
+                            : formatChange(topGainer?.price_change_percentage_24h ?? null)}
+                        </div>
                       </div>
                       {/* Top Loser */}
                       <div className="bg-gradient-to-br from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 p-4 rounded-xl border-2 border-red-200 dark:border-red-800">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold text-red-700 dark:text-red-400 uppercase tracking-wide">Top Loser</span>
+                          <span className="text-xs font-semibold text-red-700 dark:text-red-400 uppercase tracking-wide">
+                            Top Loser
+                          </span>
                           <TrendingDown className="w-4 h-4 text-red-600" />
                         </div>
                         <div className="flex items-center justify-between mb-2">
-                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">{currentCryptoPair.loser.symbol}</div>
+                          <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            {topLoser ? topLoser.symbol.toUpperCase() : "—"}
+                          </div>
                         </div>
-                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">{currentCryptoPair.loser.price}</div>
-                        <div className="text-sm font-bold text-red-600 dark:text-red-400">{currentCryptoPair.loser.change}</div>
+                        <div className="text-xl font-bold text-gray-900 dark:text-white mb-1">
+                          {cryptoLoading && !topLoser
+                            ? "Fetching..."
+                            : formatPrice(topLoser?.current_price ?? null)}
+                        </div>
+                        <div
+                          className={`text-sm font-bold ${
+                            (topLoser?.price_change_percentage_24h ?? 0) >= 0
+                              ? "text-green-600 dark:text-green-400"
+                              : "text-red-600 dark:text-red-400"
+                          }`}
+                        >
+                          {cryptoLoading && !topLoser
+                            ? "—"
+                            : formatChange(topLoser?.price_change_percentage_24h ?? null)}
+                        </div>
                       </div>
                     </div>
 
@@ -273,31 +335,54 @@ const Home: React.FC = () => {
 
                     {/* Stock List */}
                     <div className="space-y-2">
-                      {[
-                        { name: "GOOGL", price: "$142.30", change: "+1.5%", trend: "up" },
-                        { name: "AMZN", price: "$151.80", change: "+3.2%", trend: "up" },
-                        { name: "NVDA", price: "$485.20", change: "-0.5%", trend: "down" },
-                      ].map((stock, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                        >
-                          <div>
-                            <div className="font-semibold text-gray-900 dark:text-white">{stock.name}</div>
-                            <div className="text-sm text-gray-600 dark:text-gray-400">{stock.price}</div>
-                          </div>
-                          <div className={`flex items-center text-sm font-semibold ${
-                            stock.trend === "up" ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
-                          }`}>
-                            {stock.trend === "up" ? (
-                              <TrendingUp className="w-4 h-4 mr-1" />
-                            ) : (
-                              <TrendingDown className="w-4 h-4 mr-1" />
-                            )}
-                            {stock.change}
-                          </div>
+                      {stockLoading ? (
+                        <div className="flex justify-center py-4">
+                          <Loading text="Fetching stock prices..." />
                         </div>
-                      ))}
+                      ) : stockError ? (
+                        <p className="text-sm text-red-500 dark:text-red-400 text-center py-4">
+                          {stockError}
+                        </p>
+                      ) : (
+                        stockRows.map((stock) => (
+                          <div
+                            key={stock.symbol}
+                            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                          >
+                            <div>
+                              <div className="font-semibold text-gray-900 dark:text-white">
+                                {stock.symbol}
+                              </div>
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                {stock.displayPrice}
+                              </div>
+                            </div>
+                            <div
+                              className={`flex items-center text-sm font-semibold ${
+                                stock.changePercent === null
+                                  ? "text-gray-500 dark:text-gray-400"
+                                  : stock.changePercent >= 0
+                                  ? "text-green-600 dark:text-green-400"
+                                  : "text-red-600 dark:text-red-400"
+                              }`}
+                            >
+                              {stock.changePercent === null ? (
+                                <span className="text-gray-500 dark:text-gray-400">—</span>
+                              ) : stock.changePercent >= 0 ? (
+                                <>
+                                  <TrendingUp className="w-4 h-4 mr-1" />
+                                  {formatChange(stock.changePercent)}
+                                </>
+                              ) : (
+                                <>
+                                  <TrendingDown className="w-4 h-4 mr-1" />
+                                  {formatChange(stock.changePercent)}
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
                   </div>
                 </div>
