@@ -81,69 +81,38 @@ const Home: React.FC = () => {
       return { topGainer: null, topLoser: null };
     }
 
-    const computeTopCoins = () => {
-      const sorted = [...cryptoData].sort(
-        (a, b) =>
-          (b.price_change_percentage_24h ?? -Infinity) -
-          (a.price_change_percentage_24h ?? -Infinity)
-      );
+    // Sort by 24h price change percentage
+    const sorted = [...cryptoData].sort(
+      (a, b) =>
+        (b.price_change_percentage_24h ?? -Infinity) -
+        (a.price_change_percentage_24h ?? -Infinity)
+    );
 
-      const gainer = sorted.find(
-        (coin) => coin.price_change_percentage_24h !== undefined
-      );
-      const loser = [...sorted]
-        .reverse()
-        .find((coin) => coin.price_change_percentage_24h !== undefined);
+    // Filter to only coins with valid price change data
+    const validCoins = sorted.filter(
+      (coin) => coin.price_change_percentage_24h !== undefined
+    );
 
+    if (validCoins.length === 0) {
       return {
-        gainer: gainer || sorted[0] || null,
-        loser: loser || sorted[sorted.length - 1] || null,
+        topGainer: sorted[0] || null,
+        topLoser: sorted[sorted.length - 1] || null,
       };
-    };
+    }
 
-    const highlightStorageKey = "tradelens_real_highlights";
+    // Use days since epoch to deterministically select the same coins for all users
+    // This ensures everyone sees the same top gainer/loser on the same day
     const twentyFourHours = 24 * 60 * 60 * 1000;
-    const now = Date.now();
+    const daysSinceEpoch = Math.floor(Date.now() / twentyFourHours);
 
-    if (typeof window === "undefined") {
-      return computeTopCoins();
-    }
+    // Select gainer and loser based on day number (deterministic across all users)
+    const gainerIndex = daysSinceEpoch % validCoins.length;
+    const loserIndex = (daysSinceEpoch + Math.floor(validCoins.length / 2)) % validCoins.length;
 
-    try {
-      const stored = localStorage.getItem(highlightStorageKey);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (parsed?.timestamp && now - parsed.timestamp < twentyFourHours) {
-          const storedGainer =
-            cryptoData.find((coin) => coin.id === parsed.gainerId) ?? null;
-          const storedLoser =
-            cryptoData.find((coin) => coin.id === parsed.loserId) ?? null;
-
-          if (storedGainer && storedLoser) {
-            return { topGainer: storedGainer, topLoser: storedLoser };
-          }
-        }
-      }
-    } catch (error) {
-      console.warn("Failed to read highlight cache:", error);
-    }
-
-    const { gainer, loser } = computeTopCoins();
-
-    try {
-      localStorage.setItem(
-        highlightStorageKey,
-        JSON.stringify({
-          timestamp: now,
-          gainerId: gainer?.id ?? null,
-          loserId: loser?.id ?? null,
-        })
-      );
-    } catch (error) {
-      console.warn("Failed to cache highlight pair:", error);
-    }
-
-    return { topGainer: gainer, topLoser: loser };
+    return {
+      topGainer: validCoins[gainerIndex] || validCoins[0] || null,
+      topLoser: validCoins[loserIndex] || validCoins[validCoins.length - 1] || null,
+    };
   }, [cryptoData]);
 
   const stockRows = useMemo(() => {
