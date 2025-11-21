@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 import { AppProvider } from "./contexts/AppContext";
 import { AuthProvider } from "./contexts/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -142,6 +143,7 @@ function AppContent() {
               <ConnectionStatus />
               <ScrollToTop />
       {!isLoginPage && <Footer />}
+              <Analytics />
             </div>
   );
 }

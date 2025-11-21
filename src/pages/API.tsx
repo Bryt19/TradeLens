@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   Copy,
   Check,
@@ -85,7 +86,7 @@ const API: React.FC = () => {
       description: "Fetch real-time cryptocurrency prices and market data",
       language: "JavaScript",
       code: `// Get top 10 cryptocurrencies
-const response = await fetch('https://api.tradelens.com/v1/crypto/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1', {
+const response = await fetch('https://trade-lens-finance.vercel.app/api/v1/crypto/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1', {
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -103,7 +104,7 @@ console.log(data);`,
       code: `import requests
 
 # Get stock quote for Apple
-url = "https://api.tradelens.com/v1/stocks/quote"
+url = "https://trade-lens-finance.vercel.app/api/v1/stocks/quote"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY",
     "Content-Type": "application/json"
@@ -121,7 +122,7 @@ print(data)`,
       title: "Get Financial News",
       description: "Fetch latest financial and cryptocurrency news articles",
       language: "cURL",
-      code: `curl -X GET "https://api.tradelens.com/v1/news" \\
+      code: `curl -X GET "https://trade-lens-finance.vercel.app/api/v1/news" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -G -d "category=crypto" \\
@@ -134,7 +135,7 @@ print(data)`,
         "Retrieve user portfolio information and performance metrics",
       language: "JavaScript",
       code: `// Get portfolio summary
-const portfolioResponse = await fetch('https://api.tradelens.com/v1/portfolio/summary', {
+const portfolioResponse = await fetch('https://trade-lens-finance.vercel.app/api/v1/portfolio/summary', {
   headers: {
     'Authorization': 'Bearer YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -277,7 +278,12 @@ console.log('24h Change:', portfolio.change_24h);`,
     <div className="min-h-screen bg-gray-50 dark:bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="text-center mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-16"
+        >
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             TradeLens API
           </h1>
@@ -285,34 +291,46 @@ console.log('24h Change:', portfolio.change_24h);`,
             Access real-time financial data with our powerful REST API. Build
             amazing applications with comprehensive market data.
           </p>
-        </div>
+        </motion.div>
 
         {/* Features */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
           {features.map((feature, index) => {
             const Icon = feature.icon;
             return (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05, y: -5 }}
                 className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-md text-center"
               >
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <motion.div
+                  whileHover={{ rotate: 360 }}
+                  transition={{ duration: 0.6 }}
+                  className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4"
+                >
                   <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-                </div>
+                </motion.div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                   {feature.title}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
                   {feature.description}
                 </p>
-              </div>
+              </motion.div>
             );
           })}
         </div>
 
         {/* API Key Generator */}
-        <div
+        <motion.div
           id="api-key-section"
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
           className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16"
         >
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
@@ -364,10 +382,16 @@ console.log('24h Change:', portfolio.change_24h);`,
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Quick Start */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16"
+        >
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
             Quick Start
           </h2>
@@ -376,10 +400,10 @@ console.log('24h Change:', portfolio.change_24h);`,
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
                 1. Make Your First Request
               </h3>
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
-                <code className="text-sm text-gray-800 dark:text-gray-200">
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg p-4 overflow-x-auto">
+                <code className="text-sm text-gray-800 dark:text-gray-200 break-words block">
                   curl -H "Authorization: Bearer YOUR_API_KEY" \<br />
-                  &nbsp;&nbsp;&nbsp;&nbsp;https://api.tradelens.com/v1/crypto/markets
+                  &nbsp;&nbsp;&nbsp;&nbsp;https://trade-lens-finance.vercel.app/api/v1/crypto/markets
                 </code>
               </div>
             </div>
@@ -402,17 +426,28 @@ console.log('24h Change:', portfolio.change_24h);`,
               </a>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Code Examples */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl font-bold text-gray-900 dark:text-white mb-8"
+          >
             Code Examples
-          </h2>
+          </motion.h2>
           <div className="space-y-8">
-            {codeExamples.map((example) => (
-              <div
+            {codeExamples.map((example, index) => (
+              <motion.div
                 key={example.id}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
                 className="bg-white dark:bg-gray-900 rounded-lg shadow-md overflow-hidden"
               >
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -447,20 +482,31 @@ console.log('24h Change:', portfolio.change_24h);`,
                     )}
                   </button>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
 
         {/* API Endpoints */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+          <motion.h2
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-3xl font-bold text-gray-900 dark:text-white mb-8"
+          >
             API Endpoints
-          </h2>
+          </motion.h2>
           <div className="space-y-6">
             {endpoints.map((endpoint, index) => (
-              <div
+              <motion.div
                 key={index}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                whileHover={{ scale: 1.01, x: 5 }}
                 className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6"
               >
                 <div className="flex items-center space-x-4 mb-4">
@@ -508,13 +554,19 @@ console.log('24h Change:', portfolio.change_24h);`,
                     ))}
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
 
         {/* SDK Downloads */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16"
+        >
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
             SDK Downloads
           </h2>
@@ -522,7 +574,14 @@ console.log('24h Change:', portfolio.change_24h);`,
             Get started quickly with our official SDKs and libraries
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center"
+            >
               <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Code className="w-6 h-6 text-yellow-600 dark:text-yellow-400" />
               </div>
@@ -545,8 +604,15 @@ console.log('24h Change:', portfolio.change_24h);`,
                   {copiedCode === "sdk-javascript" ? "Copied!" : "Download"}
                 </span>
               </button>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center"
+            >
               <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Code className="w-6 h-6 text-blue-600 dark:text-blue-400" />
               </div>
@@ -569,8 +635,15 @@ console.log('24h Change:', portfolio.change_24h);`,
                   {copiedCode === "sdk-python" ? "Copied!" : "Download"}
                 </span>
               </button>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center"
+            >
               <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Code className="w-6 h-6 text-green-600 dark:text-green-400" />
               </div>
@@ -591,8 +664,15 @@ console.log('24h Change:', portfolio.change_24h);`,
                 )}
                 <span>{copiedCode === "sdk-php" ? "Copied!" : "Download"}</span>
               </button>
-            </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.3 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center"
+            >
               <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Code className="w-6 h-6 text-purple-600 dark:text-purple-400" />
               </div>
@@ -613,17 +693,30 @@ console.log('24h Change:', portfolio.change_24h);`,
                 )}
                 <span>{copiedCode === "sdk-go" ? "Copied!" : "Download"}</span>
               </button>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Rate Limits */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16"
+        >
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
             Rate Limits & Pricing
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="text-center border border-gray-200 dark:border-gray-700 rounded-lg p-6"
+            >
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                 100
               </div>
@@ -635,8 +728,15 @@ console.log('24h Change:', portfolio.change_24h);`,
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 $0/month
               </div>
-            </div>
-            <div className="text-center border-2 border-green-500 rounded-lg p-6 relative">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="text-center border-2 border-green-500 rounded-lg p-6 relative"
+            >
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
                 <span className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-medium">
                   Popular
@@ -653,8 +753,15 @@ console.log('24h Change:', portfolio.change_24h);`,
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 $29/month
               </div>
-            </div>
-            <div className="text-center border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.4, delay: 0.2 }}
+              whileHover={{ scale: 1.05, y: -5 }}
+              className="text-center border border-gray-200 dark:border-gray-700 rounded-lg p-6"
+            >
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                 Unlimited
               </div>
@@ -666,12 +773,18 @@ console.log('24h Change:', portfolio.change_24h);`,
               <div className="text-sm text-gray-500 dark:text-gray-400">
                 Custom pricing
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white"
+        >
           <h2 className="text-3xl font-bold mb-4">Ready to Start Building?</h2>
           <p className="text-xl mb-6 text-blue-100">
             Get your API key and start building amazing financial applications
@@ -691,7 +804,7 @@ console.log('24h Change:', portfolio.change_24h);`,
               <ExternalLink className="w-4 h-4 ml-2" />
             </Link>
           </div>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
