@@ -17,6 +17,7 @@ import FadeInOnScroll from "../components/FadeInOnScroll";
 import AnimatedCounter from "../components/AnimatedCounter";
 import { InteractiveHoverButton } from "../components/ui/interactive-hover-button";
 import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
+import EconomicCalendar from "../components/EconomicCalendar";
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -483,6 +484,30 @@ const Home: React.FC = () => {
               </div>
             )}
           </div>
+        </div>
+      </section>
+
+      {/* Economic Calendar */}
+      <section id="economic-calendar" className="py-16 bg-gray-50 dark:bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 mb-10 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-medium uppercase tracking-wide text-blue-600 dark:text-blue-400">
+                Economic Calendar
+              </p>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                Upcoming market-moving catalysts
+              </h2>
+              <p className="mt-2 text-base text-gray-600 dark:text-gray-300 max-w-2xl">
+                Track CPI releases, central bank decisions, corporate earnings, and major crypto milestones
+                in one scrollable feed.
+              </p>
+            </div>
+            <div className="text-sm text-gray-500 dark:text-gray-400">
+              Updated in near real-time with live APIs and resilient mock fallbacks.
+            </div>
+          </div>
+          <EconomicCalendar />
         </div>
       </section>
 
