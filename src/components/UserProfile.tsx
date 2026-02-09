@@ -12,7 +12,6 @@ import {
   PopoverTitle,
   PopoverDescription,
   PopoverBody,
-  PopoverFooter,
 } from "./ui/popover";
 import { Button } from "./ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
@@ -62,7 +61,7 @@ const UserProfile: React.FC = () => {
                 <AvatarImage src={avatarUrl} alt={displayName} />
                 <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
-        <span className="hidden sm:block font-medium">{displayName}</span>
+              <span className="hidden sm:block font-medium">{displayName}</span>
             </div>
           </Button>
         </PopoverTrigger>

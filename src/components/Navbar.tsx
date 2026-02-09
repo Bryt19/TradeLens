@@ -90,19 +90,19 @@ const Navbar: React.FC = () => {
 
   return (
     <nav 
-      className={`sticky top-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-md shadow-xl border-b border-gray-300/50 dark:border-gray-700/50 transition-transform duration-300 ease-in-out ${
+      className={`sticky top-0 z-50 bg-white/90 dark:bg-black/90 backdrop-blur-xl border-b border-gray-200/80 dark:border-white/10 shadow-soft transition-transform duration-300 ease-out ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14 sm:h-16">
           {/* Logo */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+            <Link to="/" className="flex items-center space-x-2.5 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:shadow-glow transition-shadow duration-300">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <span className="text-xl font-bold text-gray-900 dark:text-white drop-shadow-sm">
+              <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
                 TradeLens
               </span>
             </Link>

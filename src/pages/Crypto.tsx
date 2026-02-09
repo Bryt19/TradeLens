@@ -12,7 +12,6 @@ import CryptoCard from "../components/CryptoCard";
 import CryptoDetailsModal from "../components/CryptoDetailsModal";
 import Loading from "../components/Loading";
 // import Chart from "../components/Chart";
-import { debounce } from "../utils/helpers";
 import { CoinGeckoCoin } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 import { AnimatedSearchBar } from "../components/ui/animated-search-bar";
@@ -58,12 +57,12 @@ const Crypto: React.FC = () => {
   // Create favorites Set for O(1) lookup performance
   const favoritesSet = useMemo(
     () => new Set(cryptoFavorites),
-    [cryptoFavorites]
+    [cryptoFavorites],
   );
 
   const isCryptoFavorite = useCallback(
     (coinId: string) => favoritesSet.has(coinId),
-    [favoritesSet]
+    [favoritesSet],
   );
 
   const toggleCryptoFavorite = useCallback(
@@ -85,7 +84,7 @@ const Crypto: React.FC = () => {
           window.dispatchEvent(
             new CustomEvent("favorite:add", {
               detail: { type: "crypto", id: coinId },
-            })
+            }),
           );
         } catch {}
       }
@@ -107,7 +106,7 @@ const Crypto: React.FC = () => {
         }
       }
     },
-    [authState.user, cryptoFavorites, navigate, refreshFavorites]
+    [authState.user, cryptoFavorites, navigate, refreshFavorites],
   );
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -133,7 +132,7 @@ const Crypto: React.FC = () => {
     if (typeof window !== "undefined") {
       localStorage.setItem(
         "crypto-show-favorites-only",
-        showFavoritesOnly.toString()
+        showFavoritesOnly.toString(),
       );
     }
   }, [showFavoritesOnly]);
@@ -154,7 +153,7 @@ const Crypto: React.FC = () => {
       filtered = filtered.filter(
         (coin) =>
           coin.name.toLowerCase().includes(queryLower) ||
-          coin.symbol.toLowerCase().includes(queryLower)
+          coin.symbol.toLowerCase().includes(queryLower),
       );
     }
 
@@ -278,13 +277,13 @@ const Crypto: React.FC = () => {
             {/* Search */}
             <div className="w-full">
               <AnimatedSearchBar
-                  placeholder="Search cryptocurrencies..."
+                placeholder="Search cryptocurrencies..."
                 value={searchQuery}
-                  onChange={handleSearchChange}
+                onChange={handleSearchChange}
                 showResults={false}
                 className="w-full"
                 inputClassName="text-base py-2 sm:py-3"
-                />
+              />
             </div>
 
             {/* Sort Options and Favorites Filter */}
@@ -406,8 +405,8 @@ const Crypto: React.FC = () => {
                 {searchQuery
                   ? `No cryptocurrencies match "${searchQuery}"`
                   : showFavoritesOnly
-                  ? "You haven't added any cryptocurrencies to your favorites yet"
-                  : "No cryptocurrencies available"}
+                    ? "You haven't added any cryptocurrencies to your favorites yet"
+                    : "No cryptocurrencies available"}
               </p>
             </div>
           </div>
@@ -457,7 +456,7 @@ const Crypto: React.FC = () => {
                 Load More (
                 {Math.min(
                   20,
-                  filteredAndSortedData.length - displayedData.length
+                  filteredAndSortedData.length - displayedData.length,
                 )}{" "}
                 more)
               </span>

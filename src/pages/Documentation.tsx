@@ -10,7 +10,6 @@ import {
   ExternalLink,
   ChevronRight,
   ChevronDown,
-  ChevronUp,
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
@@ -80,7 +79,7 @@ const Documentation: React.FC = () => {
     setExpandedSections((prev) =>
       prev.includes(sectionId)
         ? prev.filter((id) => id !== sectionId)
-        : [...prev, sectionId]
+        : [...prev, sectionId],
     );
   };
 
@@ -93,8 +92,8 @@ const Documentation: React.FC = () => {
         (section) =>
           section.title.toLowerCase().includes(query.toLowerCase()) ||
           section.items.some((item) =>
-            item.title.toLowerCase().includes(query.toLowerCase())
-          )
+            item.title.toLowerCase().includes(query.toLowerCase()),
+          ),
       );
 
       const matchingSectionIds = matchingSections.map((section) => section.id);
@@ -181,13 +180,13 @@ const Documentation: React.FC = () => {
     .map((section) => ({
       ...section,
       items: section.items.filter((item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase())
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()),
       ),
     }))
     .filter(
       (section) =>
         section.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        section.items.length > 0
+        section.items.length > 0,
     );
 
   const quickStartCode = `# Install the Python SDK

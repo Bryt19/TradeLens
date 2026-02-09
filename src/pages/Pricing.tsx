@@ -1,11 +1,8 @@
 import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  Check,
-  Star,
   Zap,
   Shield,
-  Users,
   BarChart3,
   HelpCircle,
 } from "lucide-react";
@@ -132,23 +129,24 @@ const Pricing: React.FC = () => {
 
   // Convert plans to the format expected by PricingSection4
   const pricingPlans = plans.map((plan) => {
-    const priceNum = plan.price === "$0" ? 0 : parseInt(plan.price.replace("$", "")) || 0;
+    const priceNum =
+      plan.price === "$0" ? 0 : parseInt(plan.price.replace("$", "")) || 0;
     const yearlyPrice = priceNum === 0 ? 0 : Math.round(priceNum * 10); // Approximate yearly price
-    
+
     return {
       name: plan.name,
       description: plan.description,
       price: priceNum,
       yearlyPrice: yearlyPrice,
       buttonText: plan.cta,
-      buttonVariant: plan.popular ? "default" as const : "outline" as const,
+      buttonVariant: plan.popular ? ("default" as const) : ("outline" as const),
       popular: plan.popular,
       includes: [
-        plan.name === "Free" 
+        plan.name === "Free"
           ? "Free includes:"
           : plan.name === "Pro"
-          ? "Everything in Free, plus:"
-          : "Everything in Pro, plus:",
+            ? "Everything in Free, plus:"
+            : "Everything in Pro, plus:",
         ...plan.features,
       ],
     };
@@ -159,7 +157,7 @@ const Pricing: React.FC = () => {
       <div id="pricing-plans" className="relative">
         {/* Animated Pricing Section */}
         <PricingSection4 plans={pricingPlans} />
-        </div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-50 bg-black">
         {/* FAQ Section */}

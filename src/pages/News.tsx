@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Newspaper, Filter, RefreshCw, ExternalLink } from "lucide-react";
+import { Newspaper, RefreshCw, ExternalLink } from "lucide-react";
 import {
   useFinancialNews,
   useCryptoNews,
@@ -119,32 +119,38 @@ const News: React.FC = () => {
     switch (category) {
       case "financial":
         return {
-          data: deduplicateArticles(shuffleArray(
-            financialNews?.articles || getDemoData("financial")
-          )),
+          data: deduplicateArticles(
+            shuffleArray(financialNews?.articles || getDemoData("financial")),
+          ),
           loading: financialLoading,
           error: financialError,
           refetch: refetchFinancial,
         };
       case "crypto":
         return {
-          data: deduplicateArticles(shuffleArray(cryptoNews?.articles || getDemoData("crypto"))),
+          data: deduplicateArticles(
+            shuffleArray(cryptoNews?.articles || getDemoData("crypto")),
+          ),
           loading: cryptoLoading,
           error: cryptoError,
           refetch: refetchCrypto,
         };
       case "business":
         return {
-          data: deduplicateArticles(shuffleArray(businessNews?.articles || getDemoData("business"))),
+          data: deduplicateArticles(
+            shuffleArray(businessNews?.articles || getDemoData("business")),
+          ),
           loading: businessLoading,
           error: businessError,
           refetch: refetchBusiness,
         };
       case "trending":
         return {
-          data: deduplicateArticles(shuffleArray(
-            trendingCryptoNews?.articles || getDemoData("trending")
-          )),
+          data: deduplicateArticles(
+            shuffleArray(
+              trendingCryptoNews?.articles || getDemoData("trending"),
+            ),
+          ),
           loading: trendingLoading,
           error: trendingError,
           refetch: refetchTrending,
@@ -165,12 +171,12 @@ const News: React.FC = () => {
             ? deduplicateArticles(shuffleArray(apiArticles)).sort(
                 (a, b) =>
                   new Date(b.publishedAt).getTime() -
-                  new Date(a.publishedAt).getTime()
+                  new Date(a.publishedAt).getTime(),
               )
             : deduplicateArticles(shuffleArray(getDemoData("all"))).sort(
                 (a, b) =>
                   new Date(b.publishedAt).getTime() -
-                  new Date(a.publishedAt).getTime()
+                  new Date(a.publishedAt).getTime(),
               );
 
         return {

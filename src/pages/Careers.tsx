@@ -12,8 +12,10 @@ const Careers: React.FC = () => {
   const [email, setEmail] = useState("");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [visibleSections, setVisibleSections] = useState<Set<string>>(new Set());
-  
+  const [visibleSections, setVisibleSections] = useState<Set<string>>(
+    new Set(),
+  );
+
   const sectionRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Intersection Observer for scroll animations
@@ -38,7 +40,7 @@ const Careers: React.FC = () => {
         {
           threshold: 0.1,
           rootMargin: "0px 0px -50px 0px",
-        }
+        },
       );
 
       const element = sectionRefs.current[key];
@@ -124,8 +126,8 @@ const Careers: React.FC = () => {
     <div className="min-h-screen bg-gray-50 dark:bg-black">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div 
-          ref={(el) => (sectionRefs.current["header"] = el)}
+        <div
+          ref={(el) => { sectionRefs.current["header"] = el; }}
           className={`text-center mb-16 transition-all duration-1000 ${
             visibleSections.has("header")
               ? "opacity-100 translate-y-0"
@@ -142,8 +144,8 @@ const Careers: React.FC = () => {
         </div>
 
         {/* Why Work With Us */}
-        <div 
-          ref={(el) => (sectionRefs.current["benefits"] = el)}
+        <div
+          ref={(el) => { sectionRefs.current["benefits"] = el; }}
           className={`bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16 transition-all duration-1000 ${
             visibleSections.has("benefits")
               ? "opacity-100 translate-y-0"
@@ -185,8 +187,8 @@ const Careers: React.FC = () => {
         </div>
 
         {/* Our Values */}
-        <div 
-          ref={(el) => (sectionRefs.current["values"] = el)}
+        <div
+          ref={(el) => { sectionRefs.current["values"] = el; }}
           className={`mb-16 transition-all duration-1000 ${
             visibleSections.has("values")
               ? "opacity-100 translate-y-0"
@@ -222,8 +224,8 @@ const Careers: React.FC = () => {
         </div>
 
         {/* Current Status */}
-        <div 
-          ref={(el) => (sectionRefs.current["status"] = el)}
+        <div
+          ref={(el) => { sectionRefs.current["status"] = el; }}
           className={`bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-16 transition-all duration-1000 ${
             visibleSections.has("status")
               ? "opacity-100 scale-100"
@@ -231,10 +233,15 @@ const Careers: React.FC = () => {
           }`}
         >
           <div className="text-center">
-            <div className={`w-16 h-16 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-700 ${
-              visibleSections.has("status") ? "animate-bounce" : ""
-            }`}>
-              <Clock className="w-8 h-8 text-yellow-600 dark:text-yellow-400" style={{ animation: "spin 3s linear infinite" }} />
+            <div
+              className={`w-16 h-16 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center mx-auto mb-6 transition-all duration-700 ${
+                visibleSections.has("status") ? "animate-bounce" : ""
+              }`}
+            >
+              <Clock
+                className="w-8 h-8 text-yellow-600 dark:text-yellow-400"
+                style={{ animation: "spin 3s linear infinite" }}
+              />
             </div>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
               Currently Not Hiring
@@ -245,11 +252,13 @@ const Careers: React.FC = () => {
               we're always interested in connecting with talented individuals
               for future opportunities.
             </p>
-            <div className={`bg-blue-50 dark:bg-blue-900 rounded-lg p-6 max-w-2xl mx-auto transition-all duration-700 ${
-              visibleSections.has("status")
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
-            }`}>
+            <div
+              className={`bg-blue-50 dark:bg-blue-900 rounded-lg p-6 max-w-2xl mx-auto transition-all duration-700 ${
+                visibleSections.has("status")
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-8"
+              }`}
+            >
               <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
                 Stay in Touch
               </h3>
@@ -262,8 +271,8 @@ const Careers: React.FC = () => {
         </div>
 
         {/* Future Opportunities */}
-        <div 
-          ref={(el) => (sectionRefs.current["opportunities"] = el)}
+        <div
+          ref={(el) => { sectionRefs.current["opportunities"] = el; }}
           className={`mb-16 transition-all duration-1000 ${
             visibleSections.has("opportunities")
               ? "opacity-100 translate-y-0"
@@ -278,19 +287,22 @@ const Careers: React.FC = () => {
               {
                 icon: Users,
                 title: "Engineering",
-                description: "Frontend, Backend, DevOps, and Data Engineering roles",
+                description:
+                  "Frontend, Backend, DevOps, and Data Engineering roles",
                 color: "blue",
               },
               {
                 icon: Heart,
                 title: "Product & Design",
-                description: "Product Management, UX/UI Design, and User Research",
+                description:
+                  "Product Management, UX/UI Design, and User Research",
                 color: "green",
               },
               {
                 icon: ArrowRight,
                 title: "Business & Growth",
-                description: "Sales, Marketing, Customer Success, and Business Development",
+                description:
+                  "Sales, Marketing, Customer Success, and Business Development",
                 color: "purple",
               },
             ].map((opportunity, index) => {
@@ -308,20 +320,24 @@ const Careers: React.FC = () => {
                     transitionDelay: isVisible ? `${index * 150}ms` : "0ms",
                   }}
                 >
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 transition-all duration-300 hover:rotate-12 hover:scale-125 ${
-                    opportunity.color === "blue" 
-                      ? "bg-blue-100 dark:bg-blue-900" 
-                      : opportunity.color === "green"
-                      ? "bg-green-100 dark:bg-green-900"
-                      : "bg-purple-100 dark:bg-purple-900"
-                  }`}>
-                    <Icon className={`w-6 h-6 ${
+                  <div
+                    className={`w-12 h-12 rounded-lg flex items-center justify-center mx-auto mb-4 transition-all duration-300 hover:rotate-12 hover:scale-125 ${
                       opportunity.color === "blue"
-                        ? "text-blue-600 dark:text-blue-400"
+                        ? "bg-blue-100 dark:bg-blue-900"
                         : opportunity.color === "green"
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-purple-600 dark:text-purple-400"
-                    }`} />
+                          ? "bg-green-100 dark:bg-green-900"
+                          : "bg-purple-100 dark:bg-purple-900"
+                    }`}
+                  >
+                    <Icon
+                      className={`w-6 h-6 ${
+                        opportunity.color === "blue"
+                          ? "text-blue-600 dark:text-blue-400"
+                          : opportunity.color === "green"
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-purple-600 dark:text-purple-400"
+                      }`}
+                    />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
                     {opportunity.title}
@@ -336,15 +352,17 @@ const Careers: React.FC = () => {
         </div>
 
         {/* CTA Section */}
-        <div 
-          ref={(el) => (sectionRefs.current["cta"] = el)}
+        <div
+          ref={(el) => { sectionRefs.current["cta"] = el; }}
           className={`bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white transition-all duration-1000 ${
             visibleSections.has("cta")
               ? "opacity-100 scale-100"
               : "opacity-0 scale-95"
           }`}
         >
-          <h2 className="text-3xl font-bold mb-4 animate-pulse">Stay Connected</h2>
+          <h2 className="text-3xl font-bold mb-4 animate-pulse">
+            Stay Connected
+          </h2>
           <p className="text-xl mb-6 text-blue-100">
             While we're not hiring right now, we'd love to stay in touch for
             future opportunities. Follow our journey and be the first to know
@@ -394,11 +412,13 @@ const Careers: React.FC = () => {
             </div>
           )}
 
-          <div className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-700 ${
-            visibleSections.has("cta")
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 translate-y-8"
-          }`}>
+          <div
+            className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-700 ${
+              visibleSections.has("cta")
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+          >
             <button
               onClick={() => window.open("https://x.com/TradeLens25", "_blank")}
               className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-all duration-300 hover:scale-110 hover:shadow-xl active:scale-95"

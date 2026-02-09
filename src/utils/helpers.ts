@@ -1,7 +1,5 @@
 import {
   CoinGeckoCoin,
-  AlphaVantageQuote,
-  NewsArticle,
   ChartDataPoint,
   CandlestickData,
 } from "../types";
@@ -9,7 +7,7 @@ import {
 // Format currency values
 export const formatCurrency = (
   value: number,
-  currency: string = "USD"
+  currency: string = "USD",
 ): string => {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -37,7 +35,7 @@ export const formatLargeNumber = (value: number): string => {
 // Format percentage
 export const formatPercentage = (
   value: number,
-  decimals: number = 2
+  decimals: number = 2,
 ): string => {
   const sign = value >= 0 ? "+" : "";
   return `${sign}${value.toFixed(decimals)}%`;
@@ -87,7 +85,7 @@ export const getRelativeTime = (dateString: string): string => {
 
 // Convert CoinGecko chart data to ChartDataPoint format
 export const convertCoinGeckoChartData = (
-  data: [number, number][]
+  data: [number, number][],
 ): ChartDataPoint[] => {
   return data.map(([timestamp, value]) => ({
     timestamp,
@@ -147,7 +145,7 @@ export const truncateText = (text: string, maxLength: number): string => {
 // Debounce function
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,
-  wait: number
+  wait: number,
 ): ((...args: Parameters<T>) => void) => {
   let timeout: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -222,7 +220,7 @@ export const validateAPIKeys = (): {
 
 // Optimize Google avatar URL for better loading
 export const optimizeAvatarUrl = (
-  url: string | undefined
+  url: string | undefined,
 ): string | undefined => {
   if (!url) return undefined;
 

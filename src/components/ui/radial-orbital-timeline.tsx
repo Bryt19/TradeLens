@@ -29,13 +29,13 @@ export default function RadialOrbitalTimeline({
   className,
 }: RadialOrbitalTimelineProps) {
   const [expandedItems, setExpandedItems] = useState<Record<number, boolean>>(
-    {}
+    {},
   );
   const [viewMode] = useState<"orbital">("orbital");
   const [rotationAngle, setRotationAngle] = useState<number>(0);
   const [autoRotate, setAutoRotate] = useState<boolean>(true);
   const [pulseEffect, setPulseEffect] = useState<Record<number, boolean>>({});
-  const [centerOffset, setCenterOffset] = useState<{ x: number; y: number }>({
+  const [centerOffset, _setCenterOffset] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
@@ -115,7 +115,7 @@ export default function RadialOrbitalTimeline({
     const zIndex = Math.round(100 + 50 * Math.cos(radian));
     const opacity = Math.max(
       0.4,
-      Math.min(1, 0.4 + 0.6 * ((1 + Math.sin(radian)) / 2))
+      Math.min(1, 0.4 + 0.6 * ((1 + Math.sin(radian)) / 2)),
     );
     return { x, y, angle, zIndex, opacity };
   };
@@ -146,7 +146,10 @@ export default function RadialOrbitalTimeline({
 
   return (
     <div
-      className={cn("w-full min-h-[600px] flex flex-col items-center justify-center bg-black overflow-hidden relative", className)}
+      className={cn(
+        "w-full min-h-[600px] flex flex-col items-center justify-center bg-black overflow-hidden relative",
+        className,
+      )}
       ref={containerRef}
       onClick={handleContainerClick}
     >
@@ -184,7 +187,7 @@ export default function RadialOrbitalTimeline({
             return (
               <div
                 key={item.id}
-                ref={(el) => (nodeRefs.current[item.id] = el)}
+                ref={(el) => { nodeRefs.current[item.id] = el; }}
                 className="absolute transition-all duration-700 cursor-pointer"
                 style={nodeStyle}
                 onClick={(e) => {
@@ -195,7 +198,7 @@ export default function RadialOrbitalTimeline({
                 <div
                   className={cn(
                     "absolute rounded-full -inset-1",
-                    isPulsing ? "animate-pulse duration-1000" : ""
+                    isPulsing ? "animate-pulse duration-1000" : "",
                   )}
                   style={{
                     background: `radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%)`,
@@ -211,9 +214,9 @@ export default function RadialOrbitalTimeline({
                     isExpanded
                       ? "bg-white text-black scale-150 border-white shadow-lg shadow-white/30"
                       : isRelated
-                      ? "bg-white/50 text-black border-white animate-pulse"
-                      : "bg-black text-white border-white/40",
-                    isExpanded ? "scale-150" : ""
+                        ? "bg-white/50 text-black border-white animate-pulse"
+                        : "bg-black text-white border-white/40",
+                    isExpanded ? "scale-150" : "",
                   )}
                 >
                   <Icon size={16} />
@@ -221,7 +224,7 @@ export default function RadialOrbitalTimeline({
                 <div
                   className={cn(
                     "absolute top-12 whitespace-nowrap text-xs font-semibold tracking-wider transition-all duration-300",
-                    isExpanded ? "text-white scale-125" : "text-white/70"
+                    isExpanded ? "text-white scale-125" : "text-white/70",
                   )}
                 >
                   {item.title}
@@ -232,13 +235,16 @@ export default function RadialOrbitalTimeline({
                     <CardHeader className="pb-2">
                       <div className="flex justify-between items-center">
                         <Badge
-                          className={cn("px-2 text-xs", getStatusStyles(item.status))}
+                          className={cn(
+                            "px-2 text-xs",
+                            getStatusStyles(item.status),
+                          )}
                         >
                           {item.status === "completed"
                             ? "COMPLETE"
                             : item.status === "in-progress"
-                            ? "IN PROGRESS"
-                            : "PENDING"}
+                              ? "IN PROGRESS"
+                              : "PENDING"}
                         </Badge>
                         <span className="text-xs font-mono text-white/50">
                           {item.date}
@@ -256,7 +262,9 @@ export default function RadialOrbitalTimeline({
                             <Zap size={10} className="mr-1" />
                             Energy Level
                           </span>
-                          <span className="font-mono text-white/80">{item.energy}%</span>
+                          <span className="font-mono text-white/80">
+                            {item.energy}%
+                          </span>
                         </div>
                         <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
                           <div
@@ -268,7 +276,10 @@ export default function RadialOrbitalTimeline({
                       {item.relatedIds.length > 0 && (
                         <div className="mt-4 pt-3 border-t border-white/10">
                           <div className="flex items-center mb-2">
-                            <LinkIcon size={10} className="text-white/70 mr-1" />
+                            <LinkIcon
+                              size={10}
+                              className="text-white/70 mr-1"
+                            />
                             <h4 className="text-xs uppercase tracking-wider font-medium text-white/70">
                               Connected Nodes
                             </h4>
@@ -276,7 +287,7 @@ export default function RadialOrbitalTimeline({
                           <div className="flex flex-wrap gap-1">
                             {item.relatedIds.map((relatedId) => {
                               const relatedItem = timelineData.find(
-                                (i) => i.id === relatedId
+                                (i) => i.id === relatedId,
                               );
                               return (
                                 <Button
@@ -311,4 +322,3 @@ export default function RadialOrbitalTimeline({
     </div>
   );
 }
-

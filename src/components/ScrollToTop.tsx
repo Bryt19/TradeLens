@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ArrowUp, ArrowDown } from "lucide-react";
 
 const ScrollToTop = () => {
@@ -17,7 +17,7 @@ const ScrollToTop = () => {
   }, []);
 
   useEffect(() => {
-    let timeoutId: number;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     if (showScrollButtons && !isHovering) {
       timeoutId = setTimeout(() => {

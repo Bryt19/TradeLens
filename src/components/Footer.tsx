@@ -54,15 +54,15 @@ const Footer: React.FC = () => {
   ];
 
   return (
-    <footer className="py-12 px-4 md:px-6 bg-gray-50 dark:bg-black border-t border-gray-200 dark:border-gray-800">
+    <footer className="py-16 px-4 md:px-6 border-t border-gray-200/80 dark:border-white/10 bg-white/50 dark:bg-black/50 backdrop-blur-sm">
       <div className="container mx-auto max-w-7xl">
-        <div className="flex flex-col md:flex-row justify-between">
+        <div className="flex flex-col md:flex-row justify-between gap-12">
           <div className="mb-8 md:mb-0">
-            <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <Link to="/" className="inline-flex items-center gap-2.5 group">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:shadow-glow transition-shadow duration-300">
                 <TrendingUp className="w-5 h-5 text-white" />
               </div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">TradeLens</h2>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">TradeLens</h2>
             </Link>
             <h1 className="text-gray-600 dark:text-gray-300 mt-4">
               Built by{" "}
@@ -90,13 +90,13 @@ const Footer: React.FC = () => {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             <div>
-              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white">Product</h3>
-              <ul className="space-y-2">
+              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white text-sm uppercase tracking-wider">Product</h3>
+              <ul className="space-y-3">
                 {footerLinks.product.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+                      className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors text-sm"
                     >
                       {link.name}
                     </Link>
@@ -105,13 +105,13 @@ const Footer: React.FC = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white">Company</h3>
-              <ul className="space-y-2">
+              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white text-sm uppercase tracking-wider">Company</h3>
+              <ul className="space-y-3">
                 {footerLinks.company.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+                      className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors text-sm"
                     >
                       {link.name}
                     </Link>
@@ -120,13 +120,13 @@ const Footer: React.FC = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white">Resources</h3>
-              <ul className="space-y-2">
+              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white text-sm uppercase tracking-wider">Resources</h3>
+              <ul className="space-y-3">
                 {footerLinks.resources.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+                      className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors text-sm"
                     >
                       {link.name}
                     </Link>
@@ -135,15 +135,15 @@ const Footer: React.FC = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white">Socials</h3>
-              <ul className="space-y-2">
+              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white text-sm uppercase tracking-wider">Socials</h3>
+              <ul className="space-y-3">
                 {socialLinks.map((social) => (
                   <li key={social.name}>
                     <a
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+                      className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors text-sm"
                     >
                       {social.name}
                     </a>
@@ -152,13 +152,13 @@ const Footer: React.FC = () => {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white">Legal</h3>
-              <ul className="space-y-2">
+              <h3 className="font-semibold mb-4 text-gray-900 dark:text-white text-sm uppercase tracking-wider">Legal</h3>
+              <ul className="space-y-3">
                 {footerLinks.legal.map((link) => (
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-gray-600 hover:text-black dark:text-gray-400 dark:hover:text-white transition-colors"
+                      className="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors text-sm"
                     >
                       {link.name}
                     </Link>

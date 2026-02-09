@@ -1,16 +1,16 @@
 "use client";
 
-import { useRef, ReactNode } from "react";
+import React, { useRef, ReactNode } from "react";
 import { motion, useInView, Variants } from "framer-motion";
 import { cn } from "../../lib/utils";
 
 interface TimelineContentProps {
   children: ReactNode;
   animationNum: number;
-  timelineRef: React.RefObject<HTMLDivElement>;
+  timelineRef: React.RefObject<HTMLDivElement | null>;
   customVariants?: Variants;
   className?: string;
-  as?: keyof JSX.IntrinsicElements;
+  as?: keyof React.JSX.IntrinsicElements;
 }
 
 export function TimelineContent({
@@ -23,7 +23,7 @@ export function TimelineContent({
 }: TimelineContentProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, {
-    root: timelineRef.current,
+    root: timelineRef,
     margin: "-100px",
     once: true,
   });
@@ -85,4 +85,3 @@ export function TimelineContent({
     </motion.div>
   );
 }
-

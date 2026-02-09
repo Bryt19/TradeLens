@@ -101,7 +101,7 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
                 </div>
                 <div
                   className={`flex items-center space-x-2 px-4 py-2 rounded-full text-lg font-medium ${getPriceChangeBgColor(
-                    priceChange
+                    priceChange,
                   )}`}
                 >
                   {isPositive ? (
@@ -267,7 +267,7 @@ const CryptoDetailsModal: React.FC<CryptoDetailsModalProps> = ({
                     </span>
                     <span
                       className={`font-medium ${getPriceChangeColor(
-                        coin.ath_change_percentage || 0
+                        coin.ath_change_percentage || 0,
                       )}`}
                     >
                       {coin.ath_change_percentage

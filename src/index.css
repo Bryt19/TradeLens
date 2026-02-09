@@ -113,31 +113,77 @@
   animation-delay: 1.4s;
 }
 
+/* Design tokens */
+:root {
+  --color-surface: 249 250 251;
+  --color-surface-elevated: 255 255 255;
+  --color-border: 229 231 235;
+  --radius-card: 1rem;
+  --radius-button: 0.75rem;
+  --shadow-card: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 10px 40px -10px rgba(0, 0, 0, 0.12);
+}
+
+.dark {
+  --color-surface: 0 0 0;
+  --color-surface-elevated: 17 24 39;
+  --color-border: 55 65 81;
+  --shadow-card: 0 4px 20px -4px rgba(0, 0, 0, 0.4);
+  --shadow-card-hover: 0 20px 50px -15px rgba(0, 0, 0, 0.5);
+}
+
 /* Custom styles */
 @layer base {
   html {
     font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
       "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
-    @apply bg-gray-50 dark:bg-black text-gray-900 dark:text-white;
-    /* Prevent flash of white content */
-    transition: background-color 0.1s ease;
+    @apply text-gray-900 dark:text-white;
+    background-color: rgb(var(--color-surface));
+    transition: background-color 0.2s ease;
   }
 
-  /* Ensure dark mode is applied immediately */
   html.dark body {
     background-color: #000000;
-    color: #ffffff;
+    color: #f9fafb;
+  }
+
+  /* Subtle page background gradient (light) */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.07), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 50%, rgba(124, 58, 237, 0.04), transparent),
+                radial-gradient(ellipse 60% 40% at 0% 80%, rgba(59, 130, 246, 0.04), transparent);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  html.dark body::before {
+    background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(59, 130, 246, 0.05), transparent),
+                radial-gradient(ellipse 60% 40% at 100% 50%, rgba(124, 58, 237, 0.03), transparent);
   }
 }
 
 @layer components {
   /* Custom component styles */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
   .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -145,6 +191,7 @@
   .line-clamp-3 {
     display: -webkit-box;
     -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
@@ -178,20 +225,32 @@
 
   /* Card hover effects */
   .card-hover {
-    @apply transition-all duration-200 hover:shadow-lg hover:-translate-y-1;
+    @apply transition-all duration-300 ease-out hover:shadow-soft-lg hover:-translate-y-0.5;
+  }
+
+  /* Surface card (elevated) */
+  .card-surface {
+    background-color: rgb(var(--color-surface-elevated));
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+
+  .card-surface:hover {
+    box-shadow: var(--shadow-card-hover);
   }
 
   /* Button variants */
   .btn-primary {
-    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg transition-colors;
+    @apply bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2.5 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md;
   }
 
   .btn-secondary {
-    @apply bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium px-4 py-2 rounded-lg transition-colors;
+    @apply bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-medium px-4 py-2.5 rounded-xl transition-all duration-200;
   }
 
   .btn-outline {
-    @apply border border-gray-300 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-300 font-medium px-4 py-2 rounded-lg transition-colors;
+    @apply border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800/80 text-gray-700 dark:text-gray-300 font-medium px-4 py-2.5 rounded-xl transition-all duration-200;
   }
 }
 
@@ -216,11 +275,9 @@
   }
 }
 
-/* Dark mode transitions */
-* {
-  transition: background-color 0.2s ease, color 0.2s ease;
-  /* Instant border color change to prevent visible lines during theme switch */
-  transition-property: background-color, color;
+/* Theme-aware transitions (only on interactive/theme-sensitive elements) */
+[data-theme-transition] {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 /* Custom animations */

@@ -44,7 +44,7 @@ export default function FeatureShaderCards({
         distortion: 0.2,
         swirl: 0.9,
         swirlIterations: 12,
-        shape: "dots" as const,
+        shape: "stripes" as const,
         shapeScale: 0.12,
         colors: [
           "hsl(200, 100%, 25%)",
@@ -74,7 +74,7 @@ export default function FeatureShaderCards({
         distortion: 0.22,
         swirl: 0.8,
         swirlIterations: 15,
-        shape: "dots" as const,
+        shape: "stripes" as const,
         shapeScale: 0.09,
         colors: [
           "hsl(220, 100%, 35%)",
@@ -149,4 +149,3 @@ export default function FeatureShaderCards({
     </section>
   );
 }
-

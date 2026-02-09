@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   forwardRef,
@@ -9,13 +9,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { DynamicAnimationOptions, motion } from "framer-motion";
+import { AnimationOptions, motion } from "framer-motion";
 import { cn } from "../../lib/utils";
 
 interface TextProps {
   children: React.ReactNode;
   reverse?: boolean;
-  transition?: DynamicAnimationOptions;
+  transition?: AnimationOptions;
   splitBy?: "words" | "characters" | "lines" | string;
   staggerDuration?: number;
   staggerFrom?: "first" | "last" | "center" | "random" | number;
@@ -60,16 +60,25 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
       autoStart = true,
       ...props
     },
-    ref
+    ref,
   ) => {
     const containerRef = useRef<HTMLSpanElement>(null);
-    const text = typeof children === "string" ? children : children?.toString() || "";
+    const text =
+      typeof children === "string" ? children : children?.toString() || "";
     const [isAnimating, setIsAnimating] = useState(false);
 
     // Split text into characters with Unicode and emoji support
     const splitIntoCharacters = (text: string): string[] => {
-      if (typeof Intl !== "undefined" && "Segmenter" in Intl) {
-        const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
+      const IntlWithSegmenter = Intl as typeof Intl & {
+        Segmenter?: new (
+          locale: string,
+          options: { granularity: "grapheme" }
+        ) => { segment: (s: string) => Iterable<{ segment: string }> };
+      };
+      if (typeof Intl !== "undefined" && IntlWithSegmenter.Segmenter) {
+        const segmenter = new IntlWithSegmenter.Segmenter("en", {
+          granularity: "grapheme",
+        });
         return Array.from(segmenter.segment(text), ({ segment }) => segment);
       }
       return Array.from(text);
@@ -102,11 +111,12 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
                   (typeof word === "string"
                     ? 1
                     : word.characters.length + (word.needsSpace ? 1 : 0)),
-                0
+                0,
               )
             : elements.length;
         if (staggerFrom === "first") return index * staggerDuration;
-        if (staggerFrom === "last") return (total - 1 - index) * staggerDuration;
+        if (staggerFrom === "last")
+          return (total - 1 - index) * staggerDuration;
         if (staggerFrom === "center") {
           const center = Math.floor(total / 2);
           return Math.abs(center - index) * staggerDuration;
@@ -117,7 +127,7 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
         }
         return Math.abs(staggerFrom - index) * staggerDuration;
       },
-      [elements.length, staggerFrom, staggerDuration, splitBy]
+      [elements.length, staggerFrom, staggerDuration, splitBy],
     );
 
     const startAnimation = useCallback(() => {
@@ -152,7 +162,7 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
         className={cn(
           containerClassName,
           "flex flex-wrap whitespace-pre-wrap",
-          splitBy === "lines" && "flex-col"
+          splitBy === "lines" && "flex-col",
         )}
         onClick={onClick}
         ref={containerRef}
@@ -181,7 +191,7 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
                 <span
                   className={cn(
                     elementLevelClassName,
-                    "whitespace-pre-wrap relative"
+                    "whitespace-pre-wrap relative",
                   )}
                   key={charIndex}
                 >
@@ -208,10 +218,9 @@ const VerticalCutReveal = forwardRef<VerticalCutRevealRef, TextProps>(
         })}
       </span>
     );
-  }
+  },
 );
 
 VerticalCutReveal.displayName = "VerticalCutReveal";
 
 export { VerticalCutReveal };
-

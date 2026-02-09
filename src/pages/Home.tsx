@@ -18,6 +18,50 @@ import AnimatedCounter from "../components/AnimatedCounter";
 import { InteractiveHoverButton } from "../components/ui/interactive-hover-button";
 import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
 import EconomicCalendar from "../components/EconomicCalendar";
+import MiniChart from "../components/MiniChart";
+
+// Custom hook to generate mock chart data for stocks
+const useMockStockCharts = (stockRows: any[]) => {
+  return useMemo(() => {
+    const chartData: Record<string, number[]> = {};
+
+    stockRows.forEach((stock) => {
+      if (!stock.price || stock.price === null) {
+        chartData[stock.symbol] = [];
+        return;
+      }
+
+      const basePrice = stock.price;
+      const changePercent = stock.changePercent || 0;
+      const trend = changePercent >= 0 ? 1 : -1;
+
+      // Generate 20 data points for the mini chart
+      const data: number[] = [];
+      let currentPrice = basePrice * (1 - Math.abs(changePercent) * 0.01 * 0.8); // Start from a lower point
+
+      for (let i = 0; i < 20; i++) {
+        // Add some random variation but maintain the overall trend
+        const randomChange = (Math.random() - 0.5) * 0.02; // ±1% random change
+        const trendChange = (changePercent * 0.01 * trend) / 20; // Gradual trend movement
+
+        currentPrice = currentPrice * (1 + randomChange + trendChange);
+        data.push(Math.max(0.01, currentPrice)); // Ensure positive price
+      }
+
+      // Ensure the final price matches the current price
+      if (data.length > 0) {
+        const scale = basePrice / data[data.length - 1];
+        data.forEach((price, index) => {
+          data[index] = price * scale;
+        });
+      }
+
+      chartData[stock.symbol] = data;
+    });
+
+    return chartData;
+  }, [stockRows]);
+};
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
@@ -77,6 +121,20 @@ const Home: React.FC = () => {
     return `${change >= 0 ? "+" : ""}${rounded}%`;
   };
 
+  const formatVolume = (volume?: number | null) => {
+    if (volume === undefined || volume === null || Number.isNaN(volume)) {
+      return "—";
+    }
+    if (volume >= 1000000000) {
+      return `${(volume / 1000000000).toFixed(1)}B`;
+    } else if (volume >= 1000000) {
+      return `${(volume / 1000000).toFixed(1)}M`;
+    } else if (volume >= 1000) {
+      return `${(volume / 1000).toFixed(1)}K`;
+    }
+    return volume.toLocaleString();
+  };
+
   const { topGainer, topLoser } = useMemo(() => {
     if (!cryptoData || cryptoData.length === 0) {
       return { topGainer: null, topLoser: null };
@@ -86,12 +144,12 @@ const Home: React.FC = () => {
     const sorted = [...cryptoData].sort(
       (a, b) =>
         (b.price_change_percentage_24h ?? -Infinity) -
-        (a.price_change_percentage_24h ?? -Infinity)
+        (a.price_change_percentage_24h ?? -Infinity),
     );
 
     // Filter to only coins with valid price change data
     const validCoins = sorted.filter(
-      (coin) => coin.price_change_percentage_24h !== undefined
+      (coin) => coin.price_change_percentage_24h !== undefined,
     );
 
     if (validCoins.length === 0) {
@@ -108,11 +166,13 @@ const Home: React.FC = () => {
 
     // Select gainer and loser based on day number (deterministic across all users)
     const gainerIndex = daysSinceEpoch % validCoins.length;
-    const loserIndex = (daysSinceEpoch + Math.floor(validCoins.length / 2)) % validCoins.length;
+    const loserIndex =
+      (daysSinceEpoch + Math.floor(validCoins.length / 2)) % validCoins.length;
 
     return {
       topGainer: validCoins[gainerIndex] || validCoins[0] || null,
-      topLoser: validCoins[loserIndex] || validCoins[validCoins.length - 1] || null,
+      topLoser:
+        validCoins[loserIndex] || validCoins[validCoins.length - 1] || null,
     };
   }, [cryptoData]);
 
@@ -120,18 +180,24 @@ const Home: React.FC = () => {
     return stockSymbols.map((symbol) => {
       const quote = stockQuotes?.[symbol] ?? null;
       const price = quote ? parseFloat(quote["05. price"]) : null;
+      const openPrice = quote ? parseFloat(quote["02. open"]) : null;
+      const volume = quote ? parseFloat(quote["06. volume"]) : null;
       const changePercentRaw = quote?.["10. change percent"] || null;
       const changeValue =
         changePercentRaw !== null
           ? parseFloat(changePercentRaw.replace("%", ""))
           : quote
-          ? parseFloat(quote["09. change"])
-          : null;
+            ? parseFloat(quote["09. change"])
+            : null;
 
       return {
         symbol,
         price: price !== null && !Number.isNaN(price) ? price : null,
-        displayPrice: price !== null && !Number.isNaN(price) ? formatPrice(price) : "—",
+        openPrice:
+          openPrice !== null && !Number.isNaN(openPrice) ? openPrice : null,
+        volume: volume !== null && !Number.isNaN(volume) ? volume : null,
+        displayPrice:
+          price !== null && !Number.isNaN(price) ? formatPrice(price) : "—",
         changePercent:
           changePercentRaw !== null && !Number.isNaN(changeValue)
             ? changeValue
@@ -140,9 +206,10 @@ const Home: React.FC = () => {
     });
   }, [stockQuotes, stockSymbols]);
 
+  const stockChartData = useMockStockCharts(stockRows);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
+    <div className="min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Background Image */}
@@ -153,15 +220,15 @@ const Home: React.FC = () => {
               "url('https://images.unsplash.com/photo-1617880726918-4c862e74c826?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
           }}
         >
-          {/* Dim Overlay */}
-          <div className="absolute inset-0 bg-black bg-opacity-60 dark:bg-opacity-70"></div>
+          {/* Gradient overlay for depth */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/60 to-black/70"></div>
         </div>
 
         {/* Animated Background Elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob"></div>
-          <div className="absolute top-40 right-10 w-72 h-72 bg-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-2000"></div>
-          <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-4000"></div>
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-blue-500/25 rounded-full mix-blend-multiply dark:opacity-30 filter blur-3xl animate-blob"></div>
+          <div className="absolute top-40 right-10 w-80 h-80 bg-indigo-500/20 rounded-full mix-blend-multiply dark:opacity-25 filter blur-3xl animate-blob animation-delay-2000"></div>
+          <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-violet-500/25 rounded-full mix-blend-multiply dark:opacity-30 filter blur-3xl animate-blob animation-delay-4000"></div>
         </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
@@ -170,27 +237,28 @@ const Home: React.FC = () => {
             <div className="text-center lg:text-left space-y-8">
               <FadeInOnScroll direction="up" delay={0} duration={800}>
                 <div className="inline-block">
-                  <span className="px-4 py-2 bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-full text-sm font-semibold">
+                  <span className="px-4 py-2 bg-white/15 backdrop-blur-md text-white/95 border border-white/25 rounded-full text-sm font-medium tracking-wide">
                     Real-time Market Data
                   </span>
                 </div>
               </FadeInOnScroll>
 
               <FadeInOnScroll direction="up" delay={200} duration={800}>
-                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                  <span className="bg-gradient-to-r from-white via-blue-100 to-indigo-100 bg-clip-text text-transparent">
+                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
+                  <span className="bg-gradient-to-r from-white via-blue-50 to-indigo-100 bg-clip-text text-transparent">
                     Your Financial
                   </span>
-                  <span className="block bg-gradient-to-r from-blue-300 via-indigo-300 to-purple-300 bg-clip-text text-transparent">
+                  <span className="block mt-1 bg-gradient-to-r from-blue-200 via-indigo-200 to-violet-300 bg-clip-text text-transparent">
                     Dashboard
                   </span>
-              </h1>
+                </h1>
               </FadeInOnScroll>
 
               <FadeInOnScroll direction="up" delay={400} duration={800}>
                 <p className="text-lg sm:text-xl md:text-2xl text-white/90 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                  Track cryptocurrencies, stocks, and market trends with real-time data and powerful analytics tools.
-              </p>
+                  Track cryptocurrencies, stocks, and market trends with
+                  real-time data and powerful analytics tools.
+                </p>
               </FadeInOnScroll>
 
               <FadeInOnScroll direction="up" delay={600} duration={800}>
@@ -204,12 +272,12 @@ const Home: React.FC = () => {
                   ) : (
                     <>
                       <InteractiveHoverButton
-                  to="/crypto"
+                        to="/crypto"
                         text="Explore Crypto"
                         className="border-blue-600 bg-blue-600 text-white hover:border-blue-600 [&>div:nth-child(2)]:text-white [&>div:last-child]:bg-white/20"
                       />
                       <InteractiveHoverButton
-                  to="/stocks"
+                        to="/stocks"
                         text="View Stocks"
                         className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:border-white/50 [&>div:nth-child(2)]:text-white [&>div:last-child]:bg-white/20"
                       />
@@ -220,26 +288,28 @@ const Home: React.FC = () => {
 
               {/* Stats */}
               <FadeInOnScroll direction="up" delay={800} duration={800}>
-                <div className="grid grid-cols-3 gap-6 pt-8 border-t border-white/20">
-                  <div>
+                <div className="grid grid-cols-3 gap-6 sm:gap-8 pt-8 border-t border-white/20">
+                  <div className="text-center lg:text-left">
                     <AnimatedCounter
                       value="10K+"
                       duration={5000}
                       className="text-2xl sm:text-3xl font-bold text-white"
                     />
-                    <div className="text-sm text-white/80">Assets</div>
+                    <div className="text-sm text-white/75 mt-0.5">Assets</div>
                   </div>
-                  <div>
+                  <div className="text-center lg:text-left">
                     <AnimatedCounter
                       value="50K+"
                       duration={5000}
                       className="text-2xl sm:text-3xl font-bold text-white"
                     />
-                    <div className="text-sm text-white/80">Users</div>
+                    <div className="text-sm text-white/75 mt-0.5">Users</div>
                   </div>
-                  <div>
-                    <div className="text-2xl sm:text-3xl font-bold text-white animate-fade-in">24/7</div>
-                    <div className="text-sm text-white/80">Updates</div>
+                  <div className="text-center lg:text-left">
+                    <div className="text-2xl sm:text-3xl font-bold text-white animate-fade-in">
+                      24/7
+                    </div>
+                    <div className="text-sm text-white/75 mt-0.5">Updates</div>
                   </div>
                 </div>
               </FadeInOnScroll>
@@ -249,14 +319,16 @@ const Home: React.FC = () => {
             <FadeInOnScroll direction="left" delay={400} duration={1000}>
               <div className="relative">
                 {/* Mockup Container */}
-                <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 transform hover:scale-105 transition-transform duration-500">
+                <div className="relative bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-3xl shadow-soft-lg p-6 transform hover:scale-[1.02] hover:shadow-glow transition-all duration-500 border border-white/20 dark:border-white/10">
                   {/* Browser Chrome */}
                   <div className="flex items-center space-x-2 mb-4">
                     <div className="w-3 h-3 rounded-full bg-red-500"></div>
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                     <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-md px-4 py-2 ml-4">
-                      <div className="text-xs text-gray-500 dark:text-gray-400">tradelens.com/dashboard</div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        tradelens.com/dashboard
+                      </div>
                     </div>
                   </div>
 
@@ -264,7 +336,9 @@ const Home: React.FC = () => {
                   <div className="space-y-4">
                     {/* Header */}
                     <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">Portfolio Performance</h3>
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        Portfolio Performance
+                      </h3>
                       <div className="text-sm text-red-600 dark:text-red-400 font-semibold flex items-center">
                         <TrendingDown className="w-4 h-4 mr-1" />
                         -0.8%
@@ -300,7 +374,9 @@ const Home: React.FC = () => {
                         >
                           {cryptoLoading && !topGainer
                             ? "—"
-                            : formatChange(topGainer?.price_change_percentage_24h ?? null)}
+                            : formatChange(
+                                topGainer?.price_change_percentage_24h ?? null,
+                              )}
                         </div>
                       </div>
                       {/* Top Loser */}
@@ -330,23 +406,27 @@ const Home: React.FC = () => {
                         >
                           {cryptoLoading && !topLoser
                             ? "—"
-                            : formatChange(topLoser?.price_change_percentage_24h ?? null)}
+                            : formatChange(
+                                topLoser?.price_change_percentage_24h ?? null,
+                              )}
                         </div>
                       </div>
                     </div>
 
                     {/* Chart Area */}
                     <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4 h-32 flex items-end justify-between space-x-1">
-                      {[35, 48, 42, 55, 45, 62, 58, 70, 65, 78, 72, 88].map((height, index) => (
-                        <div
-                          key={index}
-                          className="flex-1 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t transition-all duration-500 hover:opacity-80 chart-bar"
-                          style={{
-                            height: `${height}%`,
-                            animationDelay: `${index * 50}ms`,
-                          }}
-                        ></div>
-                      ))}
+                      {[35, 48, 42, 55, 45, 62, 58, 70, 65, 78, 72, 88].map(
+                        (height, index) => (
+                          <div
+                            key={index}
+                            className="flex-1 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t transition-all duration-500 hover:opacity-80 chart-bar"
+                            style={{
+                              height: `${height}%`,
+                              animationDelay: `${index * 50}ms`,
+                            }}
+                          ></div>
+                        ),
+                      )}
                     </div>
 
                     {/* Stock List */}
@@ -365,35 +445,76 @@ const Home: React.FC = () => {
                             key={stock.symbol}
                             className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                           >
-                            <div>
-                              <div className="font-semibold text-gray-900 dark:text-white">
-                                {stock.symbol}
-                              </div>
-                              <div className="text-sm text-gray-600 dark:text-gray-400">
-                                {stock.displayPrice}
+                            <div className="flex items-center space-x-3">
+                              {stockChartData[stock.symbol] &&
+                                stockChartData[stock.symbol].length > 0 && (
+                                  <MiniChart
+                                    data={stockChartData[stock.symbol]}
+                                    width={60}
+                                    height={32}
+                                    color={
+                                      stock.price !== null &&
+                                      stock.openPrice !== null &&
+                                      stock.price > stock.openPrice
+                                        ? "#10b981"
+                                        : "#ef4444"
+                                    }
+                                    className="flex-shrink-0"
+                                  />
+                                )}
+                              <div>
+                                <div className="font-semibold text-gray-900 dark:text-white">
+                                  {stock.symbol}
+                                </div>
+                                <div
+                                  className={`text-sm font-medium ${
+                                    stock.price === null ||
+                                    stock.openPrice === null
+                                      ? "text-gray-600 dark:text-gray-400"
+                                      : stock.price > stock.openPrice
+                                        ? "text-green-600 dark:text-green-400"
+                                        : stock.price < stock.openPrice
+                                          ? "text-red-600 dark:text-red-400"
+                                          : "text-gray-600 dark:text-gray-400"
+                                  }`}
+                                >
+                                  {stock.displayPrice}
+                                </div>
                               </div>
                             </div>
                             <div
                               className={`flex items-center text-sm font-semibold ${
-                                stock.changePercent === null
+                                stock.price === null || stock.openPrice === null
                                   ? "text-gray-500 dark:text-gray-400"
-                                  : stock.changePercent >= 0
-                                  ? "text-green-600 dark:text-green-400"
-                                  : "text-red-600 dark:text-red-400"
+                                  : stock.price > stock.openPrice
+                                    ? "text-green-600 dark:text-green-400"
+                                    : stock.price < stock.openPrice
+                                      ? "text-red-600 dark:text-red-400"
+                                      : "text-gray-500 dark:text-gray-400"
                               }`}
                             >
-                              {stock.changePercent === null ? (
-                                <span className="text-gray-500 dark:text-gray-400">—</span>
-                              ) : stock.changePercent >= 0 ? (
+                              {stock.volume === null ? (
+                                <span className="text-gray-500 dark:text-gray-400">
+                                  —
+                                </span>
+                              ) : stock.price === null || stock.openPrice === null ? (
+                                <span className="text-gray-500 dark:text-gray-400">
+                                  {formatVolume(stock.volume)}
+                                </span>
+                              ) : stock.price > stock.openPrice ? (
                                 <>
                                   <TrendingUp className="w-4 h-4 mr-1" />
-                                  {formatChange(stock.changePercent)}
+                                  {formatVolume(stock.volume)}
                                 </>
-                              ) : (
+                              ) : stock.price < stock.openPrice ? (
                                 <>
                                   <TrendingDown className="w-4 h-4 mr-1" />
-                                  {formatChange(stock.changePercent)}
+                                  {formatVolume(stock.volume)}
                                 </>
+                              ) : (
+                                <span className="text-gray-500 dark:text-gray-400">
+                                  {formatVolume(stock.volume)}
+                                </span>
                               )}
                             </div>
                           </div>
@@ -413,13 +534,13 @@ const Home: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section className="py-12 sm:py-16 bg-white dark:bg-gray-900">
+      <section className="py-16 sm:py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
               Everything You Need
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
               Comprehensive financial tools and data at your fingertips
             </p>
           </div>
@@ -428,14 +549,14 @@ const Home: React.FC = () => {
       </section>
 
       {/* Market Overview */}
-      <section className="py-16 bg-gray-50 dark:bg-black">
+      <section className="py-16 sm:py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="text-center mb-12 sm:mb-14">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 tracking-tight">
               Market Overview
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-300">
-              Top cryptocurrencies and Market sentiment
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+              Top cryptocurrencies and market sentiment
             </p>
           </div>
 
@@ -488,23 +609,24 @@ const Home: React.FC = () => {
       </section>
 
       {/* Economic Calendar */}
-      <section id="economic-calendar" className="py-16 bg-gray-50 dark:bg-black">
+      <section id="economic-calendar" className="py-16 sm:py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 mb-10 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-medium uppercase tracking-wide text-blue-600 dark:text-blue-400">
+              <p className="text-sm font-medium uppercase tracking-wider text-blue-600 dark:text-blue-400">
                 Economic Calendar
               </p>
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight mt-1">
                 Upcoming market-moving catalysts
               </h2>
-              <p className="mt-2 text-base text-gray-600 dark:text-gray-300 max-w-2xl">
-                Track CPI releases, central bank decisions, corporate earnings, and major crypto milestones
-                in one scrollable feed.
+              <p className="mt-2 text-base text-gray-600 dark:text-gray-400 max-w-2xl leading-relaxed">
+                Track CPI releases, central bank decisions, corporate earnings,
+                and major crypto milestones in one scrollable feed.
               </p>
             </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">
-              Updated in near real-time with live APIs and resilient mock fallbacks.
+              Updated in near real-time with live APIs and resilient mock
+              fallbacks.
             </div>
           </div>
           <EconomicCalendar />
@@ -512,10 +634,10 @@ const Home: React.FC = () => {
       </section>
 
       {/* News Section */}
-      <section className="py-16 bg-white dark:bg-gray-900">
+      <section className="py-16 sm:py-20 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white tracking-tight">
               Latest Financial News
             </h2>
             <Link

@@ -1,245 +1,104 @@
 import {
   EconomicCalendarResult,
   UnifiedEconomicEvent,
-  CpiEvent,
-  InterestRateEvent,
-  EarningsEvent,
-  CryptoEvent,
 } from "../types/economicCalendar";
-import {
-  mockCpiEvents,
-  mockInterestRateEvents,
-  mockEarningsEvents,
-  mockCryptoEvents,
-} from "./economicCalendar.mock";
 
-const FMP_BASE_URL = "https://financialmodelingprep.com/api/v3";
-const COINGECKO_EVENTS_URL =
-  "https://api.coingecko.com/api/v3/events?upcoming_events_only=true";
-const DATE_RANGE_DAYS = 45;
+// Mock Data Generators
+const COUNTRIES = ["USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CNY"];
+const IMPORTANCE: ("low" | "medium" | "high")[] = ["low", "medium", "high", "high"]; // skewed to high effectively
 
-const FMP_API_KEY = import.meta.env.VITE_FMP_API_KEY;
-
-const getDateRange = () => {
-  const today = new Date();
-  const future = new Date();
-  future.setDate(today.getDate() + DATE_RANGE_DAYS);
-  const format = (date: Date) => date.toISOString().split("T")[0];
-  return { from: format(today), to: format(future) };
+const generateRandomTime = (date: Date) => {
+  const d = new Date(date);
+  d.setHours(8 + Math.floor(Math.random() * 10)); // 8 AM to 6 PM
+  d.setMinutes(Math.random() < 0.5 ? 0 : 30);
+  return d.toISOString();
 };
 
-const normalizeDate = (value: string | number | Date | undefined): string => {
-  if (!value) {
-    return new Date().toISOString();
-  }
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? new Date().toISOString() : date.toISOString();
-};
+const generateMockEventsForDate = (date: Date): UnifiedEconomicEvent[] => {
+  const events: UnifiedEconomicEvent[] = [];
+  const eventCount = 5 + Math.floor(Math.random() * 8); // 5-12 events per day
 
-const toNumber = (value: unknown): number | null => {
-  if (value === null || value === undefined || value === "") return null;
-  const num = Number(value);
-  return Number.isFinite(num) ? num : null;
-};
-
-const parseImportance = (importance?: string): "low" | "medium" | "high" | undefined => {
-  if (!importance) return undefined;
-  const normalized = importance.toLowerCase();
-  if (normalized.includes("high")) return "high";
-  if (normalized.includes("medium")) return "medium";
-  if (normalized.includes("low")) return "low";
-  return undefined;
-};
-
-const requireApiKey = () => {
-  if (!FMP_API_KEY) {
-    throw new Error(
-      "Missing VITE_FMP_API_KEY. Please set it in your environment to enable live economic data."
-    );
-  }
-};
-
-const withFallback = async <T>(
-  operation: () => Promise<T>,
-  fallback: T
-): Promise<{ data: T; usedFallback: boolean }> => {
-  try {
-    const data = await operation();
-    if (Array.isArray(data) && data.length === 0) {
-      return { data: fallback, usedFallback: true };
+  for (let i = 0; i < eventCount; i++) {
+    const country = COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)];
+    const importance = IMPORTANCE[Math.floor(Math.random() * IMPORTANCE.length)];
+    const time = generateRandomTime(date);
+    
+    // Randomize event type
+    const rand = Math.random();
+    if (rand < 0.4) {
+      // CPI / Inflation
+      const prev = 2 + Math.random() * 5;
+      const forecast = prev + (Math.random() - 0.5);
+      const actual = forecast + (Math.random() - 0.5) * 0.5;
+      
+      events.push({
+        id: `mock-cpi-${date.getTime()}-${i}`,
+        type: "CPI",
+        title: `${country} CPI (YoY)`,
+        country,
+        date: time,
+        period: "Monthly",
+        previous: prev,
+        forecast: forecast,
+        actual: new Date(time) < new Date() ? actual : null, // Only show actual if in past
+        unit: "%",
+        importance,
+        source: "Simulation",
+      });
+    } else if (rand < 0.7) {
+      // Interest Rate
+      const prev = 1 + Math.random() * 4;
+      events.push({
+        id: `mock-rate-${date.getTime()}-${i}`,
+        type: "Interest Rates",
+        title: `${country} Interest Rate Decision`,
+        centralBank: `${country} Central Bank`,
+        country,
+        date: time,
+        previousRate: prev,
+        forecastRate: prev,
+        actualRate: new Date(time) < new Date() ? prev : null,
+        importance: "high",
+        source: "Simulation",
+      });
+    } else {
+      // Earnings (Tech focused for "TradeLens" vibe)
+      const tickers = ["AAPL", "NVDA", "TSLA", "MSFT", "AMD", "COIN"];
+      const ticker = tickers[Math.floor(Math.random() * tickers.length)];
+      events.push({
+        id: `mock-earn-${date.getTime()}-${i}`,
+        type: "Earnings",
+        title: `${ticker} Q${1 + Math.floor(Math.random() * 3)} Earnings`,
+        company: ticker,
+        ticker,
+        date: time,
+        epsEstimate: 1 + Math.random() * 5,
+        epsActual: new Date(time) < new Date() ? 1 + Math.random() * 5 : null,
+        revenueEstimate: 10000000000 + Math.random() * 50000000000,
+        revenueActual: new Date(time) < new Date() ? 10000000000 + Math.random() * 50000000000 : null,
+        importance,
+        source: "Simulation",
+      });
     }
-    return { data, usedFallback: false };
-  } catch (error) {
-    console.warn("Economic calendar request failed, using fallback data.", error);
-    return { data: fallback, usedFallback: true };
   }
+  return events.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 };
-
-const fetchCpiEvents = async (): Promise<CpiEvent[]> => {
-  requireApiKey();
-  const { from, to } = getDateRange();
-  const url = `${FMP_BASE_URL}/economic_calendar?from=${from}&to=${to}&apikey=${FMP_API_KEY}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch CPI releases");
-  }
-  const payload = await response.json();
-  return (payload as any[])
-    .filter((item) =>
-      String(item?.event ?? "")
-        .toLowerCase()
-        .includes("cpi")
-    )
-    .slice(0, 15)
-    .map((item, index) => ({
-      id: `cpi-${item?.id ?? index}-${item?.date}`,
-      type: "CPI",
-      title: item?.event ?? "CPI Release",
-      country: item?.country ?? item?.region ?? "Global",
-      date: normalizeDate(item?.date),
-      period: item?.period ?? item?.date,
-      previous: toNumber(item?.previous),
-      forecast: toNumber(item?.forecast),
-      actual: toNumber(item?.actual),
-      unit: item?.unit ?? "%",
-      importance: parseImportance(item?.importance),
-      description: item?.change ?? item?.impact ?? undefined,
-      source: "Financial Modeling Prep",
-    }));
-};
-
-const fetchInterestRateEvents = async (): Promise<InterestRateEvent[]> => {
-  requireApiKey();
-  const { from, to } = getDateRange();
-  const url = `${FMP_BASE_URL}/economic_calendar?from=${from}&to=${to}&apikey=${FMP_API_KEY}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch interest rate decisions");
-  }
-  const payload = await response.json();
-  return (payload as any[])
-    .filter((item) => {
-      const event = String(item?.event ?? "").toLowerCase();
-      return (
-        event.includes("interest rate") ||
-        event.includes("policy rate") ||
-        event.includes("rate decision") ||
-        event.includes("central bank")
-      );
-    })
-    .slice(0, 15)
-    .map((item, index) => ({
-      id: `rate-${item?.id ?? index}-${item?.date}`,
-      type: "Interest Rates",
-      title: item?.event ?? "Rate Decision",
-      centralBank: item?.event?.split(" - ")?.[0] ?? item?.country ?? "Central Bank",
-      country: item?.country ?? "Global",
-      date: normalizeDate(item?.date),
-      previousRate: toNumber(item?.previous),
-      forecastRate: toNumber(item?.forecast),
-      actualRate: toNumber(item?.actual),
-      importance: parseImportance(item?.importance),
-      description: item?.impact ?? undefined,
-      source: "Financial Modeling Prep",
-    }));
-};
-
-const fetchEarningsEvents = async (): Promise<EarningsEvent[]> => {
-  requireApiKey();
-  const { from, to } = getDateRange();
-  const url = `${FMP_BASE_URL}/earning_calendar?from=${from}&to=${to}&apikey=${FMP_API_KEY}`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error("Failed to fetch earnings calendar");
-  }
-  const payload = await response.json();
-  return (payload as any[])
-    .slice(0, 25)
-    .map((item: any) => ({
-      id: `earnings-${item?.symbol}-${item?.date}`,
-      type: "Earnings",
-      title: `${item?.company ?? item?.symbol} Earnings`,
-      company: item?.company ?? item?.symbol ?? "Company",
-      ticker: item?.symbol ?? "TBD",
-      date: normalizeDate(item?.date ?? item?.time),
-      epsEstimate: toNumber(item?.epsEstimated),
-      epsActual: toNumber(item?.eps),
-      revenueEstimate: toNumber(item?.revenueEstimated),
-      revenueActual: toNumber(item?.revenue),
-      description: item?.time ? `Call at ${item.time}` : undefined,
-      importance: parseImportance(item?.importance) ?? "medium",
-      source: "Financial Modeling Prep",
-    }));
-};
-
-const fetchCryptoEvents = async (): Promise<CryptoEvent[]> => {
-  const response = await fetch(COINGECKO_EVENTS_URL);
-  if (!response.ok) {
-    throw new Error("Failed to fetch crypto events");
-  }
-  const payload = await response.json();
-  const events = Array.isArray(payload?.data) ? payload.data : [];
-  return events.slice(0, 20).map((event: any, index: number) => ({
-    id: event?.id ? `crypto-${event.id}` : `crypto-${index}`,
-    type: "Crypto",
-    title: event?.title ?? "Crypto Event",
-    network: event?.project?.name ?? "Multi-chain",
-    category: ((): CryptoEvent["category"] => {
-      const type = String(event?.type ?? "").toLowerCase();
-      if (type.includes("halving")) return "halving";
-      if (type.includes("fork")) return "hard fork";
-      if (type.includes("upgrade") || type.includes("update")) return "upgrade";
-      if (type.includes("launch")) return "launch";
-      return "other";
-    })(),
-    date: normalizeDate(event?.start_date ?? event?.end_date),
-    description: event?.description ?? event?.organizer ?? undefined,
-    importance: "medium",
-    assetSymbol: event?.project?.symbol,
-    location: event?.venue ?? event?.city ?? null,
-    source: "CoinGecko",
-  }));
-};
-
-const getCpiEvents = () => withFallback(fetchCpiEvents, mockCpiEvents);
-const getInterestRateEvents = () =>
-  withFallback(fetchInterestRateEvents, mockInterestRateEvents);
-const getEarningsEvents = () =>
-  withFallback(fetchEarningsEvents, mockEarningsEvents);
-const getCryptoEvents = () => withFallback(fetchCryptoEvents, mockCryptoEvents);
 
 export const economicCalendarService = {
-  getCpiEvents,
-  getInterestRateEvents,
-  getEarningsEvents,
-  getCryptoEvents,
-  getAllEvents: async (): Promise<EconomicCalendarResult> => {
-    const [cpi, interest, earnings, crypto] = await Promise.all([
-      getCpiEvents(),
-      getInterestRateEvents(),
-      getEarningsEvents(),
-      getCryptoEvents(),
-    ]);
-
-    const events: UnifiedEconomicEvent[] = [
-      ...cpi.data,
-      ...interest.data,
-      ...earnings.data,
-      ...crypto.data,
-    ];
-
-    events.sort(
-      (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-    );
+  getAllEvents: async (date?: Date): Promise<EconomicCalendarResult> => {
+    const targetDate = date || new Date();
+    
+    // If we have an API key, we *could* fetch real data, but the user explicitly
+    // wants to test "real-time" features which might be sparse in real-time APIs for "Today" 
+    // depending on the time of day. 
+    // However, the instruction is to use Mock Data generator because the user has NO key.
+    
+    const events = generateMockEventsForDate(targetDate);
 
     return {
       events,
       lastUpdated: new Date().toISOString(),
-      usedFallback:
-        cpi.usedFallback ||
-        interest.usedFallback ||
-        earnings.usedFallback ||
-        crypto.usedFallback,
+      usedFallback: true,
     };
   },
 };

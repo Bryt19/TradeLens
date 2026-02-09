@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { User, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import Avatar from "./Avatar";
 

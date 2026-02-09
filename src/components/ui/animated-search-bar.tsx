@@ -45,8 +45,8 @@ export function AnimatedSearchBar({
   showResults = true,
 }: AnimatedSearchBarProps) {
   const [isFocused, setIsFocused] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const debouncedValue = useDebounce(value, debounceDelay);
+  const [_isTyping, setIsTyping] = useState(false);
+  useDebounce(value, debounceDelay);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -62,7 +62,10 @@ export function AnimatedSearchBar({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setIsFocused(false);
       }
     };
@@ -196,9 +199,13 @@ export function AnimatedSearchBar({
                     setIsFocused(false);
                   }}
                 >
-                  {renderResult ? renderResult(result, index) : (
+                  {renderResult ? (
+                    renderResult(result, index)
+                  ) : (
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                      {typeof result === "string" ? result : JSON.stringify(result)}
+                      {typeof result === "string"
+                        ? result
+                        : JSON.stringify(result)}
                     </span>
                   )}
                 </motion.li>
@@ -210,4 +217,3 @@ export function AnimatedSearchBar({
     </div>
   );
 }
-

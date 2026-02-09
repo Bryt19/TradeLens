@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, ReactNode } from 'react';
-import { cn } from '../../lib/utils';
+import { useEffect, useRef, ReactNode } from "react";
+import { cn } from "../../lib/utils";
 import {
   BarChart3,
   Globe,
@@ -10,7 +10,7 @@ import {
   Newspaper,
   Code,
   Smartphone,
-} from 'lucide-react';
+} from "lucide-react";
 
 interface BentoItemProps {
   className?: string;
@@ -28,19 +28,19 @@ const BentoItem = ({ className, children }: BentoItemProps) => {
       const rect = item.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      item.style.setProperty('--mouse-x', `${x}px`);
-      item.style.setProperty('--mouse-y', `${y}px`);
+      item.style.setProperty("--mouse-x", `${x}px`);
+      item.style.setProperty("--mouse-y", `${y}px`);
     };
 
-    item.addEventListener('mousemove', handleMouseMove);
+    item.addEventListener("mousemove", handleMouseMove);
 
     return () => {
-      item.removeEventListener('mousemove', handleMouseMove);
+      item.removeEventListener("mousemove", handleMouseMove);
     };
   }, []);
 
   return (
-    <div ref={itemRef} className={cn('bento-item', className)}>
+    <div ref={itemRef} className={cn("bento-item", className)}>
       {children}
     </div>
   );
@@ -50,9 +50,11 @@ interface CyberneticBentoGridProps {
   className?: string;
 }
 
-export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => {
+export const CyberneticBentoGrid = ({
+  className,
+}: CyberneticBentoGridProps) => {
   return (
-    <div className={cn('w-full', className)}>
+    <div className={cn("w-full", className)}>
       <div className="w-full mx-auto z-10">
         <div className="bento-grid">
           <BentoItem className="col-span-2 row-span-2 flex flex-col justify-between">
@@ -62,7 +64,8 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
                 Real-time Market Data
               </h2>
               <p className="mt-2 text-gray-600 dark:text-gray-400">
-                Monitor cryptocurrency and stock prices with up-to-the-second data streams and comprehensive market analysis.
+                Monitor cryptocurrency and stock prices with up-to-the-second
+                data streams and comprehensive market analysis.
               </p>
             </div>
             <div className="mt-4 h-48 bg-gradient-to-br from-blue-500/10 to-purple-500/10 dark:from-blue-500/20 dark:to-purple-500/20 rounded-lg overflow-hidden border border-blue-500/20 dark:border-blue-500/30 relative">
@@ -72,7 +75,7 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
                 className="w-full h-full object-cover opacity-80 dark:opacity-60"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
+                  target.style.display = "none";
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
@@ -88,7 +91,8 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
               Global Coverage
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-              Access markets worldwide with support for multiple currencies and exchanges.
+              Access markets worldwide with support for multiple currencies and
+              exchanges.
             </p>
           </BentoItem>
 
@@ -98,7 +102,8 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
               Secure & Private
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-              Bank-grade security with encrypted data transmission and secure API keys.
+              Bank-grade security with encrypted data transmission and secure
+              API keys.
             </p>
           </BentoItem>
 
@@ -108,7 +113,8 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
               Portfolio Management
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-              Track your investments with detailed analytics, performance metrics, and risk assessment.
+              Track your investments with detailed analytics, performance
+              metrics, and risk assessment.
             </p>
           </BentoItem>
 
@@ -118,7 +124,8 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
               API Integration
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-              Powerful REST API and WebSocket feeds for developers. Integrate market data seamlessly into your applications.
+              Powerful REST API and WebSocket feeds for developers. Integrate
+              market data seamlessly into your applications.
             </p>
           </BentoItem>
 
@@ -128,7 +135,8 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
               News & Analysis
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-              Stay informed with the latest market news, expert analysis, and sentiment indicators.
+              Stay informed with the latest market news, expert analysis, and
+              sentiment indicators.
             </p>
           </BentoItem>
 
@@ -138,7 +146,8 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
               High Performance
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-              Optimized for speed with sub-second data updates and lightning-fast chart rendering.
+              Optimized for speed with sub-second data updates and
+              lightning-fast chart rendering.
             </p>
           </BentoItem>
 
@@ -148,7 +157,8 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
               Mobile Responsive
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-              Access your trading dashboard anywhere with our fully responsive mobile-optimized interface.
+              Access your trading dashboard anywhere with our fully responsive
+              mobile-optimized interface.
             </p>
           </BentoItem>
         </div>
@@ -156,4 +166,3 @@ export const CyberneticBentoGrid = ({ className }: CyberneticBentoGridProps) => 
     </div>
   );
 };
-
