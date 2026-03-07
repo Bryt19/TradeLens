@@ -90,7 +90,7 @@ const Navbar: React.FC = () => {
 
   return (
     <nav 
-      className={`sticky top-0 z-50 bg-white/90 dark:bg-black/90 backdrop-blur-xl border-b border-gray-200/80 dark:border-white/10 shadow-soft transition-transform duration-300 ease-out ${
+      className={`sticky top-0 z-[999] bg-white/90 dark:bg-black/90 backdrop-blur-xl border-b border-gray-200/80 dark:border-white/10 shadow-soft transition-transform duration-200 ease-out ${
         isVisible ? "translate-y-0" : "-translate-y-full"
       }`}
     >
@@ -153,43 +153,39 @@ const Navbar: React.FC = () => {
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-gray-300/50 dark:border-gray-700/50 bg-white/98 dark:bg-black/98 backdrop-blur-md">
-              {navigation.map((item) => {
-                const Icon = item.icon;
-                const isProtected = item.href !== "/"; // Home is not protected
-                const classes = `flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors cursor-pointer ${
-                  isActive(item.href)
-                    ? "bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 font-semibold"
-                    : "text-gray-700 dark:text-gray-200"
-                } ${
-                  !authState.user && isProtected
-                    ? "opacity-75 hover:opacity-100"
-                    : "hover:text-gray-900 dark:hover:text-white hover:bg-gray-200/80 dark:hover:bg-gray-700/80"
-                }`;
-
-                return (
-                  <div
-                    key={item.name}
-                    className={classes}
-                    title={
-                      !authState.user && isProtected
-                        ? "Click to sign in"
-                        : undefined
-                    }
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      if (isProtected) {
-                        handleNavigation(item.href);
-                      } else {
-                        navigate(item.href);
-                      }
-                    }}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span>{item.name}</span>
-                  </div>
-                );
-              })}
+            <div className="mx-2 mb-4 p-2 bg-white/95 dark:bg-black/95 backdrop-blur-2xl border border-gray-200/50 dark:border-white/10 rounded-2xl shadow-xl overflow-hidden animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="grid grid-cols-1 gap-1">
+                {navigation.map((item) => {
+                  const Icon = item.icon;
+                  const isProtected = item.href !== "/";
+                  const active = isActive(item.href);
+                  
+                  return (
+                    <div
+                      key={item.name}
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        if (isProtected) {
+                          handleNavigation(item.href);
+                        } else {
+                          navigate(item.href);
+                        }
+                      }}
+                      className={`flex items-center space-x-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                        active
+                          ? "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white"
+                      }`}
+                    >
+                      <div className={`p-1.5 rounded-lg ${active ? "bg-blue-500/20" : "bg-gray-100 dark:bg-white/5"}`}>
+                        <Icon className="w-3 h-3" />
+                      </div>
+                      <span className="flex-1">{item.name}</span>
+                      {active && <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-glow-sm" />}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}

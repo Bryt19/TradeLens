@@ -9,6 +9,7 @@ import {
   X,
   RefreshCw,
 } from "lucide-react";
+import CTASection from "../components/CTASection";
 import {
   polygonNewsService,
   gnewsService,
@@ -34,9 +35,6 @@ interface BlogPost {
 
 const Blog: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [email, setEmail] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [isLoadingNews, setIsLoadingNews] = useState(true);
@@ -640,41 +638,7 @@ const Blog: React.FC = () => {
   };
 
   // Handle newsletter subscription
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
 
-    if (!email) {
-      alert("Please enter your email address");
-      return;
-    }
-
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      alert("Please enter a valid email address");
-      return;
-    }
-
-    setIsLoading(true);
-
-    // Simulate API call
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-
-      // Simulate successful subscription
-      setIsSubscribed(true);
-      setEmail("");
-
-      // Reset success message after 5 seconds
-      setTimeout(() => {
-        setIsSubscribed(false);
-      }, 5000);
-    } catch (error) {
-      alert("Something went wrong. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Handle blog post selection
   const handleReadMore = (post: BlogPost) => {
@@ -917,54 +881,12 @@ const Blog: React.FC = () => {
         )}
 
         {/* Newsletter Signup */}
-        <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Stay Updated</h2>
-          <p className="text-xl mb-6 text-blue-100">
-            Subscribe to our newsletter for the latest market insights and
-            trading tips
-          </p>
-
-          {isSubscribed ? (
-            <div className="max-w-md mx-auto">
-              <div className="bg-green-500 text-white px-6 py-4 rounded-lg">
-                <h3 className="text-lg font-semibold mb-2">
-                  🎉 Successfully Subscribed!
-                </h3>
-                <p className="text-sm">
-                  Thank you for subscribing to our newsletter. You'll receive
-                  the latest updates soon!
-                </p>
-              </div>
-            </div>
-          ) : (
-            <form onSubmit={handleSubscribe} className="max-w-md mx-auto">
-              <div className="flex flex-col sm:flex-row gap-4">
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email"
-                  className="flex-1 px-4 py-3 rounded-lg text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white"
-                  disabled={isLoading}
-                />
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="bg-white text-blue-600 px-6 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                >
-                  {isLoading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
-                      Subscribing...
-                    </>
-                  ) : (
-                    "Subscribe"
-                  )}
-                </button>
-              </div>
-            </form>
-          )}
-        </div>
+        <CTASection
+          title="Stay Updated"
+          description="Subscribe to our newsletter for the latest market insights and trading tips"
+          showNewsletter={true}
+          className="mt-16"
+        />
       </div>
 
       {/* Blog Post Modal */}

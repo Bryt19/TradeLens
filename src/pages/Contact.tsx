@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Clock, Send, CheckCircle } from "lucide-react";
 import { saveContactMessage } from "../services/messages";
 import FadeInOnScroll from "../components/FadeInOnScroll";
 import { motion, AnimatePresence } from "framer-motion";
 import FeatureShaderCards from "../components/ui/feature-shader-cards";
+import CTASection from "../components/CTASection";
+import { Sparkles } from "../components/ui/sparkles";
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -125,15 +126,25 @@ const Contact: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative bg-[#030712] py-24 overflow-hidden border-b border-white/5">
+        {/* Background Mesh */}
+        <div className="absolute inset-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/20 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/20 blur-[120px]" />
+        </div>
+        
+        <div className="absolute inset-0 opacity-30">
+          <Sparkles color="#6366f1" density={50} />
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center">
             <FadeInOnScroll direction="up" delay={0}>
               <motion.h1
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
-                className="text-4xl md:text-6xl font-bold mb-6"
+                className="text-4xl md:text-6xl font-bold mb-6 text-white tracking-tight"
               >
                 Contact Sales
               </motion.h1>
@@ -143,7 +154,7 @@ const Contact: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="text-xl md:text-2xl mb-8 text-blue-100"
+                className="text-xl md:text-2xl mb-8 text-gray-400"
               >
                 Ready to transform your trading experience? Let's talk.
               </motion.p>
@@ -153,7 +164,7 @@ const Contact: React.FC = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="text-lg text-blue-200 max-w-3xl mx-auto"
+                className="text-lg text-gray-400 max-w-3xl mx-auto leading-relaxed"
               >
                 Our sales team is here to help you choose the perfect plan and get
                 you started with TradeLens. Get personalized recommendations and
@@ -558,65 +569,15 @@ const Contact: React.FC = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-20">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <FadeInOnScroll direction="up" delay={0}>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="text-3xl md:text-4xl font-bold mb-6"
-            >
-              Ready to Get Started?
-            </motion.h2>
-          </FadeInOnScroll>
-          <FadeInOnScroll direction="up" delay={100}>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="text-xl mb-8 text-blue-100"
-            >
-              Join thousands of traders and investors using TradeLens
-            </motion.p>
-          </FadeInOnScroll>
-          <FadeInOnScroll direction="up" delay={200}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  to="/pricing"
-                  className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors text-center inline-block"
-                >
-                  Start Free Trial
-                </Link>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Link
-                  to="/pricing#pricing-plans"
-                  className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors text-center inline-block"
-                >
-                  View Pricing
-                </Link>
-              </motion.div>
-            </div>
-          </FadeInOnScroll>
-        </div>
+      <div className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <CTASection
+          title="Ready to Get Started?"
+          description="Join thousands of traders and investors using TradeLens"
+          primaryButtonText="Start Free Trial"
+          primaryButtonTo="/pricing"
+          secondaryButtonText="View Pricing"
+          secondaryButtonTo="/pricing#pricing-plans"
+        />
       </div>
     </div>
   );

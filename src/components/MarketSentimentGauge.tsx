@@ -1,6 +1,7 @@
 import React from "react";
 import { useFearAndGreedIndex } from "../hooks/useApi";
 import Loading from "./Loading";
+import { NumberTicker } from "./ui/number-ticker";
 
 interface MarketSentimentGaugeProps {
   height?: number;
@@ -143,7 +144,7 @@ const MarketSentimentGauge: React.FC<MarketSentimentGaugeProps> = ({
               className="text-3xl font-bold mb-1"
               style={{ color: gaugeColor }}
             >
-              {value}
+              <NumberTicker value={value} />
             </div>
             <div
               className="text-sm font-medium px-3 py-1 rounded-full"

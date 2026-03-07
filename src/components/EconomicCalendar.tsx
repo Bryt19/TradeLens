@@ -225,7 +225,7 @@ const EconomicCalendar: React.FC = () => {
       {/* Header Section */}
       <div className="p-6 border-b border-gray-200 dark:border-white/10 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <h2 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-400 bg-clip-text text-transparent flex items-center gap-2">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
             <Activity className="w-6 h-6 text-blue-500" />
             Economic Calendar
           </h2>

@@ -22,11 +22,16 @@ A modern, secure financial web application built with React and TypeScript that 
 
 ### 🎨 User Experience
 
-- **Dark/Light Mode** - Seamless theme switching
+- **Dark/Light Mode** - Seamless theme switching with persistent state
 - **Responsive Design** - Optimized for desktop, tablet, and mobile
-- **Favorites System** - Save and track preferred assets
-- **Smart Navigation** - Auto-scroll to top on page changes
-- **Collapsible FAQs** - Interactive help sections
+- **Animated Counters** - High-performance number counting animations
+- **Market Sentiment** - Real-time "Fear & Greed Index" gauge
+- **Floating Mobile Menu** - Redesigned professional mobile navigation island
+- **Glassmorphic UI** - Modern deep-layered design with translucent effects
+- **Career Portal** - Interactive growth statistics and career focus
+- **Favorites System** - Save and track preferred financial assets
+- **Smart Navigation** - Snappy auto-scroll and intelligent hover states
+- **Collapsible FAQs** - Theme-aware interactive help sections
 - **User Notifications** - Welcome messages and status updates
 
 ## 🚀 Quick Start

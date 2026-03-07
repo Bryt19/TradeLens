@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
 import {
   Zap,
   Shield,
@@ -8,6 +7,7 @@ import {
 } from "lucide-react";
 import { AnimatedFaqAccordion } from "../components/ui/animated-faq-accordion";
 import PricingSection4 from "../components/ui/pricing-section-4";
+import CTASection from "../components/CTASection";
 
 const Pricing: React.FC = () => {
   useEffect(() => {
@@ -153,46 +153,34 @@ const Pricing: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-white dark:bg-black">
       <div id="pricing-plans" className="relative">
         {/* Animated Pricing Section */}
         <PricingSection4 plans={pricingPlans} />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-50 bg-black">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-50 bg-white dark:bg-black">
         {/* FAQ Section */}
         <div className="mb-16">
-          <h2 className="text-3xl font-bold text-white text-center mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">
             Frequently Asked Questions
           </h2>
           <AnimatedFaqAccordion items={faqs} />
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-          <p className="text-xl mb-6 text-blue-100">
-            Join thousands of traders and investors using TradeLens
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={() => {
-                document.getElementById("pricing-plans")?.scrollIntoView({
-                  behavior: "smooth",
-                });
-              }}
-              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
-            >
-              Start Free Trial
-            </button>
-            <Link
-              to="/contact"
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors text-center"
-            >
-              Contact Sales
-            </Link>
-          </div>
-        </div>
+        <CTASection
+          title="Ready to Get Started?"
+          description="Join thousands of traders and investors using TradeLens"
+          primaryButtonText="Start Free Trial"
+          primaryButtonOnClick={() => {
+            document.getElementById("pricing-plans")?.scrollIntoView({
+              behavior: "smooth",
+            });
+          }}
+          secondaryButtonText="Contact Sales"
+          secondaryButtonTo="/contact"
+        />
       </div>
     </div>
   );

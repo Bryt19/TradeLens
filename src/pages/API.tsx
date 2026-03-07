@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Copy,
@@ -12,6 +11,7 @@ import {
   Key,
   Download,
 } from "lucide-react";
+import CTASection from "../components/CTASection";
 
 const API: React.FC = () => {
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -778,33 +778,14 @@ console.log('24h Change:', portfolio.change_24h);`,
         </motion.div>
 
         {/* CTA Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white"
-        >
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Building?</h2>
-          <p className="text-xl mb-6 text-blue-100">
-            Get your API key and start building amazing financial applications
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={scrollToApiKeySection}
-              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors"
-            >
-              Get API Key
-            </button>
-            <Link
-              to="/docs"
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-flex items-center justify-center"
-            >
-              View Documentation
-              <ExternalLink className="w-4 h-4 ml-2" />
-            </Link>
-          </div>
-        </motion.div>
+        <CTASection
+          title="Ready to Start Building?"
+          description="Get your API key and start building amazing financial applications"
+          primaryButtonText="Get API Key"
+          primaryButtonOnClick={scrollToApiKeySection}
+          secondaryButtonText="Read Documentation"
+          secondaryButtonTo="/docs"
+        />
       </div>
     </div>
   );

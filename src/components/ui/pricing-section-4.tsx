@@ -153,7 +153,7 @@ export default function PricingSection4({ plans: customPlans, className }: Prici
 
   return (
     <div
-      className={cn("min-h-screen mx-auto relative bg-black overflow-x-hidden", className)}
+      className={cn("min-h-screen mx-auto relative bg-white dark:bg-black overflow-x-hidden", className)}
       ref={pricingRef}
     >
       <TimelineContent
@@ -203,7 +203,7 @@ export default function PricingSection4({ plans: customPlans, className }: Prici
       </TimelineContent>
 
       <article className="text-center mb-6 pt-32 max-w-3xl mx-auto space-y-2 relative z-50">
-        <h2 className="text-4xl font-medium text-white">
+        <h2 className="text-4xl font-medium text-gray-900 dark:text-white">
           <VerticalCutReveal
             splitBy="words"
             staggerDuration={0.15}
@@ -226,7 +226,7 @@ export default function PricingSection4({ plans: customPlans, className }: Prici
           animationNum={0}
           timelineRef={pricingRef}
           customVariants={revealVariants}
-          className="text-gray-300"
+          className="text-gray-600 dark:text-gray-300"
         >
           Trusted by millions, We help teams all around the world, Explore which
           option is right for you.
@@ -252,77 +252,68 @@ export default function PricingSection4({ plans: customPlans, className }: Prici
       />
 
       <div className="grid md:grid-cols-3 max-w-5xl gap-4 py-6 mx-auto relative z-50">
-        {plans.map((plan, index) => (
-          <TimelineContent
+        {plans.map((plan) => (
+          <Card
             key={plan.name}
-            as="div"
-            animationNum={2 + index}
-            timelineRef={pricingRef}
-            customVariants={revealVariants}
+            className={cn(
+              "relative border shadow-sm transition-transform duration-300 hover:scale-105",
+              plan.popular
+                ? "bg-white dark:bg-neutral-900 border-blue-500/50 dark:border-blue-500 shadow-[0px_10px_40px_-10px_rgba(37,99,235,0.1)] dark:shadow-[0px_-13px_300px_0px_#0900ff] z-20"
+                : "bg-white dark:bg-neutral-900 border-gray-100 dark:border-neutral-800 z-10"
+            )}
           >
-            <Card
-              className={cn(
-                "relative text-white border-neutral-800",
-                plan.popular
-                  ? "bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 shadow-[0px_-13px_300px_0px_#0900ff] z-20"
-                  : "bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 z-10"
-              )}
-            >
-              <CardHeader className="text-left">
-                <div className="flex justify-between">
-                  <h3 className="text-3xl mb-2">{plan.name}</h3>
-                </div>
-                <div className="flex items-baseline">
-                  <span className="text-4xl font-semibold">
-                    $
-                    <NumberFlow
-                      format={{
-                        currency: "USD",
-                      }}
-                      value={isYearly ? plan.yearlyPrice : plan.price}
-                      className="text-4xl font-semibold"
-                    />
-                  </span>
-                  <span className="text-gray-300 ml-1">
-                    /{isYearly ? "year" : "month"}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-300 mb-4">{plan.description}</p>
-              </CardHeader>
+            <CardHeader className="text-left">
+              <div className="flex justify-between">
+                <h3 className="text-3xl mb-2 text-gray-900 dark:text-white font-bold">{plan.name}</h3>
+              </div>
+              <div className="flex items-baseline text-gray-900 dark:text-white">
+                <span className="text-4xl font-semibold">
+                  $
+                  <NumberFlow
+                    format={{
+                      currency: "USD",
+                    }}
+                    value={isYearly ? plan.yearlyPrice : plan.price}
+                    className="text-4xl font-semibold"
+                  />
+                </span>
+                <span className="text-gray-500 dark:text-gray-300 ml-1">
+                  /{isYearly ? "year" : "month"}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{plan.description}</p>
+            </CardHeader>
 
-              <CardContent className="pt-0">
-                <button
-                  className={cn(
-                    "w-full mb-6 p-4 text-xl rounded-xl",
-                    plan.popular
-                      ? "bg-gradient-to-t from-blue-500 to-blue-600 shadow-lg shadow-blue-800 border border-blue-500 text-white"
-                      : plan.buttonVariant === "outline"
-                        ? "bg-gradient-to-t from-neutral-950 to-neutral-600 shadow-lg shadow-neutral-900 border border-neutral-800 text-white"
-                        : ""
-                  )}
-                >
-                  {plan.buttonText}
-                </button>
+            <CardContent className="pt-0">
+              <button
+                className={cn(
+                  "w-full mb-6 p-4 text-xl rounded-xl font-bold",
+                  plan.popular
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                    : "bg-gray-100 dark:bg-neutral-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-neutral-700 transition-colors"
+                )}
+              >
+                {plan.buttonText}
+              </button>
 
-                <div className="space-y-3 pt-4 border-t border-neutral-700">
-                  <h4 className="font-medium text-base mb-3">
-                    {plan.includes[0]}
-                  </h4>
-                  <ul className="space-y-2">
-                    {plan.includes.slice(1).map((feature, featureIndex) => (
-                      <li
-                        key={featureIndex}
-                        className="flex items-center gap-2"
-                      >
-                        <span className="h-2.5 w-2.5 bg-neutral-500 rounded-full grid place-content-center"></span>
-                        <span className="text-sm text-gray-300">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </TimelineContent>
+              <div className="space-y-3 pt-4 border-t border-gray-100 dark:border-neutral-700 text-gray-900 dark:text-white">
+                <h4 className="font-bold text-base mb-3">
+                  {plan.includes[0]}
+                </h4>
+                <ul className="space-y-2">
+                  {plan.includes.slice(1).map((feature, featureIndex) => (
+                    <li
+                      key={featureIndex}
+                      className="flex items-center gap-2"
+                    >
+                      <span className="h-2.5 w-2.5 bg-blue-500 rounded-full grid place-content-center"></span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
         ))}
       </div>
     </div>

@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
-  Search,
   Book,
   Code,
   Zap,
   Shield,
   BarChart3,
-  ExternalLink,
   ChevronRight,
   ChevronDown,
   ArrowUp,
   ArrowDown,
 } from "lucide-react";
 import { AnimatedSearchBar } from "../components/ui/animated-search-bar";
+import { Sparkles } from "../components/ui/sparkles";
+import FadeInOnScroll from "../components/FadeInOnScroll";
+import { motion } from "framer-motion";
+import CTASection from "../components/CTASection";
+import { NumberTicker } from "../components/ui/number-ticker";
 
 const Documentation: React.FC = () => {
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
@@ -176,18 +179,7 @@ const Documentation: React.FC = () => {
     },
   ];
 
-  const filteredSections = documentationSections
-    .map((section) => ({
-      ...section,
-      items: section.items.filter((item) =>
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()),
-      ),
-    }))
-    .filter(
-      (section) =>
-        section.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        section.items.length > 0,
-    );
+
 
   const quickStartCode = `# Install the Python SDK
 pip install tradelens
@@ -234,94 +226,128 @@ print(stock_quote)`;
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            API Documentation
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-            Comprehensive guides and references for integrating TradeLens APIs
-            into your applications.
-          </p>
-          <div className="max-w-md mx-auto">
-            <AnimatedSearchBar
-              placeholder="Search documentation..."
-              value={searchQuery}
-              onChange={(value) => handleSearch(value)}
-              showResults={false}
-              className="w-full"
-              inputClassName="text-base py-3"
-            />
+    <div className="min-h-screen bg-white dark:bg-[#030712]">
+      {/* Hero Section */}
+      <div className="relative bg-[#030712] py-20 overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/10 blur-[120px]" />
+        </div>
+        <div className="absolute inset-0 opacity-30">
+          <Sparkles color="#6366f1" density={50} />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center">
+             <FadeInOnScroll direction="up">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6"
+                >
+                  <Book className="w-4 h-4" />
+                  <span>Developer Portal</span>
+                </motion.div>
+                <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                  Documentation
+                </h1>
+                <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+                  Everything you need to integrate with TradeLens APIs and build powerful financial applications.
+                </p>
+                <div className="max-w-xl mx-auto backdrop-blur-md bg-white/5 rounded-2xl p-2 border border-white/10">
+                  <AnimatedSearchBar
+                    placeholder="Search docs, APIs, and guides..."
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    showResults={false}
+                  />
+                </div>
+             </FadeInOnScroll>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Sidebar Navigation */}
-          <div className="lg:col-span-1">
-            <div className="sticky top-8">
-              <nav className="space-y-2">
-                {filteredSections.length > 0 ? (
-                  filteredSections.map((section) => {
-                    const Icon = section.icon;
-                    const isExpanded = expandedSections.includes(section.id);
-
-                    return (
-                      <div key={section.id}>
-                        <button
-                          onClick={() => toggleSection(section.id)}
-                          className="w-full flex items-center justify-between p-3 text-left bg-white dark:bg-gray-900 rounded-lg shadow-md hover:shadow-lg transition-shadow"
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-12">
+          {/* Sidebar */}
+          <div className="hidden lg:block lg:col-span-3">
+            <nav className="sticky top-24 space-y-2">
+              {documentationSections.map((section) => (
+                <div key={section.id} className="mb-4">
+                  <button
+                    onClick={() => toggleSection(section.id)}
+                    className={`w-full flex items-center justify-between p-3 rounded-xl transition-all ${
+                      expandedSections.includes(section.id)
+                        ? "bg-blue-600 text-white shadow-lg shadow-blue-500/20"
+                        : "bg-gray-50 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <section.icon className="w-5 h-5" />
+                      <span className="font-bold">{section.title}</span>
+                    </div>
+                    {expandedSections.includes(section.id) ? (
+                      <ChevronDown className="w-4 h-4" />
+                    ) : (
+                      <ChevronRight className="w-4 h-4" />
+                    )}
+                  </button>
+                  {expandedSections.includes(section.id) && (
+                    <div className="mt-2 ml-4 space-y-1">
+                      {section.items.map((item, idx) => (
+                        <a
+                          key={`${section.id}-${idx}`}
+                          href={item.href}
+                          className="block p-2 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium border-l border-gray-200 dark:border-white/10 pl-4"
                         >
-                          <div className="flex items-center space-x-3">
-                            <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                            <span className="font-medium text-gray-900 dark:text-white">
-                              {section.title}
-                            </span>
-                          </div>
-                          {isExpanded ? (
-                            <ChevronDown className="w-4 h-4 text-gray-400" />
-                          ) : (
-                            <ChevronRight className="w-4 h-4 text-gray-400" />
-                          )}
-                        </button>
-                        {isExpanded && (
-                          <div className="mt-2 ml-6 space-y-1">
-                            {section.items.map((item, index) => (
-                              <a
-                                key={index}
-                                href={item.href}
-                                className="block py-2 px-3 text-sm text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-gray-50 dark:hover:bg-gray-800 rounded transition-colors"
-                              >
-                                {item.title}
-                              </a>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="text-center py-8">
-                    <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500 dark:text-gray-400">
-                      No results found for "{searchQuery}"
-                    </p>
-                    <p className="text-sm text-gray-400 dark:text-gray-500 mt-2">
-                      Try searching for "API", "crypto", "stocks", or "webhooks"
-                    </p>
-                  </div>
-                )}
-              </nav>
-            </div>
+                          {item.title}
+                        </a>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </nav>
           </div>
 
           {/* Main Content */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-9">
+            {/* Quick Links */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <button 
+                onClick={() => document.getElementById("quick-start")?.scrollIntoView({ behavior: "smooth" })}
+                className="p-8 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-3xl transition-all hover:scale-105 active:scale-95 group text-left"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors">
+                  <Zap className="w-6 h-6 text-blue-600 group-hover:text-white" />
+                </div>
+                <h3 className="text-xl font-bold dark:text-white mb-2">Quick Start</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Get up and running in minutes</p>
+              </button>
+              <button 
+                onClick={() => document.getElementById("crypto-api")?.scrollIntoView({ behavior: "smooth" })}
+                className="p-8 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-3xl transition-all hover:scale-105 active:scale-95 group text-left"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-colors">
+                  <Code className="w-6 h-6 text-indigo-600 group-hover:text-white" />
+                </div>
+                <h3 className="text-xl font-bold dark:text-white mb-2">API Reference</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Full endpoint specification</p>
+              </button>
+              <button 
+                onClick={() => document.getElementById("security")?.scrollIntoView({ behavior: "smooth" })}
+                className="p-8 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-3xl transition-all hover:scale-105 active:scale-95 group text-left"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center mb-6 group-hover:bg-purple-600 transition-colors">
+                  <Shield className="w-6 h-6 text-purple-600 group-hover:text-white" />
+                </div>
+                <h3 className="text-xl font-bold dark:text-white mb-2">Security</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Best practices for auth</p>
+              </button>
+            </div>
             {/* Quick Start */}
             <div
               id="quick-start"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Quick Start Guide
@@ -354,7 +380,7 @@ print(stock_quote)`;
             {/* Authentication */}
             <div
               id="authentication"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Authentication
@@ -380,7 +406,7 @@ print(stock_quote)`;
             {/* Your First API Call */}
             <div
               id="first-call"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Your First API Call
@@ -414,7 +440,7 @@ print(data)`}</code>
             {/* Rate Limits */}
             <div
               id="rate-limits"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Rate Limits
@@ -427,16 +453,16 @@ print(data)`}</code>
                   <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
                     Free Plan
                   </h3>
-                  <p className="text-blue-800 dark:text-blue-200 text-sm">
-                    100 requests/hour
+                   <p className="text-blue-800 dark:text-blue-200 text-sm">
+                    <NumberTicker value="100" /> requests/hour
                   </p>
                 </div>
                 <div className="bg-green-50 dark:bg-green-900 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
                     Pro Plan
                   </h3>
-                  <p className="text-green-800 dark:text-green-200 text-sm">
-                    1,000 requests/hour
+                   <p className="text-green-800 dark:text-green-200 text-sm">
+                    <NumberTicker value="1,000" /> requests/hour
                   </p>
                 </div>
                 <div className="bg-purple-50 dark:bg-purple-900 rounded-lg p-6">
@@ -453,7 +479,7 @@ print(data)`}</code>
             {/* Cryptocurrency API - Market Data */}
             <div
               id="crypto-markets"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Cryptocurrency Market Data
@@ -480,7 +506,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* Cryptocurrency API - Coin Details */}
             <div
               id="crypto-coins"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Cryptocurrency Coin Details
@@ -506,7 +532,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* Cryptocurrency API - Historical Data */}
             <div
               id="crypto-history"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Cryptocurrency Historical Data
@@ -534,7 +560,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* Cryptocurrency API - Price Charts */}
             <div
               id="crypto-charts"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Cryptocurrency Price Charts
@@ -609,7 +635,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* Stock Market API - Stock Quotes */}
             <div
               id="stock-quotes"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Stock Quotes
@@ -635,7 +661,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* Stock Market API - Market Data */}
             <div
               id="stock-markets"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Stock Market Data
@@ -661,7 +687,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* Stock Market API - Company Information */}
             <div
               id="company-info"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Company Information
@@ -687,7 +713,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* Stock Market API - Historical Prices */}
             <div
               id="stock-history"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Stock Historical Prices
@@ -714,7 +740,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* News API - Financial News */}
             <div
               id="financial-news"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Financial News
@@ -741,7 +767,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* News API - Crypto News */}
             <div
               id="crypto-news"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Cryptocurrency News
@@ -768,7 +794,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* News API - Market Analysis */}
             <div
               id="market-analysis"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Market Analysis
@@ -795,7 +821,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* News API - News Categories */}
             <div
               id="news-categories"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 News Categories
@@ -828,7 +854,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             </div>
 
             {/* SDK Downloads */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8">
+            <div className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 SDK Downloads
               </h2>
@@ -863,7 +889,7 @@ curl -H "Authorization: Bearer YOUR_API_KEY" \\
             {/* JavaScript SDK */}
             <div
               id="js-sdk"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 JavaScript SDK
@@ -897,7 +923,7 @@ console.log(cryptoData);`}</code>
             {/* Python SDK */}
             <div
               id="python-sdk"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Python SDK
@@ -930,7 +956,7 @@ for article in news:
             {/* Node.js SDK */}
             <div
               id="node-sdk"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Node.js SDK
@@ -970,7 +996,7 @@ async function getMarketData() {
             {/* cURL Examples */}
             <div
               id="curl-examples"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 cURL Examples
@@ -1018,7 +1044,7 @@ async function getMarketData() {
             {/* API Security */}
             <div
               id="api-security"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 API Security
@@ -1060,7 +1086,7 @@ async function getMarketData() {
             {/* Authentication Best Practices */}
             <div
               id="auth-best-practices"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Authentication Best Practices
@@ -1122,7 +1148,7 @@ async function getMarketData() {
             {/* Error Handling */}
             <div
               id="error-handling"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Error Handling
@@ -1197,7 +1223,7 @@ async function getMarketData() {
             {/* Webhooks */}
             <div
               id="webhooks"
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8"
+              className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">
                 Webhooks
@@ -1278,27 +1304,15 @@ async function getMarketData() {
             </div>
 
             {/* Support */}
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white">
-              <h2 className="text-3xl font-bold mb-4">Need Help?</h2>
-              <p className="text-xl mb-6 text-blue-100">
-                Our support team is here to help you succeed
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to="/contact"
-                  className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors text-center"
-                >
-                  Contact Support
-                </Link>
-                <a
-                  href="/community"
-                  className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors inline-flex items-center justify-center"
-                >
-                  Join Community
-                  <ExternalLink className="w-4 h-4 ml-2" />
-                </a>
-              </div>
-            </div>
+            <CTASection
+              title="Need Help?"
+              description="Our support team is here to help you succeed"
+              primaryButtonText="Contact Support"
+              primaryButtonTo="/contact"
+              secondaryButtonText="Join Community"
+              secondaryButtonTo="/community"
+              className="mt-8"
+            />
           </div>
         </div>
       </div>

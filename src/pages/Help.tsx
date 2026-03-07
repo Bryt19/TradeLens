@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import {
   Search,
   HelpCircle,
@@ -10,6 +9,11 @@ import {
 } from "lucide-react";
 import { AnimatedSearchBar } from "../components/ui/animated-search-bar";
 import { AnimatedFaqAccordion } from "../components/ui/animated-faq-accordion";
+import { Sparkles } from "../components/ui/sparkles";
+import FadeInOnScroll from "../components/FadeInOnScroll";
+import { motion } from "framer-motion";
+import CTASection from "../components/CTASection";
+import { NumberTicker } from "../components/ui/number-ticker";
 
 const Help: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -305,7 +309,7 @@ const Help: React.FC = () => {
   ];
 
   // Flatten FAQ categories into a single list for the accordion
-  const allFaqs = faqCategories.flatMap((category,) =>
+  const allFaqs = faqCategories.flatMap((category) =>
     category.questions.map((faq, questionIndex) => ({
       icon: category.icon,
       value: `${category.id}-${questionIndex}`,
@@ -321,153 +325,168 @@ const Help: React.FC = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Help Center
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-            Find answers to common questions, browse our documentation, or get
-            in touch with our support team.
-          </p>
-          <div className="max-w-2xl mx-auto">
-            <AnimatedSearchBar
-              placeholder="Search for help articles, FAQs, or topics..."
-              value={searchQuery}
-              onChange={(value) => setSearchQuery(value)}
-              showResults={false}
-              className="w-full"
-              inputClassName="text-lg py-4 pl-12"
-            />
-          </div>
+    <div className="min-h-screen bg-white dark:bg-[#030712]">
+      {/* Hero Section */}
+      <div className="relative bg-[#030712] py-24 sm:py-32 overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-600/10 blur-[140px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-indigo-600/10 blur-[140px]" />
         </div>
+        <div className="absolute inset-0 opacity-40">
+          <Sparkles color="#6366f1" density={40} />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <FadeInOnScroll direction="up" delay={0}>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6"
+            >
+              <HelpCircle className="w-4 h-4" />
+              <span>Support Center</span>
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-4xl sm:text-7xl font-bold text-white mb-6 tracking-tight"
+            >
+              How can we <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">help</span>?
+            </motion.h1>
+          </FadeInOnScroll>
+          <FadeInOnScroll direction="up" delay={200}>
+            <div className="max-w-2xl mx-auto backdrop-blur-md rounded-[2rem] border border-white/10 p-2 bg-white/5">
+              <AnimatedSearchBar
+                placeholder="Search for articles, guides, and help..."
+                value={searchQuery}
+                onChange={(value) => setSearchQuery(value)}
+                showResults={false}
+              />
+            </div>
+          </FadeInOnScroll>
+        </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
           {contactMethods.map((method, index) => {
             const Icon = method.icon;
             return (
-              <div
+              <button
                 key={index}
-                className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 text-center hover:shadow-lg transition-shadow"
+                onClick={() => {
+                  if (method.action === "Start Chat") {
+                    handleLiveChat();
+                  } else if (method.action === "Send Email") {
+                    handleEmailSupport();
+                  } else if (method.action === "Call Us") {
+                    handlePhoneSupport();
+                  }
+                }}
+                className="p-10 bg-[#030712] rounded-[3rem] border border-white/5 transition-all hover:scale-105 active:scale-95 group text-center"
               >
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 flex items-center justify-center mx-auto mb-8 group-hover:bg-blue-600 transition-colors">
+                  <Icon className="w-8 h-8 text-blue-500 group-hover:text-white transition-colors" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {method.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-3">
-                  {method.description}
+                <h3 className="text-2xl font-bold text-white mb-2">{method.title}</h3>
+                <p className="text-gray-400 mb-6">{method.description}</p>
+                <p className="text-xs font-bold text-blue-500 uppercase tracking-widest mb-2">
+                  {method.availability}
                 </p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  Available: {method.availability}
-                </p>
-                <button
-                  onClick={() => {
-                    if (method.action === "Start Chat") {
-                      handleLiveChat();
-                    } else if (method.action === "Send Email") {
-                      handleEmailSupport();
-                    } else if (method.action === "Call Us") {
-                      handlePhoneSupport();
-                    }
-                  }}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg font-medium transition-colors"
-                >
-                  {method.action}
-                </button>
-              </div>
+                <div className="inline-flex items-center text-blue-400 font-bold">
+                   {method.action} <ChevronRight className="w-4 h-4 ml-1" />
+                </div>
+              </button>
             );
           })}
         </div>
 
         {/* Search Results or FAQ Categories */}
         {searchQuery ? (
-          <div className="mb-16">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Search Results for "{searchQuery}"
-            </h2>
-            {filteredQuestions.length > 0 ? (
-              <AnimatedFaqAccordion items={filteredQuestions} />
-            ) : (
-              <div className="text-center py-12">
-                <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  No results found
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  Try different keywords or contact our support team
-                </p>
-              </div>
-            )}
-          </div>
+          <FadeInOnScroll direction="up">
+            <div className="mb-24">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+                Results for "{searchQuery}"
+              </h2>
+              {filteredQuestions.length > 0 ? (
+                <div className="max-w-4xl">
+                  <AnimatedFaqAccordion items={filteredQuestions} />
+                </div>
+              ) : (
+                <div className="text-center py-20 bg-gray-50 dark:bg-white/5 rounded-[3rem]">
+                  <Search className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+                  <p className="text-xl text-gray-600 dark:text-gray-400">No results found for your search.</p>
+                </div>
+              )}
+            </div>
+          </FadeInOnScroll>
         ) : (
           <>
             {/* Popular Articles */}
-            <div className="mb-16">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Popular Articles
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {popularArticles.map((article, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handleArticleClick(article)}
-                    className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow cursor-pointer"
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <FadeInOnScroll direction="up">
+              <div className="mb-24">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">
+                  Popular Articles
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {popularArticles.map((article, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleArticleClick(article)}
+                      className="p-8 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2rem] transition-all duration-300 hover:scale-105 hover:border-blue-500/30 text-left group"
+                    >
+                      <div className="flex items-start justify-between mb-6">
+                        <div className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                           <HelpCircle className="w-6 h-6 text-blue-600 dark:text-blue-400 group-hover:text-white" />
+                        </div>
+                        <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                         {article.title}
                       </h3>
-                      <ChevronRight className="w-5 h-5 text-gray-400" />
-                    </div>
-                    <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                      <span>{article.category}</span>
-                      <div className="flex items-center space-x-4">
+                      <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-6">
+                        <span className="font-bold text-blue-500">{article.category}</span>
+                        <span>•</span>
                         <span>{article.readTime}</span>
-                        <span>{article.helpful}% helpful</span>
+                         <span>•</span>
+                        <span>
+                          <NumberTicker value={article.helpful} />% helpful
+                        </span>
                       </div>
-                    </div>
-                  </div>
-                ))}
+                      <p className="text-gray-600 dark:text-gray-400 leading-relaxed line-clamp-2">
+                        {article.content}
+                      </p>
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            </FadeInOnScroll>
 
             {/* FAQ Categories */}
-            <div className="mb-16">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-                Frequently Asked Questions
-              </h2>
-              <AnimatedFaqAccordion items={allFaqs} />
-            </div>
+            <FadeInOnScroll direction="up">
+              <div className="mb-24">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-12 text-center">
+                  Frequently Asked Questions
+                </h2>
+                <div className="max-w-4xl mx-auto">
+                   <AnimatedFaqAccordion items={allFaqs} />
+                </div>
+              </div>
+            </FadeInOnScroll>
           </>
         )}
 
         {/* Still Need Help */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">Still Need Help?</h2>
-          <p className="text-xl mb-6 text-blue-100">
-            Our support team is here to help you succeed. Get in touch and we'll
-            respond quickly.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/contact"
-              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors text-center"
-            >
-              Contact Support
-            </Link>
-            <button
-              onClick={handleScheduleCall}
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors"
-            >
-              Schedule Call
-            </button>
-          </div>
-        </div>
+        <CTASection
+          title="Still Need Help?"
+          description="Our support team is here to help you succeed. Get in touch and we'll respond quickly."
+          primaryButtonText="Contact Support"
+          primaryButtonTo="/contact"
+          secondaryButtonText="Schedule Call"
+          secondaryButtonOnClick={handleScheduleCall}
+        />
       </div>
 
       {/* Email Support Modal */}

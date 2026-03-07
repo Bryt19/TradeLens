@@ -9,8 +9,14 @@ import {
   ChevronDown,
   ChevronUp,
   Globe,
+  User,
+  Mail,
 } from "lucide-react";
 import { AnimatedFaqAccordion } from "../components/ui/animated-faq-accordion";
+import { Sparkles } from "../components/ui/sparkles";
+import FadeInOnScroll from "../components/FadeInOnScroll";
+import { motion } from "framer-motion";
+import CTASection from "../components/CTASection";
 
 const Cookies: React.FC = () => {
   const lastUpdated = "January 1, 2024";
@@ -201,37 +207,71 @@ const Cookies: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Cookie className="w-8 h-8 text-blue-600 dark:text-blue-400" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Cookie Policy
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            This policy explains how TradeLens uses cookies and similar
-            technologies to enhance your experience on our website and services.
-          </p>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-4">
-            Last updated: {lastUpdated}
-          </p>
+    <div className="min-h-screen bg-white dark:bg-[#030712]">
+      {/* Hero Section */}
+      <div className="relative bg-[#030712] py-24 overflow-hidden border-b border-white/5">
+        {/* Background Mesh */}
+        <div className="absolute inset-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-600/10 blur-[120px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-indigo-600/10 blur-[120px]" />
+        </div>
+        
+        <div className="absolute inset-0 opacity-30">
+          <Sparkles color="#6366f1" density={50} />
         </div>
 
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center">
+            <FadeInOnScroll direction="up" delay={0}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6"
+              >
+                <Cookie className="w-4 h-4" />
+                <span>Cookie Policy</span>
+              </motion.div>
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="text-4xl md:text-6xl font-bold mb-6 text-white tracking-tight"
+              >
+                Data Tracking
+              </motion.h1>
+            </FadeInOnScroll>
+            <FadeInOnScroll direction="up" delay={200}>
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed"
+              >
+                This policy explains how TradeLens uses cookies and similar
+                technologies to enhance your experience on our website and services.
+              </motion.p>
+              <div className="mt-8 flex items-center justify-center gap-4 text-sm text-gray-500">
+                <span>Last updated: {lastUpdated}</span>
+              </div>
+            </FadeInOnScroll>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         {/* What Are Cookies */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-8 mb-8">
+        <div className="bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-3xl p-8 mb-12">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             What Are Cookies?
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-4 text-lg">
             Cookies are small text files that are stored on your device when you
             visit our website. They help us provide you with a better experience
             by remembering your preferences, analyzing how you use our site, and
             personalizing content.
           </p>
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
             We also use similar technologies such as web beacons, pixels, and
             local storage to collect information about your interactions with
             our services.
@@ -267,7 +307,7 @@ const Cookies: React.FC = () => {
         </div>
 
         {/* Cookie Settings */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg mb-8">
+        <div className="bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-3xl overflow-hidden mb-12 transition-all duration-300 hover:border-blue-500/20">
           <button
             onClick={() => toggleSection("cookie-settings")}
             onKeyDown={(e) => {
@@ -278,22 +318,31 @@ const Cookies: React.FC = () => {
             }}
             aria-expanded={expandedSections.includes("cookie-settings")}
             aria-controls="cookie-settings-content"
-            className="w-full p-8 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="w-full p-8 text-left focus:outline-none group"
           >
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Manage Your Cookie Preferences
-              </h2>
-              {expandedSections.includes("cookie-settings") ? (
-                <ChevronUp className="w-6 h-6 text-gray-400" aria-hidden="true" />
-              ) : (
-                <ChevronDown className="w-6 h-6 text-gray-400" aria-hidden="true" />
-              )}
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors">
+                  Manage Your Cookie Preferences
+                </h2>
+                <p className="mt-2 text-gray-500 dark:text-gray-400">
+                  Customize your data tracking preferences
+                </p>
+              </div>
+              <div className="w-12 h-12 rounded-full bg-black/5 dark:bg-white/5 flex items-center justify-center group-hover:bg-blue-500/10 transition-colors">
+                {expandedSections.includes("cookie-settings") ? (
+                  <ChevronUp className="w-6 h-6 text-gray-400 group-hover:text-blue-500" />
+                ) : (
+                  <ChevronDown className="w-6 h-6 text-gray-400 group-hover:text-blue-500" />
+                )}
+              </div>
             </div>
           </button>
+          
           {expandedSections.includes("cookie-settings") && (
-            <div id="cookie-settings-content" className="px-8 pb-8" role="region">
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
+            <div id="cookie-settings-content" className="px-8 pb-8 animate-in fade-in slide-in-from-top-4 duration-500" role="region">
+              <div className="h-px bg-black/5 dark:bg-white/10 mb-8" />
+              <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg">
                 You can control which cookies you accept. Note that disabling
                 certain cookies may affect the functionality of our website.
               </p>
@@ -303,26 +352,26 @@ const Cookies: React.FC = () => {
                   return (
                     <div
                       key={index}
-                      className="flex items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg"
+                      className="flex items-center justify-between p-6 bg-white dark:bg-black/20 border border-gray-200 dark:border-gray-800 rounded-2xl transition-all duration-300 hover:border-blue-500/30"
                     >
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-gray-900 dark:text-white">
+                      <div className="flex-1 pr-6">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">
                           {setting.category}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300">
+                        <p className="text-gray-600 dark:text-gray-400">
                           {setting.description}
                         </p>
                       </div>
-                      <div className="flex items-center space-x-3">
+                      <div className="flex items-center gap-6">
                         <span
                           id={`status-${setting.category.toLowerCase().replace(/\s+/g, '-')}`}
-                          className={`text-sm font-medium ${
+                          className={`text-sm font-bold uppercase tracking-wider ${
                             isEnabled
-                              ? "text-green-600 dark:text-green-400"
-                              : "text-gray-500 dark:text-gray-400"
+                              ? "text-blue-600 dark:text-blue-400"
+                              : "text-gray-500 dark:text-gray-500"
                           }`}
                         >
-                          {isEnabled ? "Enabled" : "Disabled"}
+                          {isEnabled ? "Active" : "Disabled"}
                         </span>
                         <button
                           role="switch"
@@ -332,18 +381,18 @@ const Cookies: React.FC = () => {
                           disabled={!setting.canToggle}
                           onClick={() => setting.canToggle && toggleCookiePreference(setting.category)}
                           onKeyDown={(e) => handleToggleKeyDown(e, setting.category, setting.canToggle)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                          className={`relative inline-flex h-7 w-12 items-center rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                             isEnabled
-                              ? "bg-blue-600"
-                              : "bg-gray-200 dark:bg-gray-700"
+                              ? "bg-blue-600 shadow-[0_0_15px_-3px_rgba(37,99,235,0.4)]"
+                              : "bg-gray-200 dark:bg-gray-800"
                           } ${
                             !setting.canToggle
-                              ? "opacity-50 cursor-not-allowed"
-                              : "cursor-pointer hover:opacity-80"
+                              ? "opacity-40 cursor-not-allowed"
+                              : "cursor-pointer hover:scale-105"
                           }`}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-sm transition-transform duration-300 ${
                               isEnabled ? "translate-x-6" : "translate-x-1"
                             }`}
                           />
@@ -353,47 +402,46 @@ const Cookies: React.FC = () => {
                   );
                 })}
               </div>
-              <div className="mt-6 flex flex-col sm:flex-row gap-4">
+              <div className="mt-10 flex flex-wrap gap-4">
                 <button
                   onClick={handleSavePreferences}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                  aria-label="Save cookie preferences"
+                  className="bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/20"
                 >
                   Save Preferences
                 </button>
                 <button
                   onClick={handleAcceptAll}
-                  className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                  aria-label="Accept all cookies"
+                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white px-8 py-4 rounded-2xl font-bold transition-all hover:bg-gray-50 dark:hover:bg-white/10"
                 >
                   Accept All
                 </button>
                 <button
                   onClick={handleRejectAll}
-                  className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-                  aria-label="Reject all optional cookies"
+                  className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white px-8 py-4 rounded-2xl font-bold transition-all hover:bg-gray-50 dark:hover:bg-white/10"
                 >
-                  Reject All
+                  Reject Optional
                 </button>
               </div>
               {statusMessage && (
                 <div
                   role="status"
                   aria-live="polite"
-                  className={`mt-4 rounded-lg p-4 border ${
-                    statusMessage.type === "success"
-                      ? "bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200"
-                      : "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200"
-                  }`}
+                  className={`mt-8 animate-in zoom-in-95 duration-300`}
                 >
-                  <div className="flex items-start justify-between">
-                    <p className="font-medium">{statusMessage.text}</p>
+                  <div className={`p-6 rounded-2xl border flex items-center justify-between ${
+                    statusMessage.type === "success"
+                      ? "bg-green-500/10 border-green-500/20 text-green-600 dark:text-green-400"
+                      : "bg-blue-500/10 border-blue-500/20 text-blue-600 dark:text-blue-400"
+                  }`}>
+                    <div className="flex items-center gap-3 font-bold">
+                       <Shield className="w-5 h-5" />
+                       {statusMessage.text}
+                    </div>
                     <button
                       onClick={() => setStatusMessage(null)}
-                      className="ml-4 text-sm underline hover:no-underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                      aria-label="Dismiss message"
+                      className="text-sm font-bold uppercase tracking-wider hover:underline"
                     >
-                      Dismiss
+                      Close
                     </button>
                   </div>
                 </div>
@@ -418,32 +466,54 @@ const Cookies: React.FC = () => {
         </div>
 
         {/* Contact Information */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-8">
+        <div className="bg-blue-500/5 dark:bg-blue-500/10 border border-blue-500/10 rounded-3xl p-8 mt-12 mb-12">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
             Questions About Cookies?
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-6">
+          <p className="text-gray-600 dark:text-gray-300 mb-8 text-lg">
             If you have any questions about our use of cookies or this policy,
             please contact us:
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <p className="font-medium text-gray-900 dark:text-white mb-2">
-                Email
-              </p>
-              <p className="text-gray-600 dark:text-gray-300">
-                privacy@tradelens.com
-              </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="flex items-start space-x-4">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                <Mail className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="font-bold text-gray-900 dark:text-white text-lg">
+                  Email
+                </p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  privacy@tradelens.com
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-medium text-gray-900 dark:text-white mb-2">
-                Data Protection Officer
-              </p>
-              <p className="text-gray-600 dark:text-gray-300">
-                dpo@tradelens.com
-              </p>
+            <div className="flex items-start space-x-4">
+              <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+                <User className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="font-bold text-gray-900 dark:text-white text-lg">
+                  Data Protection Officer
+                </p>
+                <p className="text-gray-600 dark:text-gray-400">
+                  dpo@tradelens.com
+                </p>
+              </div>
             </div>
           </div>
+        </div>
+
+        {/* Final CTA */}
+        <div className="mt-20">
+          <CTASection
+            title="Full Transparency"
+            description="We believe in giving you full control over your data and how it's used."
+            primaryButtonText="Privacy Policy"
+            primaryButtonTo="/privacy"
+            secondaryButtonText="Terms of Service"
+            secondaryButtonTo="/terms"
+          />
         </div>
       </div>
     </div>

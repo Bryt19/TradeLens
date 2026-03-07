@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import CTASection from "../components/CTASection";
 import {
   Users,
   Target,
@@ -13,7 +13,7 @@ import {
   CheckCircle,
 } from "lucide-react";
 import FadeInOnScroll from "../components/FadeInOnScroll";
-import AnimatedCounter from "../components/AnimatedCounter";
+import { NumberTicker } from "../components/ui/number-ticker";
 import RadialOrbitalTimeline from "../components/ui/radial-orbital-timeline";
 
 const About: React.FC = () => {
@@ -170,9 +170,8 @@ const About: React.FC = () => {
                   <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <AnimatedCounter
+                  <NumberTicker
                     value={stat.number}
-                    duration={2000}
                     className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
                   />
                   <div className="text-gray-600 dark:text-gray-300">
@@ -363,29 +362,15 @@ const About: React.FC = () => {
         </FadeInOnScroll>
 
         {/* CTA Section */}
-        <FadeInOnScroll direction="up" delay={0}>
-          <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white">
-            <h2 className="text-3xl font-bold mb-4">Join Our Mission</h2>
-            <p className="text-xl mb-6 text-blue-100">
-              Be part of the future of financial data. Start your journey with
-              TradeLens today.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                to="/"
-                className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors text-center"
-              >
-                Get Started Free
-              </Link>
-              <Link
-                to="/careers"
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors text-center"
-              >
-                View Careers
-              </Link>
-            </div>
-          </div>
-        </FadeInOnScroll>
+        <CTASection
+          title="Join Our Mission"
+          description="Be part of the future of financial data. Start your journey with TradeLens today."
+          primaryButtonText="Get Started Free"
+          primaryButtonTo="/"
+          secondaryButtonText="View Careers"
+          secondaryButtonTo="/careers"
+          className="mt-16"
+        />
       </div>
     </div>
   );

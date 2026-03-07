@@ -31,7 +31,7 @@ export function AnimatedFaqAccordion({
           <AccordionItem
             key={value}
             value={value}
-            className="group border border-black/10 dark:border-white/10 rounded-md overflow-hidden transition-all duration-300"
+            className="group border border-black/10 dark:border-white/10 rounded-xl overflow-hidden bg-white dark:bg-black/20 shadow-sm dark:shadow-none transition-all duration-300 hover:shadow-md dark:hover:bg-black/40"
           >
             <AccordionTrigger
               className="flex items-center justify-between w-full px-4 py-3 bg-transparent text-left group-data-[state=open]:bg-black/[0.04] dark:group-data-[state=open]:bg-white/[0.05] transition-colors"

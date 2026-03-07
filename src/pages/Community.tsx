@@ -10,6 +10,11 @@ import {
   Heart,
   Star,
 } from "lucide-react";
+import { Sparkles } from "../components/ui/sparkles";
+import FadeInOnScroll from "../components/FadeInOnScroll";
+import { motion } from "framer-motion";
+import CTASection from "../components/CTASection";
+import { NumberTicker } from "../components/ui/number-ticker";
 
 const Community: React.FC = () => {
   const formatDate = (date: Date) => {
@@ -133,7 +138,7 @@ const Community: React.FC = () => {
     },
     {
       name: "LinkedIn",
-      description: "Connect with other developers and professionals",
+      description: "Connect with other professionals",
       icon: Linkedin,
       members: "3,000+",
       color: "bg-blue-600",
@@ -143,286 +148,311 @@ const Community: React.FC = () => {
 
   const featuredProjects = [
     {
-      title: "Leapbod",
+      title: "MoneyGrid",
       description:
-        "A modern web application built with cutting-edge technology",
+        "A modern web application for managing your finances",
       author: "Bright Akoto",
-      stars: 167,
+      stars: 231,
       language: "React",
       lastUpdated: "1 week ago",
-      url: "https://leapbod.vercel.app/",
+      url: "https://moneygrid.vercel.app/",
     },
     {
       title: "Bitspenda",
       description:
         "A secure and efficient payment platform for digital transactions",
       author: "Bright Kportiklah",
-      stars: 189,
+      stars: 809,
       language: "Next.js",
       lastUpdated: "3 days ago",
       url: "https://send.bitspenda.app",
     },
     {
-      title: "TaskFlow",
+      title: "ElectionHub",
       description:
-        "A comprehensive task management system with advanced features",
+        "A comprehensive election management system with advanced features",
       author: "Ezekiel J.N.L Quarcoopome",
       stars: 127,
       language: "JavaScript",
       lastUpdated: "5 days ago",
-      url: "https://task-flow-organizer.vercel.app/login.html",
+      url: "https://electhub.vercel.app/",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            TradeLens Community
-          </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-            Connect with developers, share knowledge, and build amazing
-            applications together. Join our growing community of financial tech
-            enthusiasts.
-          </p>
+    <div className="min-h-screen bg-white dark:bg-[#030712]">
+      {/* Hero Section */}
+      <div className="relative bg-[#030712] py-24 sm:py-32 overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0">
+          <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-600/10 blur-[140px]" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-indigo-600/10 blur-[140px]" />
         </div>
+        <div className="absolute inset-0 opacity-40">
+          <Sparkles color="#6366f1" density={40} />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+          <FadeInOnScroll direction="up" delay={0}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6 backdrop-blur-md"
+            >
+              <Users className="w-4 h-4" />
+              <span>Global Creator Network</span>
+            </motion.div>
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              className="text-4xl sm:text-7xl font-bold text-white mb-6 tracking-tight"
+            >
+              Build the <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400">Future</span> Together
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-xl text-gray-400 max-w-2xl mx-auto"
+            >
+              Connect with thousands of developers, share knowledge, and build amazing financial applications with TradeLens APIs.
+            </motion.p>
+          </FadeInOnScroll>
+        </div>
+      </div>
 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
         {/* Community Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 mb-32">
           {communityStats.map((stat, index) => {
             const Icon = stat.icon;
             return (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-900 rounded-lg p-6 text-center shadow-md"
-              >
-                <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mx-auto mb-4">
-                  <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <FadeInOnScroll key={index} direction="up" delay={index * 100}>
+                <div className="group relative p-8 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[3rem] text-center transition-all duration-500 hover:scale-[1.05] hover:bg-white/10">
+                  <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-blue-600 transition-all duration-500 group-hover:rotate-6">
+                    <Icon className="w-8 h-8 text-blue-500 group-hover:text-white" />
+                  </div>
+                  <div className="text-4xl font-bold text-gray-900 dark:text-white mb-2 tracking-tighter">
+                    <NumberTicker value={stat.number} />
+                  </div>
+                  <div className="text-gray-500 font-bold uppercase tracking-widest text-[10px]">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 dark:text-gray-300">
-                  {stat.label}
-                </div>
-              </div>
+              </FadeInOnScroll>
             );
           })}
         </div>
 
         {/* Social Links */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">
-            Join Our Communities
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="mb-32">
+          <FadeInOnScroll direction="up">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white text-center mb-16 tracking-tight">
+              Join the Ecosystem
+            </h2>
+          </FadeInOnScroll>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {socialLinks.map((social, index) => {
               const Icon = social.icon;
               return (
-                <a
-                  key={index}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow group"
-                >
-                  <div
-                    className={`w-12 h-12 ${social.color} rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+                <FadeInOnScroll key={index} direction="up" delay={index * 100}>
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block p-10 bg-[#030712] rounded-[3rem] border border-white/5 transition-all duration-500 hover:scale-105 active:scale-95 group relative overflow-hidden"
                   >
-                    <Icon className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                    {social.name}
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">
-                    {social.description}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {social.members} members
-                    </span>
-                    <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300" />
-                  </div>
-                </a>
+                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className={`w-16 h-16 ${social.color} rounded-2xl flex items-center justify-center mb-10 group-hover:scale-110 transition-all duration-500 shadow-xl group-hover:rotate-3`}>
+                      <Icon className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-2 uppercase tracking-tight">
+                      {social.name}
+                    </h3>
+                    <p className="text-gray-400 mb-8 leading-relaxed font-medium">
+                      {social.description}
+                    </p>
+                    <div className="flex items-center justify-between text-blue-400 font-bold">
+                      <span className="text-xs uppercase tracking-widest">
+                        <NumberTicker value={social.members} /> Members
+                      </span>
+                      <ExternalLink className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                    </div>
+                  </a>
+                </FadeInOnScroll>
               );
             })}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-32">
           {/* Recent Discussions */}
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Recent Discussions
-              </h2>
-              <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-                View All
-              </button>
-            </div>
-            <div className="space-y-4">
-              {recentDiscussions.map((discussion) => (
-                <div
-                  key={discussion.id}
-                  className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400">
-                      {discussion.title}
-                    </h3>
-                    {discussion.solved && (
-                      <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
-                        <Star className="w-4 h-4 fill-current" />
-                        <span className="text-sm font-medium">Solved</span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-3">
-                    <span>by {discussion.author}</span>
-                    <span className="bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded-full">
-                      {discussion.category}
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
-                    <div className="flex items-center space-x-4">
-                      <span>{discussion.replies} replies</span>
-                      <span>{discussion.views} views</span>
+          <FadeInOnScroll direction="left">
+            <div>
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                  Recent Activity
+                </h2>
+                <button className="text-blue-600 dark:text-blue-400 font-bold hover:underline">
+                  View All
+                </button>
+              </div>
+              <div className="space-y-6">
+                {recentDiscussions.map((discussion) => (
+                  <div
+                    key={discussion.id}
+                    className="p-8 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[2.5rem] transition-all duration-500 hover:scale-[1.02] cursor-pointer group"
+                  >
+                    <div className="flex items-start justify-between mb-6">
+                      <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors">
+                        {discussion.title}
+                      </h3>
+                      {discussion.solved && (
+                        <div className="flex items-center space-x-1 text-green-500 bg-green-500/10 px-3 py-1 rounded-full">
+                          <Star className="w-4 h-4 fill-current" />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">Solved</span>
+                        </div>
+                      )}
                     </div>
-                    <span>{discussion.lastActivity}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Upcoming Events */}
-          <div>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Upcoming Events
-              </h2>
-              <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-                View All
-              </button>
-            </div>
-            <div className="space-y-4">
-              {upcomingEvents.map((event, index) => (
-                <div
-                  key={index}
-                  className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {event.title}
-                    </h3>
-                    <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full text-xs font-medium">
-                      {event.type}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
-                    <span>{event.date}</span>
-                    <span>{event.time}</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <Users className="w-4 h-4" />
-                      <span className="text-sm text-gray-600 dark:text-gray-300">
-                        {event.attendees}/{event.maxAttendees} attending
+                    <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-8">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-blue-600/10 flex items-center justify-center font-bold text-blue-500 text-xs">
+                           {discussion.author[0]}
+                        </div>
+                        <span className="font-bold">{discussion.author}</span>
+                      </div>
+                      <span className="px-3 py-1 bg-blue-500/10 text-blue-500 rounded-lg font-bold text-[10px] uppercase tracking-widest">
+                        {discussion.category}
                       </span>
                     </div>
-                    <a
-                      href={(event as any).url || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-                    >
-                      View Event
-                    </a>
+                    <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-gray-400 pt-6 border-t border-black/5 dark:border-white/5">
+                      <div className="flex items-center space-x-6">
+                        <span>{discussion.replies} Replies</span>
+                        <span>{discussion.views} Views</span>
+                      </div>
+                      <span className="text-blue-500">{discussion.lastActivity}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </FadeInOnScroll>
+
+          {/* Upcoming Events */}
+          <FadeInOnScroll direction="right">
+            <div>
+              <div className="flex items-center justify-between mb-10">
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                  Live Events
+                </h2>
+                <button className="text-blue-600 dark:text-blue-400 font-bold hover:underline">
+                  View Full Schedule
+                </button>
+              </div>
+              <div className="space-y-6">
+                {upcomingEvents.map((event, index) => (
+                  <div
+                    key={index}
+                    className="p-8 bg-[#030712] rounded-[2.5rem] border border-white/5 transition-all duration-500 hover:scale-[1.02] relative group"
+                  >
+                    <div className="absolute top-0 right-0 p-8">
+                       <div className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">
+                        {event.date}
+                      </div>
+                    </div>
+                    <div className="bg-blue-600/10 text-blue-400 px-4 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-600/20 w-fit mb-6">
+                      {event.type}
+                    </div>
+                    <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-blue-400 transition-colors">
+                      {event.title}
+                    </h3>
+                    <p className="text-gray-400 mb-8 font-medium">
+                      Starts at {event.time}
+                    </p>
+                    <div className="flex flex-wrap items-center justify-between gap-4 pt-8 border-t border-white/5">
+                      <div className="flex items-center space-x-3 text-blue-400 bg-blue-400/10 px-4 py-2 rounded-xl">
+                        <Users className="w-4 h-4" />
+                        <span className="text-xs font-bold uppercase tracking-widest">
+                          {event.attendees}/{event.maxAttendees} Reserved
+                        </span>
+                      </div>
+                      <a
+                        href={(event as any).url || "#"}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="bg-blue-600 hover:bg-white hover:text-blue-600 text-white px-8 py-3 rounded-2xl text-xs font-bold uppercase tracking-widest transition-all duration-300 shadow-xl shadow-blue-600/20 active:scale-95"
+                      >
+                        Join Stream
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </FadeInOnScroll>
         </div>
 
         {/* Featured Projects */}
-        <div className="mb-16">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-              Featured Projects
-            </h2>
-            <button className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium">
-              View All
-            </button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mb-32">
+          <FadeInOnScroll direction="up">
+            <div className="flex items-center justify-between mb-12">
+              <h2 className="text-4xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                Featured Projects
+              </h2>
+              <button className="text-blue-600 dark:text-blue-400 font-bold hover:underline">
+                View Gallery
+              </button>
+            </div>
+          </FadeInOnScroll>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {featuredProjects.map((project, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-900 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow"
-              >
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                  {project.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                  {project.description}
-                </p>
-                <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400 mb-4">
-                  <span>by {project.author}</span>
-                  <span>{project.language}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-1">
-                      <Star className="w-4 h-4 text-yellow-500" />
-                      <span>{project.stars}</span>
-                    </div>
-                    <span>Updated {project.lastUpdated}</span>
+              <FadeInOnScroll key={index} direction="up" delay={index * 100}>
+                <div className="p-10 bg-gray-50 dark:bg-white/5 border border-black/5 dark:border-white/10 rounded-[3rem] transition-all duration-500 hover:scale-[1.05] group text-left relative overflow-hidden">
+                  <div className="flex items-center justify-between mb-10">
+                     <span className="px-4 py-1 bg-blue-500/10 text-blue-500 rounded-full text-[10px] font-bold uppercase tracking-widest border border-blue-500/20">
+                       {project.language}
+                     </span>
+                     <div className="flex items-center gap-2 text-yellow-500">
+                       <Star className="w-5 h-5 fill-current" />
+                       <span className="font-bold text-lg">
+                         <NumberTicker value={project.stars} />
+                       </span>
+                     </div>
                   </div>
-                  <a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
-                  >
-                    View Project
-                  </a>
+                  <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 group-hover:text-blue-500 transition-all">
+                    {project.title}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-10 leading-relaxed font-medium">
+                    {project.description}
+                  </p>
+                  <div className="flex items-center justify-between pt-10 border-t border-black/5 dark:border-white/5">
+                    <div className="text-sm">
+                      <div className="text-gray-400 uppercase tracking-widest text-[10px] font-bold mb-1">Architect</div>
+                      <div className="font-bold dark:text-white group-hover:text-blue-500 transition-colors">{project.author}</div>
+                    </div>
+                    <a
+                      href={project.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 group-hover:bg-blue-600 group-hover:text-white transition-all duration-500 rotate-0 group-hover:rotate-12"
+                    >
+                      <ExternalLink className="w-5 h-5" />
+                    </a>
+                  </div>
                 </div>
-              </div>
+              </FadeInOnScroll>
             ))}
           </div>
         </div>
 
         {/* CTA Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white">
-          <h2 className="text-3xl font-bold mb-4">
-            Ready to Join Our Community?
-          </h2>
-          <p className="text-xl mb-6 text-blue-100">
-            Connect with thousands of developers building the future of
-            financial technology
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="https://discord.gg/tradelens"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors text-center"
-            >
-              Join Discord
-            </a>
-            <a
-              href="https://github.com/tradelens"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition-colors text-center"
-            >
-              Browse Projects
-            </a>
-          </div>
-        </div>
+        <CTASection
+          title="Ready to Join Our Community?"
+          description="Connect with thousands of developers building the future of financial technology"
+          primaryButtonText="Join Discord"
+          primaryButtonTo="https://discord.gg/tradelens"
+          secondaryButtonText="Browse Projects"
+          secondaryButtonTo="https://github.com/tradelens"
+        />
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import {
   useMultipleStockQuotes,
 } from "../hooks/useApi";
 import CryptoCard from "../components/CryptoCard";
+import CTASection from "../components/CTASection";
 import CryptoDetailsModal from "../components/CryptoDetailsModal";
 import NewsCard from "../components/NewsCard";
 import Loading from "../components/Loading";
@@ -14,7 +15,7 @@ import MarketSentimentGauge from "../components/MarketSentimentGauge";
 import { CoinGeckoCoin } from "../types";
 import { useAuth } from "../contexts/AuthContext";
 import FadeInOnScroll from "../components/FadeInOnScroll";
-import AnimatedCounter from "../components/AnimatedCounter";
+import { NumberTicker } from "../components/ui/number-ticker";
 import { InteractiveHoverButton } from "../components/ui/interactive-hover-button";
 import { FeaturesSectionWithHoverEffects } from "../components/ui/feature-section-with-hover-effects";
 import EconomicCalendar from "../components/EconomicCalendar";
@@ -245,10 +246,10 @@ const Home: React.FC = () => {
 
               <FadeInOnScroll direction="up" delay={200} duration={800}>
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight">
-                  <span className="bg-gradient-to-r from-white via-blue-50 to-indigo-100 bg-clip-text text-transparent">
+                  <span className="bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">
                     Your Financial
                   </span>
-                  <span className="block mt-1 bg-gradient-to-r from-blue-200 via-indigo-200 to-violet-300 bg-clip-text text-transparent">
+                  <span className="block mt-1 bg-gradient-to-br from-blue-400 to-indigo-600 bg-clip-text text-transparent">
                     Dashboard
                   </span>
                 </h1>
@@ -290,17 +291,15 @@ const Home: React.FC = () => {
               <FadeInOnScroll direction="up" delay={800} duration={800}>
                 <div className="grid grid-cols-3 gap-6 sm:gap-8 pt-8 border-t border-white/20">
                   <div className="text-center lg:text-left">
-                    <AnimatedCounter
+                    <NumberTicker
                       value="10K+"
-                      duration={5000}
                       className="text-2xl sm:text-3xl font-bold text-white"
                     />
                     <div className="text-sm text-white/75 mt-0.5">Assets</div>
                   </div>
                   <div className="text-center lg:text-left">
-                    <AnimatedCounter
+                    <NumberTicker
                       value="50K+"
-                      duration={5000}
                       className="text-2xl sm:text-3xl font-bold text-white"
                     />
                     <div className="text-sm text-white/75 mt-0.5">Users</div>
@@ -667,6 +666,18 @@ const Home: React.FC = () => {
             </div>
           )}
         </div>
+      </section>
+      
+      {/* Bottom CTA */}
+      <section className="py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <CTASection
+          title="Master the Markets with TradeLens"
+          description="Join thousands of pros using our real-time data and analytics. Your financial edge starts here."
+          primaryButtonText="Get Started Free"
+          primaryButtonTo="/pricing"
+          secondaryButtonText="View Documentation"
+          secondaryButtonTo="/docs"
+        />
       </section>
 
       {/* Crypto Details Modal */}
