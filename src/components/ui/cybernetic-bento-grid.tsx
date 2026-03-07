@@ -10,6 +10,9 @@ import {
   Newspaper,
   Code,
   Smartphone,
+  Bell,
+  Layers,
+  Cloud,
 } from "lucide-react";
 
 interface BentoItemProps {
@@ -107,6 +110,17 @@ export const CyberneticBentoGrid = ({
             </p>
           </BentoItem>
 
+          <BentoItem>
+            <Smartphone className="w-6 h-6 text-blue-400 mb-3" />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              Mobile Responsive
+            </h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+              Access your trading dashboard anywhere with our fully responsive
+              mobile-optimized interface.
+            </p>
+          </BentoItem>
+
           <BentoItem className="row-span-2">
             <Database className="w-6 h-6 text-blue-400 mb-3" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -152,15 +166,38 @@ export const CyberneticBentoGrid = ({
           </BentoItem>
 
           <BentoItem>
-            <Smartphone className="w-6 h-6 text-blue-400 mb-3" />
+            <Bell className="w-6 h-6 text-blue-400 mb-3" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              Mobile Responsive
+              Advanced Alerts
             </h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-              Access your trading dashboard anywhere with our fully responsive
-              mobile-optimized interface.
+              Set custom price alerts and technical indicators to never miss a
+              market move.
             </p>
           </BentoItem>
+
+          <BentoItem>
+            <Layers className="w-6 h-6 text-blue-400 mb-3" />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              Multi-Asset Support
+            </h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+              Track Crypto, Stocks, and Forex all in one unified, powerful
+              trading interface.
+            </p>
+          </BentoItem>
+
+          <BentoItem>
+            <Cloud className="w-6 h-6 text-blue-400 mb-3" />
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              Cloud Sync
+            </h2>
+            <p className="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+              Synchronize your preferences and watchlists across all your
+              devices instantly.
+            </p>
+          </BentoItem>
+
         </div>
       </div>
     </div>
