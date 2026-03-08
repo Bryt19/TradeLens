@@ -56,7 +56,7 @@ const Pricing: React.FC = () => {
         "Custom watchlists",
         "Price predictions",
       ],
-      cta: "Start Free Trial",
+      cta: "Coming Soon",
       popular: true,
     },
     {
@@ -77,7 +77,7 @@ const Pricing: React.FC = () => {
         "Team collaboration tools",
         "SLA guarantees",
       ],
-      cta: "Contact Sales",
+      cta: "Coming Soon",
       popular: false,
     },
   ];
