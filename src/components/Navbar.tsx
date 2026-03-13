@@ -14,6 +14,7 @@ import UserProfile from "./UserProfile";
 import { useAuth } from "../contexts/AuthContext";
 import { PillBase } from "./ui/3d-adaptive-navigation-bar";
 import { ThemeToggle } from "./ui/theme-toggle";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 
 const Navbar: React.FC = () => {
   const { state, dispatch } = useApp();
@@ -99,9 +100,10 @@ const Navbar: React.FC = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:shadow-glow transition-shadow duration-300">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
+              <Avatar className="w-10 h-10 shadow-md group-hover:shadow-glow transition-all duration-300 border border-gray-100 dark:border-white/10">
+                <AvatarImage src="/img/logo.png" alt="TradeLens Logo" className="object-cover" />
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600">TL</AvatarFallback>
+              </Avatar>
               <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
                 TradeLens
               </span>

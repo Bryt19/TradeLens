@@ -249,7 +249,7 @@ const Home: React.FC = () => {
                   <span className="bg-gradient-to-br from-white to-gray-400 bg-clip-text text-transparent">
                     Your Financial
                   </span>
-                  <span className="block mt-1 bg-gradient-to-br from-blue-400 to-indigo-600 bg-clip-text text-transparent">
+                  <span className="block mt-1 bg-gradient-to-b from-neutral-700 via-blue-600 to-purple-600 dark:from-neutral-300 dark:via-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
                     Dashboard
                   </span>
                 </h1>

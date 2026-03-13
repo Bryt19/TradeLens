@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import {
-  TrendingUp,
   Github,
   Twitter,
   Linkedin,
@@ -10,6 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Icons } from "./ui/icons";
+import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 
 const Footer: React.FC = () => {
   const currentYear = new Date().getFullYear();
@@ -59,9 +59,10 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between gap-12">
           <div className="mb-8 md:mb-0">
             <Link to="/" className="inline-flex items-center gap-2.5 group">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-md group-hover:shadow-glow transition-shadow duration-300">
-                <TrendingUp className="w-5 h-5 text-white" />
-              </div>
+              <Avatar className="w-10 h-10 shadow-md group-hover:shadow-glow transition-all duration-300 border border-gray-100 dark:border-white/10">
+                <AvatarImage src="/img/logo.png" alt="TradeLens Logo" className="object-cover" />
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600">TL</AvatarFallback>
+              </Avatar>
               <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">TradeLens</h2>
             </Link>
             <h1 className="text-gray-600 dark:text-gray-300 mt-4">

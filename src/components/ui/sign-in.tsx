@@ -1,4 +1,5 @@
 import React from "react";
+import { Avatar, AvatarImage, AvatarFallback } from "./avatar";
 
 // --- HELPER COMPONENTS (ICONS) ---
 
@@ -116,6 +117,15 @@ export const SignInPage: React.FC<SignInPageProps> = ({
       <section className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="flex flex-col gap-6">
+            <div className="animate-element animate-delay-75 flex items-center gap-2.5 group">
+              <Avatar className="w-14 h-14 shadow-glow transition-all duration-300 border-2 border-white/20 dark:border-white/10">
+                <AvatarImage src="/img/logo.png" alt="TradeLens Logo" className="object-cover" />
+                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-lg">TL</AvatarFallback>
+              </Avatar>
+              <span className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">
+                TradeLens
+              </span>
+            </div>
             <h1 className="animate-element animate-delay-100 text-4xl md:text-5xl font-semibold leading-tight text-gray-900 dark:text-white">
               {title}
             </h1>
